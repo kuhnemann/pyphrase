@@ -46,7 +46,7 @@ Modern Python client for interacting with the Phrase TMS API, both for sync and 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Built With
-The code is based on the OpenAPI docs as of March 1 2023, which was parsed using [datamodel-code-generator](https://github.com/koxudaxi/datamodel-code-generator/) (for the models)
+The code is based on the [Phrase TMS OpenAPI docs](https://cloud.memsource.com/web/docs/api) as of March 1 2023, which was parsed using [datamodel-code-generator](https://github.com/koxudaxi/datamodel-code-generator/) (for the models)
 and a slightly modified version of [swagger-to](https://github.com/Parquery/swagger-to) (for the methods). 
 
 
