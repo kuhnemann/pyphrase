@@ -20,7 +20,6 @@ class ProjectReferenceFileOperations:
 
     def listReferenceFiles(
         self,
-        phrase_token: str,
         projectUid: str,
         createdBy: str = None,
         dateCreatedSince: str = None,
@@ -29,11 +28,11 @@ class ProjectReferenceFileOperations:
         pageSize: int = "50",
         sort: str = "DATE_CREATED",
         order: str = "DESC",
+        phrase_token: Optional[str] = None,
     ) -> ReferenceFilePageDto:
         """
         List project reference files
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param createdBy: string (optional), query. UID of user.
         :param dateCreatedSince: string (optional), query. date time in ISO 8601 UTC format.
@@ -42,6 +41,8 @@ class ProjectReferenceFileOperations:
         :param pageSize: integer (optional), query.
         :param sort: string (optional), query.
         :param order: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ReferenceFilePageDto
         """
@@ -60,22 +61,26 @@ class ProjectReferenceFileOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ReferenceFilePageDto(**r)
 
     def createNoteRef(
-        self, phrase_token: str, projectUid: str, body: CreateReferenceFileNoteDto
+        self,
+        projectUid: str,
+        body: CreateReferenceFileNoteDto,
+        phrase_token: Optional[str] = None,
     ) -> ReferenceFileReference:
         """
         Create project reference file
         Accepts `application/octet-stream` or `application/json`.<br>
                        - `application/json` - `note` field will be converted to .txt.<br>
                        - `application/octet-stream` - `Content-Disposition` header is required
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: CreateReferenceFileNoteDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ReferenceFileReference
         """
@@ -86,20 +91,24 @@ class ProjectReferenceFileOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ReferenceFileReference(**r)
 
     def batchDeleteReferenceFiles(
-        self, phrase_token: str, projectUid: str, body: ProjectReferenceFilesRequestDto
+        self,
+        projectUid: str,
+        body: ProjectReferenceFilesRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete project reference files (batch)
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: ProjectReferenceFilesRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -110,20 +119,21 @@ class ProjectReferenceFileOperations:
         payload = body
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def downloadReference(
-        self, phrase_token: str, referenceFileId: str, projectUid: str
+        self, referenceFileId: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> bytes:
         """
         Download project reference file
 
-        :param phrase_token: string (required) - token to authenticate
         :param referenceFileId: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -134,20 +144,24 @@ class ProjectReferenceFileOperations:
         payload = None
 
         r = self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     def batchDownloadReferenceFiles(
-        self, phrase_token: str, projectUid: str, body: ProjectReferenceFilesRequestDto
+        self,
+        projectUid: str,
+        body: ProjectReferenceFilesRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
         Download project reference files (batch)
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: ProjectReferenceFilesRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -158,7 +172,7 @@ class ProjectReferenceFileOperations:
         payload = body
 
         r = self.client.post_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r

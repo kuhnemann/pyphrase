@@ -11,14 +11,17 @@ class LanguageQualityAssessmentOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def downloadLqaReports(self, phrase_token: str, jobParts: str) -> bytes:
+    def downloadLqaReports(
+        self, jobParts: str, phrase_token: Optional[str] = None
+    ) -> bytes:
         """
                 Download LQA Assessment XLSX reports
                 Returns a single xlsx report or ZIP archive with multiple reports.
         If any given jobPart is not from LQA workflow step, reports from successive workflow steps may be returned
         If none were found returns 404 error, otherwise returns those that were found.
-                :param phrase_token: string (required) - token to authenticate
                 :param jobParts: string (required), query. Comma separated list of JobPart UIDs.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: None
         """
@@ -29,7 +32,7 @@ class LanguageQualityAssessmentOperations:
         payload = None
 
         r = self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r

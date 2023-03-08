@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from datetime import datetime
+from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 if TYPE_CHECKING:
-    from src.pyphrase import AsyncPhraseTMSClient
+    from pyphrase.client import AsyncPhraseTMSClient
 
-from src.pyphrase.models.phrase_models import (
+from pyphrase.models.phrase_models import (
     WEBHOOK_TOKEN,
     AutomatedProjectCreationDtoV2,
     CreateEditAutomatedProjectCreationDtoV2,

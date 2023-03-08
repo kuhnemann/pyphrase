@@ -38,20 +38,21 @@ class TranslationMemoryOperations:
 
     async def searchSegmentByJob(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: SearchTMByJobRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SearchResponseListTmDto:
         """
         Search translation memory for segment by job
         Returns at most <i>maxSegments</i>
             records with <i>score >= scoreThreshold</i> and at most <i>maxSubsegments</i> records which are subsegment,
             i.e. the source text is substring of the query text.
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: SearchTMByJobRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchResponseListTmDto
         """
@@ -64,20 +65,24 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchResponseListTmDto(**r)
 
     async def search(
-        self, phrase_token: str, transMemoryUid: str, body: SearchRequestDto
+        self,
+        transMemoryUid: str,
+        body: SearchRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SearchResponseListTmDto:
         """
         Search translation memory (sync)
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: SearchRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchResponseListTmDto
         """
@@ -88,14 +93,13 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchResponseListTmDto(**r)
 
     async def listTransMemories(
         self,
-        phrase_token: str,
         businessUnitId: str = None,
         subDomainId: str = None,
         domainId: str = None,
@@ -105,11 +109,11 @@ class TranslationMemoryOperations:
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoTransMemoryDto:
         """
         List translation memories
 
-        :param phrase_token: string (required) - token to authenticate
         :param businessUnitId: string (optional), query.
         :param subDomainId: string (optional), query.
         :param domainId: string (optional), query.
@@ -119,6 +123,8 @@ class TranslationMemoryOperations:
         :param name: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoTransMemoryDto
         """
@@ -139,19 +145,20 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoTransMemoryDto(**r)
 
     async def createTransMemory(
-        self, phrase_token: str, body: TransMemoryCreateDto
+        self, body: TransMemoryCreateDto, phrase_token: Optional[str] = None
     ) -> TransMemoryDto:
         """
         Create translation memory
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: TransMemoryCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TransMemoryDto
         """
@@ -162,19 +169,20 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TransMemoryDto(**r)
 
     async def exportCleanedTMs(
-        self, phrase_token: str, body: CleanedTransMemoriesDto
+        self, body: CleanedTransMemoriesDto, phrase_token: Optional[str] = None
     ) -> AsyncRequestWrapperDto:
         """
         Extract cleaned translation memory
         Returns a ZIP file containing the cleaned translation memories in the specified outputFormat.
-        :param phrase_token: string (required) - token to authenticate
         :param body: CleanedTransMemoriesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncRequestWrapperDto
         """
@@ -185,19 +193,20 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncRequestWrapperDto(**r)
 
     async def getTransMemory(
-        self, phrase_token: str, transMemoryUid: str
+        self, transMemoryUid: str, phrase_token: Optional[str] = None
     ) -> TransMemoryDto:
         """
         Get translation memory
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TransMemoryDto
         """
@@ -208,20 +217,24 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TransMemoryDto(**r)
 
     async def editTransMemory(
-        self, phrase_token: str, transMemoryUid: str, body: TransMemoryEditDto
+        self,
+        transMemoryUid: str,
+        body: TransMemoryEditDto,
+        phrase_token: Optional[str] = None,
     ) -> TransMemoryDto:
         """
         Edit translation memory
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: TransMemoryEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TransMemoryDto
         """
@@ -232,20 +245,24 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TransMemoryDto(**r)
 
     async def deleteTransMemory(
-        self, phrase_token: str, transMemoryUid: str, purge: bool = "False"
+        self,
+        transMemoryUid: str,
+        purge: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete translation memory
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param purge: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -256,20 +273,24 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def addTargetLangToTransMemory(
-        self, phrase_token: str, transMemoryUid: str, body: TargetLanguageDto
+        self,
+        transMemoryUid: str,
+        body: TargetLanguageDto,
+        phrase_token: Optional[str] = None,
     ) -> TransMemoryDto:
         """
         Add target language to translation memory
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: TargetLanguageDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TransMemoryDto
         """
@@ -280,17 +301,20 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TransMemoryDto(**r)
 
-    async def downloadCleanedTM(self, phrase_token: str, asyncRequestId: str) -> bytes:
+    async def downloadCleanedTM(
+        self, asyncRequestId: str, phrase_token: Optional[str] = None
+    ) -> bytes:
         """
         Download cleaned TM
 
-        :param phrase_token: string (required) - token to authenticate
         :param asyncRequestId: string (required), path. Request ID.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -301,20 +325,21 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def insertToTransMemory(
-        self, phrase_token: str, transMemoryUid: str, body: SegmentDto
+        self, transMemoryUid: str, body: SegmentDto, phrase_token: Optional[str] = None
     ) -> None:
         """
         Insert segment
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: SegmentDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -325,17 +350,20 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
-    async def clearTransMemory(self, phrase_token: str, transMemoryUid: str) -> None:
+    async def clearTransMemory(
+        self, transMemoryUid: str, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Delete all segments
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -346,25 +374,26 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getRelatedProjects(
         self,
-        phrase_token: str,
         transMemoryUid: str,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoAbstractProjectDto:
         """
         List related projects
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoAbstractProjectDto
         """
@@ -375,20 +404,24 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoAbstractProjectDto(**r)
 
     async def getMetadata(
-        self, phrase_token: str, transMemoryUid: str, byLanguage: bool = "False"
+        self,
+        transMemoryUid: str,
+        byLanguage: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> MetadataResponse:
         """
         Get translation memory metadata
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param byLanguage: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: MetadataResponse
         """
@@ -399,25 +432,26 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return MetadataResponse(**r)
 
     async def updateTranslation(
         self,
-        phrase_token: str,
         segmentId: str,
         transMemoryUid: str,
         body: TranslationDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Edit segment
 
-        :param phrase_token: string (required) - token to authenticate
         :param segmentId: string (required), path.
         :param transMemoryUid: string (required), path.
         :param body: TranslationDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -428,20 +462,21 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def deleteSourceAndTranslations(
-        self, phrase_token: str, segmentId: str, transMemoryUid: str
+        self, segmentId: str, transMemoryUid: str, phrase_token: Optional[str] = None
     ) -> None:
         """
         Delete both source and translation
         Not recommended for bulk removal of segments
-        :param phrase_token: string (required) - token to authenticate
         :param segmentId: string (required), path.
         :param transMemoryUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -452,21 +487,26 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def deleteTranslation(
-        self, phrase_token: str, lang: str, segmentId: str, transMemoryUid: str
+        self,
+        lang: str,
+        segmentId: str,
+        transMemoryUid: str,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete segment of given language
         Not recommended for bulk removal of segments
-        :param phrase_token: string (required) - token to authenticate
         :param lang: string (required), path.
         :param segmentId: string (required), path.
         :param transMemoryUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -479,19 +519,20 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getBackgroundTasks_1(
-        self, phrase_token: str, transMemoryUid: str
+        self, transMemoryUid: str, phrase_token: Optional[str] = None
     ) -> BackgroundTasksTmDto:
         """
         Get last task information
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: BackgroundTasksTmDto
         """
@@ -502,20 +543,24 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return BackgroundTasksTmDto(**r)
 
     async def wildcardSearch(
-        self, phrase_token: str, transMemoryUid: str, body: WildCardSearchRequestDto
+        self,
+        transMemoryUid: str,
+        body: WildCardSearchRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SearchResponseListTmDto:
         """
         Wildcard search
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: WildCardSearchRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchResponseListTmDto
         """
@@ -526,25 +571,26 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchResponseListTmDto(**r)
 
     async def downloadSearchResult(
         self,
-        phrase_token: str,
         asyncRequestId: str,
         fields: List[str] = None,
         format: str = "TMX",
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
         Download export
 
-        :param phrase_token: string (required) - token to authenticate
         :param asyncRequestId: string (required), path. Request ID.
         :param fields: array (optional), query. Fields to include in exported XLSX.
         :param format: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -555,20 +601,24 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def exportByQueryAsync(
-        self, phrase_token: str, transMemoryUid: str, body: ExportByQueryDto
+        self,
+        transMemoryUid: str,
+        body: ExportByQueryDto,
+        phrase_token: Optional[str] = None,
     ) -> AsyncExportTMByQueryResponseDto:
         """
         Search translation memory
         Use [this API](#operation/downloadSearchResult) to download result
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: ExportByQueryDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncExportTMByQueryResponseDto
         """
@@ -579,17 +629,20 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncExportTMByQueryResponseDto(**r)
 
-    async def clearTransMemoryV2(self, phrase_token: str, transMemoryUid: str) -> None:
+    async def clearTransMemoryV2(
+        self, transMemoryUid: str, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Delete all segments.
         This call is **asynchronous**, use [this API](#operation/getAsyncRequest) to check the result
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -600,27 +653,28 @@ class TranslationMemoryOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def importTransMemoryV2(
         self,
-        phrase_token: str,
         transMemoryUid: str,
         body: InputStream,
         strictLangMatching: bool = "False",
         stripNativeCodes: bool = "True",
+        phrase_token: Optional[str] = None,
     ) -> AsyncRequestWrapperV2Dto:
         """
         Import TMX
 
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: InputStream (required), body.
         :param strictLangMatching: boolean (optional), query.
         :param stripNativeCodes: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncRequestWrapperV2Dto
         """
@@ -634,20 +688,21 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncRequestWrapperV2Dto(**r)
 
     async def exportV2(
-        self, phrase_token: str, transMemoryUid: str, body: ExportTMDto
+        self, transMemoryUid: str, body: ExportTMDto, phrase_token: Optional[str] = None
     ) -> AsyncExportTMResponseDto:
         """
         Export translation memory
         Use [this API](#operation/downloadSearchResult) to download result
-        :param phrase_token: string (required) - token to authenticate
         :param transMemoryUid: string (required), path.
         :param body: ExportTMDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncExportTMResponseDto
         """
@@ -658,7 +713,7 @@ class TranslationMemoryOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncExportTMResponseDto(**r)

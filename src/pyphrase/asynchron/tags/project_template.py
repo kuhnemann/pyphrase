@@ -33,7 +33,6 @@ class ProjectTemplateOperations:
 
     async def relevantTransMemories(
         self,
-        phrase_token: str,
         projectTemplateUid: str,
         targetLangs: List[str] = None,
         subDomainName: str = None,
@@ -43,11 +42,11 @@ class ProjectTemplateOperations:
         strictLangMatching: bool = "False",
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoTransMemoryDto:
         """
         List project template relevant translation memories
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param targetLangs: array (optional), query.
         :param subDomainName: string (optional), query.
@@ -57,6 +56,8 @@ class ProjectTemplateOperations:
         :param strictLangMatching: boolean (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoTransMemoryDto
         """
@@ -78,14 +79,13 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoTransMemoryDto(**r)
 
     async def getProjectTemplates(
         self,
-        phrase_token: str,
         businessUnitName: str = None,
         costCenterName: str = None,
         costCenterId: int = None,
@@ -99,11 +99,11 @@ class ProjectTemplateOperations:
         direction: str = "desc",
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoProjectTemplateReference:
         """
         List project templates
 
-        :param phrase_token: string (required) - token to authenticate
         :param businessUnitName: string (optional), query.
         :param costCenterName: string (optional), query.
         :param costCenterId: integer (optional), query.
@@ -117,6 +117,8 @@ class ProjectTemplateOperations:
         :param direction: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoProjectTemplateReference
         """
@@ -141,19 +143,20 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoProjectTemplateReference(**r)
 
     async def createProjectTemplate(
-        self, phrase_token: str, body: ProjectTemplateCreateActionDto
+        self, body: ProjectTemplateCreateActionDto, phrase_token: Optional[str] = None
     ) -> ProjectTemplateDto:
         """
         Create project template
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: ProjectTemplateCreateActionDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectTemplateDto
         """
@@ -164,19 +167,20 @@ class ProjectTemplateOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectTemplateDto(**r)
 
     async def getProjectTemplateTermBases(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> ProjectTemplateTermBaseListDto:
         """
         Get term bases
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectTemplateTermBaseListDto
         """
@@ -187,23 +191,24 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectTemplateTermBaseListDto(**r)
 
     async def setProjectTemplateTermBases(
         self,
-        phrase_token: str,
         projectTemplateUid: str,
         body: SetProjectTemplateTermBaseDto,
+        phrase_token: Optional[str] = None,
     ) -> ProjectTemplateTermBaseListDto:
         """
         Edit term bases in project template
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param body: SetProjectTemplateTermBaseDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectTemplateTermBaseListDto
         """
@@ -214,19 +219,20 @@ class ProjectTemplateOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectTemplateTermBaseListDto(**r)
 
     async def getProjectTemplateAccessSettings(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> ProjectSecuritySettingsDtoV2:
         """
         Get project template access and security settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectSecuritySettingsDtoV2
         """
@@ -237,23 +243,24 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectSecuritySettingsDtoV2(**r)
 
     async def editProjectTemplateAccessSettings(
         self,
-        phrase_token: str,
         projectTemplateUid: str,
         body: EditProjectSecuritySettingsDtoV2,
+        phrase_token: Optional[str] = None,
     ) -> ProjectSecuritySettingsDtoV2:
         """
         Edit project template access and security settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param body: EditProjectSecuritySettingsDtoV2 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectSecuritySettingsDtoV2
         """
@@ -264,19 +271,20 @@ class ProjectTemplateOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectSecuritySettingsDtoV2(**r)
 
     async def getProjectTemplate(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> ProjectTemplateDto:
         """
         Get project template
         Note: importSettings in response is deprecated and will be always null
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectTemplateDto
         """
@@ -287,20 +295,24 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectTemplateDto(**r)
 
     async def editProjectTemplate(
-        self, phrase_token: str, projectTemplateUid: str, body: ProjectTemplateEditDto
+        self,
+        projectTemplateUid: str,
+        body: ProjectTemplateEditDto,
+        phrase_token: Optional[str] = None,
     ) -> ProjectTemplateDto:
         """
         Edit project template
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param body: ProjectTemplateEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectTemplateDto
         """
@@ -311,19 +323,20 @@ class ProjectTemplateOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectTemplateDto(**r)
 
     async def deleteProjectTemplate(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> None:
         """
         Delete project template
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -334,19 +347,20 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getAnalyseSettingsForProjectTemplate(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> AbstractAnalyseSettingsDto:
         """
         Get analyse settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AbstractAnalyseSettingsDto
         """
@@ -357,20 +371,24 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AbstractAnalyseSettingsDto(**r)
 
     async def updateAnalyseSettingsForProjectTemplate(
-        self, phrase_token: str, projectTemplateUid: str, body: EditAnalyseSettingsDto
+        self,
+        projectTemplateUid: str,
+        body: EditAnalyseSettingsDto,
+        phrase_token: Optional[str] = None,
     ) -> AbstractAnalyseSettingsDto:
         """
         Edit analyse settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param body: EditAnalyseSettingsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AbstractAnalyseSettingsDto
         """
@@ -381,19 +399,20 @@ class ProjectTemplateOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AbstractAnalyseSettingsDto(**r)
 
     async def getImportSettingsForProjectTemplate(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> FileImportSettingsDto:
         """
         Get import settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: FileImportSettingsDto
         """
@@ -404,19 +423,20 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return FileImportSettingsDto(**r)
 
     async def getMachineTranslateSettingsForProjectTemplate(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> MTSettingsPerLanguageListDto:
         """
         Get project template machine translate settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: MTSettingsPerLanguageListDto
         """
@@ -427,25 +447,26 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return MTSettingsPerLanguageListDto(**r)
 
     async def setProjectTemplateTransMemoriesV2(
         self,
-        phrase_token: str,
         projectTemplateUid: str,
         body: SetProjectTemplateTransMemoriesV2Dto,
+        phrase_token: Optional[str] = None,
     ) -> ProjectTemplateTransMemoryListV2Dto:
         """
         Edit translation memories
         If user wants to edit “All target languages” or "All workflow steps”,
                        but there are already varied TM settings for individual languages or steps,
                        then the user risks to overwrite these individual choices.
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param body: SetProjectTemplateTransMemoriesV2Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectTemplateTransMemoryListV2Dto
         """
@@ -456,19 +477,20 @@ class ProjectTemplateOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectTemplateTransMemoryListV2Dto(**r)
 
     async def getPreTranslateSettingsForProjectTemplate_2(
-        self, phrase_token: str, projectTemplateUid: str
+        self, projectTemplateUid: str, phrase_token: Optional[str] = None
     ) -> PreTranslateSettingsV3Dto:
         """
         Get Pre-translate settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PreTranslateSettingsV3Dto
         """
@@ -481,23 +503,24 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PreTranslateSettingsV3Dto(**r)
 
     async def updatePreTranslateSettingsForProjectTemplate_2(
         self,
-        phrase_token: str,
         projectTemplateUid: str,
         body: PreTranslateSettingsV3Dto,
+        phrase_token: Optional[str] = None,
     ) -> PreTranslateSettingsV3Dto:
         """
         Update Pre-translate settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param body: PreTranslateSettingsV3Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PreTranslateSettingsV3Dto
         """
@@ -510,25 +533,26 @@ class ProjectTemplateOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PreTranslateSettingsV3Dto(**r)
 
     async def getProjectTemplateTransMemories_2(
         self,
-        phrase_token: str,
         projectTemplateUid: str,
         wfStepUid: str = None,
         targetLang: str = None,
+        phrase_token: Optional[str] = None,
     ) -> ProjectTemplateTransMemoryListDtoV3:
         """
         Get translation memories
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectTemplateUid: string (required), path.
         :param wfStepUid: string (optional), query. Filter project translation memories by workflow step.
         :param targetLang: string (optional), query. Filter project translation memories by target language.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectTemplateTransMemoryListDtoV3
         """
@@ -539,7 +563,7 @@ class ProjectTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectTemplateTransMemoryListDtoV3(**r)

@@ -13,12 +13,15 @@ class VendorOperations:
     def __init__(self, client: AsyncPhraseTMSClient):
         self.client = client
 
-    async def getVendor(self, phrase_token: str, vendorUid: str) -> VendorDto:
+    async def getVendor(
+        self, vendorUid: str, phrase_token: Optional[str] = None
+    ) -> VendorDto:
         """
         Get vendor
 
-        :param phrase_token: string (required) - token to authenticate
         :param vendorUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: VendorDto
         """
@@ -29,25 +32,26 @@ class VendorOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return VendorDto(**r)
 
     async def listVendors(
         self,
-        phrase_token: str,
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoVendorDto:
         """
         List vendors
 
-        :param phrase_token: string (required) - token to authenticate
         :param name: string (optional), query. Name or the vendor, for filtering.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoVendorDto
         """
@@ -58,17 +62,20 @@ class VendorOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoVendorDto(**r)
 
-    async def createVendor(self, phrase_token: str, body: CreateVendorDto) -> VendorDto:
+    async def createVendor(
+        self, body: CreateVendorDto, phrase_token: Optional[str] = None
+    ) -> VendorDto:
         """
         Create vendor
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateVendorDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: VendorDto
         """
@@ -79,7 +86,7 @@ class VendorOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return VendorDto(**r)

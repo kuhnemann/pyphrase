@@ -15,24 +15,25 @@ class SubdomainOperations:
 
     def listSubDomains(
         self,
-        phrase_token: str,
         createdBy: str = None,
         name: str = None,
         sort: str = "NAME",
         order: str = "ASC",
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoSubDomainDto:
         """
         List subdomains
 
-        :param phrase_token: string (required) - token to authenticate
         :param createdBy: string (optional), query. Uid of user.
         :param name: string (optional), query.
         :param sort: string (optional), query.
         :param order: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoSubDomainDto
         """
@@ -50,19 +51,22 @@ class SubdomainOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoSubDomainDto(**r)
 
     def createSubDomain(
-        self, phrase_token: str, body: SubDomainEditDto
+        self,
+        body: SubDomainEditDto,
+        phrase_token: Optional[str] = None,
     ) -> SubDomainDto:
         """
         Create subdomain
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: SubDomainEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SubDomainDto
         """
@@ -73,17 +77,22 @@ class SubdomainOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SubDomainDto(**r)
 
-    def getSubDomain(self, phrase_token: str, subDomainUid: str) -> SubDomainDto:
+    def getSubDomain(
+        self,
+        subDomainUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> SubDomainDto:
         """
         Get subdomain
 
-        :param phrase_token: string (required) - token to authenticate
         :param subDomainUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SubDomainDto
         """
@@ -94,20 +103,24 @@ class SubdomainOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SubDomainDto(**r)
 
     def updateSubDomain(
-        self, phrase_token: str, subDomainUid: str, body: SubDomainEditDto
+        self,
+        subDomainUid: str,
+        body: SubDomainEditDto,
+        phrase_token: Optional[str] = None,
     ) -> SubDomainDto:
         """
         Edit subdomain
 
-        :param phrase_token: string (required) - token to authenticate
         :param subDomainUid: string (required), path.
         :param body: SubDomainEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SubDomainDto
         """
@@ -118,17 +131,22 @@ class SubdomainOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SubDomainDto(**r)
 
-    def deleteSubDomain(self, phrase_token: str, subDomainUid: str) -> None:
+    def deleteSubDomain(
+        self,
+        subDomainUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete subdomain
 
-        :param phrase_token: string (required) - token to authenticate
         :param subDomainUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -139,7 +157,7 @@ class SubdomainOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return

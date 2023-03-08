@@ -28,12 +28,15 @@ class AuthenticationOperations:
     def __init__(self, client: AsyncPhraseTMSClient):
         self.client = client
 
-    async def login(self, phrase_token: str, body: LoginDto) -> LoginResponseDto:
+    async def login(
+        self, body: LoginDto, phrase_token: Optional[str] = None
+    ) -> LoginResponseDto:
         """
         Login
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginResponseDto
         """
@@ -44,17 +47,20 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginResponseDto(**r)
 
-    async def logout(self, phrase_token: str, token: str = None) -> None:
+    async def logout(
+        self, token: str = None, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Logout
 
-        :param phrase_token: string (required) - token to authenticate
         :param token: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -65,19 +71,20 @@ class AuthenticationOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def loginToSession(
-        self, phrase_token: str, body: LoginToSessionDto
+        self, body: LoginToSessionDto, phrase_token: Optional[str] = None
     ) -> LoginToSessionResponseDto:
         """
         Login to session
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginToSessionDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginToSessionResponseDto
         """
@@ -88,19 +95,20 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginToSessionResponseDto(**r)
 
     async def loginOther(
-        self, phrase_token: str, body: LoginOtherDto
+        self, body: LoginOtherDto, phrase_token: Optional[str] = None
     ) -> LoginResponseDto:
         """
         Login as another user
         Available only for admin
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginOtherDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginResponseDto
         """
@@ -111,19 +119,17 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginResponseDto(**r)
 
-    async def whoAmI(
-        self,
-        phrase_token: str,
-    ) -> LoginUserDto:
+    async def whoAmI(self, phrase_token: Optional[str] = None) -> LoginUserDto:
         """
         Who am I
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginUserDto
         """
@@ -134,19 +140,20 @@ class AuthenticationOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginUserDto(**r)
 
     async def loginByGoogle(
-        self, phrase_token: str, body: LoginWithGoogleDto
+        self, body: LoginWithGoogleDto, phrase_token: Optional[str] = None
     ) -> LoginResponseDto:
         """
         Login with Google
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginWithGoogleDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginResponseDto
         """
@@ -157,19 +164,20 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginResponseDto(**r)
 
     async def loginByAppleWithRefreshToken(
-        self, phrase_token: str, body: LoginWithAppleDto
+        self, body: LoginWithAppleDto, phrase_token: Optional[str] = None
     ) -> LoginResponseDto:
         """
         Login with Apple refresh token
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginWithAppleDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginResponseDto
         """
@@ -180,20 +188,24 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginResponseDto(**r)
 
     async def loginByAppleWithCode(
-        self, phrase_token: str, body: LoginWithAppleDto, native: bool = None
+        self,
+        body: LoginWithAppleDto,
+        native: bool = None,
+        phrase_token: Optional[str] = None,
     ) -> LoginResponseDto:
         """
         Login with Apple with code
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginWithAppleDto (required), body.
         :param native: boolean (optional), query. For sign in with code from native device.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginResponseDto
         """
@@ -204,19 +216,20 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginResponseDto(**r)
 
     async def refreshAppleToken(
-        self, phrase_token: str, token: str = None
+        self, token: str = None, phrase_token: Optional[str] = None
     ) -> AppleTokenResponseDto:
         """
         refresh apple token
 
-        :param phrase_token: string (required) - token to authenticate
         :param token: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AppleTokenResponseDto
         """
@@ -227,17 +240,20 @@ class AuthenticationOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AppleTokenResponseDto(**r)
 
-    async def login_1(self, phrase_token: str, body: LoginV3Dto) -> LoginResponseV3Dto:
+    async def login_1(
+        self, body: LoginV3Dto, phrase_token: Optional[str] = None
+    ) -> LoginResponseV3Dto:
         """
         Login
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginV3Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginResponseV3Dto
         """
@@ -248,19 +264,20 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginResponseV3Dto(**r)
 
     async def loginToSession_2(
-        self, phrase_token: str, body: LoginToSessionV3Dto
+        self, body: LoginToSessionV3Dto, phrase_token: Optional[str] = None
     ) -> LoginToSessionResponseV3Dto:
         """
         Login to session
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginToSessionV3Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginToSessionResponseV3Dto
         """
@@ -271,19 +288,20 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginToSessionResponseV3Dto(**r)
 
     async def loginOther_1(
-        self, phrase_token: str, body: LoginOtherV3Dto
+        self, body: LoginOtherV3Dto, phrase_token: Optional[str] = None
     ) -> LoginResponseV3Dto:
         """
         Login as another user
         Available only for admin
-        :param phrase_token: string (required) - token to authenticate
         :param body: LoginOtherV3Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LoginResponseV3Dto
         """
@@ -294,7 +312,7 @@ class AuthenticationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LoginResponseV3Dto(**r)

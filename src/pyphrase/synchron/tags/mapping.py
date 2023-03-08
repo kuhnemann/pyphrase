@@ -14,14 +14,18 @@ class MappingOperations:
         self.client = client
 
     def getMappingForTask(
-        self, phrase_token: str, id: str, workflowLevel: int = "1"
+        self,
+        id: str,
+        workflowLevel: int = "1",
+        phrase_token: Optional[str] = None,
     ) -> TaskMappingDto:
         """
         Returns mapping for taskId (mxliff)
 
-        :param phrase_token: string (required) - token to authenticate
         :param id: string (required), path.
         :param workflowLevel: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TaskMappingDto
         """
@@ -32,7 +36,7 @@ class MappingOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TaskMappingDto(**r)

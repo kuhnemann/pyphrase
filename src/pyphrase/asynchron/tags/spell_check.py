@@ -20,13 +20,14 @@ class SpellCheckOperations:
         self.client = client
 
     async def check(
-        self, phrase_token: str, body: SpellCheckRequestDto
+        self, body: SpellCheckRequestDto, phrase_token: Optional[str] = None
     ) -> SpellCheckResponseDto:
         """
         Spell check
         Spell check using the settings of the user's organization
-        :param phrase_token: string (required) - token to authenticate
         :param body: SpellCheckRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SpellCheckResponseDto
         """
@@ -37,20 +38,24 @@ class SpellCheckOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SpellCheckResponseDto(**r)
 
     async def checkByJob(
-        self, phrase_token: str, jobUid: str, body: SpellCheckRequestDto
+        self,
+        jobUid: str,
+        body: SpellCheckRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SpellCheckResponseDto:
         """
         Spell check for job
         Spell check using the settings from the project of the job
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param body: SpellCheckRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SpellCheckResponseDto
         """
@@ -61,17 +66,20 @@ class SpellCheckOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SpellCheckResponseDto(**r)
 
-    async def addWord(self, phrase_token: str, body: DictionaryItemDto) -> None:
+    async def addWord(
+        self, body: DictionaryItemDto, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Add word to dictionary
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: DictionaryItemDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -82,19 +90,20 @@ class SpellCheckOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def suggest(
-        self, phrase_token: str, body: SuggestRequestDto
+        self, body: SuggestRequestDto, phrase_token: Optional[str] = None
     ) -> SuggestResponseDto:
         """
         Suggest a word
         Spell check suggest using the users's spell check dictionary
-        :param phrase_token: string (required) - token to authenticate
         :param body: SuggestRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SuggestResponseDto
         """
@@ -105,7 +114,7 @@ class SpellCheckOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SuggestResponseDto(**r)

@@ -30,13 +30,19 @@ class AnalysisOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def delete(self, phrase_token: str, analyseUid: str, purge: bool = None) -> None:
+    def delete(
+        self,
+        analyseUid: str,
+        purge: bool = None,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete analysis
 
-        :param phrase_token: string (required) - token to authenticate
         :param analyseUid: string (required), path.
         :param purge: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -47,17 +53,22 @@ class AnalysisOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
-    def bulkDeleteAnalyses(self, phrase_token: str, body: BulkDeleteAnalyseDto) -> None:
+    def bulkDeleteAnalyses(
+        self,
+        body: BulkDeleteAnalyseDto,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete analyses (batch)
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: BulkDeleteAnalyseDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -68,19 +79,22 @@ class AnalysisOperations:
         payload = body
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def recalculate(
-        self, phrase_token: str, body: AnalyseRecalculateRequestDto
+        self,
+        body: AnalyseRecalculateRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> AnalyseRecalculateResponseDto:
         """
         Recalculate analysis
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: AnalyseRecalculateRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AnalyseRecalculateResponseDto
         """
@@ -91,18 +105,21 @@ class AnalysisOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AnalyseRecalculateResponseDto(**r)
 
-    def downloadAnalyse(self, phrase_token: str, analyseUid: str, format: str) -> bytes:
+    def downloadAnalyse(
+        self, analyseUid: str, format: str, phrase_token: Optional[str] = None
+    ) -> bytes:
         """
         Download analysis
 
-        :param phrase_token: string (required) - token to authenticate
         :param analyseUid: string (required), path.
         :param format: string (required), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -113,19 +130,22 @@ class AnalysisOperations:
         payload = None
 
         r = self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     def createAnalysesForProviders(
-        self, phrase_token: str, body: CreateAnalyseListAsyncDto
+        self,
+        body: CreateAnalyseListAsyncDto,
+        phrase_token: Optional[str] = None,
     ) -> AsyncAnalyseListResponseDto:
         """
         Create analyses by providers
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateAnalyseListAsyncDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncAnalyseListResponseDto
         """
@@ -136,19 +156,22 @@ class AnalysisOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncAnalyseListResponseDto(**r)
 
     def createAnalysesForLangs(
-        self, phrase_token: str, body: CreateAnalyseListAsyncDto
+        self,
+        body: CreateAnalyseListAsyncDto,
+        phrase_token: Optional[str] = None,
     ) -> AsyncAnalyseListResponseDto:
         """
         Create analyses by languages
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateAnalyseListAsyncDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncAnalyseListResponseDto
         """
@@ -159,27 +182,28 @@ class AnalysisOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncAnalyseListResponseDto(**r)
 
     def listJobParts(
         self,
-        phrase_token: str,
         analyseLanguagePartId: int,
         analyseUid: str,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoAnalyseJobDto:
         """
         List jobs of analyses
         Returns list of job's analyses
-        :param phrase_token: string (required) - token to authenticate
         :param analyseLanguagePartId: integer (required), path.
         :param analyseUid: string (required), path.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoAnalyseJobDto
         """
@@ -190,20 +214,24 @@ class AnalysisOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoAnalyseJobDto(**r)
 
     def getAnalyseLanguagePart(
-        self, phrase_token: str, analyseLanguagePartId: int, analyseUid: str
+        self,
+        analyseLanguagePartId: int,
+        analyseUid: str,
+        phrase_token: Optional[str] = None,
     ) -> AnalyseLanguagePartDto:
         """
         Get analysis language part
         Returns analysis language pair
-        :param phrase_token: string (required) - token to authenticate
         :param analyseLanguagePartId: integer (required), path.
         :param analyseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AnalyseLanguagePartDto
         """
@@ -214,20 +242,24 @@ class AnalysisOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AnalyseLanguagePartDto(**r)
 
     def getJobPartAnalyse(
-        self, phrase_token: str, jobUid: str, analyseUid: str
+        self,
+        jobUid: str,
+        analyseUid: str,
+        phrase_token: Optional[str] = None,
     ) -> AnalyseJobDto:
         """
         Get jobs analysis
         Returns job's analyse
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param analyseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AnalyseJobDto
         """
@@ -238,22 +270,26 @@ class AnalysisOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AnalyseJobDto(**r)
 
     def editAnalysis(
-        self, phrase_token: str, analyseUid: str, body: EditAnalyseV2Dto
+        self,
+        analyseUid: str,
+        body: EditAnalyseV2Dto,
+        phrase_token: Optional[str] = None,
     ) -> AnalyseV2Dto:
         """
                 Edit analysis
                 If no netRateScheme is provided in
         request, then netRateScheme associated with provider will be used if it exists, otherwise it will remain the same
         as it was.
-                :param phrase_token: string (required) - token to authenticate
                 :param analyseUid: string (required), path.
                 :param body: EditAnalyseV2Dto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: AnalyseV2Dto
         """
@@ -264,19 +300,22 @@ class AnalysisOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AnalyseV2Dto(**r)
 
     def createAnalyseAsync_1(
-        self, phrase_token: str, body: CreateAnalyseAsyncV2Dto
+        self,
+        body: CreateAnalyseAsyncV2Dto,
+        phrase_token: Optional[str] = None,
     ) -> AsyncAnalyseListResponseV2Dto:
         """
         Create analysis
         Returns created analyses - batching analyses by number of segments (api.segment.count.approximation, default 100000), in case request contains more segments than maximum (api.segment.max.count, default 300000), returns 400 bad request.
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateAnalyseAsyncV2Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncAnalyseListResponseV2Dto
         """
@@ -287,20 +326,23 @@ class AnalysisOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncAnalyseListResponseV2Dto(**r)
 
     def analyses_batchEdit_v2(
-        self, phrase_token: str, body: BulkEditAnalyseV2Dto
+        self,
+        body: BulkEditAnalyseV2Dto,
+        phrase_token: Optional[str] = None,
     ) -> AnalysesV2Dto:
         """
                 Edit analyses (batch)
                 If no netRateScheme is provided in request, then netRateScheme associated with provider will
         be used if it exists, otherwise it will remain the same as it was.
-                :param phrase_token: string (required) - token to authenticate
                 :param body: BulkEditAnalyseV2Dto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: AnalysesV2Dto
         """
@@ -311,17 +353,22 @@ class AnalysisOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AnalysesV2Dto(**r)
 
-    def getAnalyseV3(self, phrase_token: str, analyseUid: str) -> AnalyseV3Dto:
+    def getAnalyseV3(
+        self,
+        analyseUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> AnalyseV3Dto:
         """
         Get analysis
 
-        :param phrase_token: string (required) - token to authenticate
         :param analyseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AnalyseV3Dto
         """
@@ -332,27 +379,28 @@ class AnalysisOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AnalyseV3Dto(**r)
 
     def listPartAnalyseV3(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoAnalyseReference:
         """
         List analyses
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoAnalyseReference
         """
@@ -363,7 +411,7 @@ class AnalysisOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoAnalyseReference(**r)

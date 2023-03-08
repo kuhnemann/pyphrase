@@ -20,20 +20,21 @@ class WorkflowStepOperations:
 
     def listWFSteps(
         self,
-        phrase_token: str,
         abbr: str = None,
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoWorkflowStepDto:
         """
         List workflow steps
 
-        :param phrase_token: string (required) - token to authenticate
         :param abbr: string (optional), query. Abbreviation of workflow step.
         :param name: string (optional), query. Name of the workflow step.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoWorkflowStepDto
         """
@@ -49,19 +50,22 @@ class WorkflowStepOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoWorkflowStepDto(**r)
 
     def createWFStep(
-        self, phrase_token: str, body: CreateWorkflowStepDto
+        self,
+        body: CreateWorkflowStepDto,
+        phrase_token: Optional[str] = None,
     ) -> WorkflowStepDto:
         """
         Create workflow step
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateWorkflowStepDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: WorkflowStepDto
         """
@@ -72,20 +76,24 @@ class WorkflowStepOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return WorkflowStepDto(**r)
 
     def editWFStep(
-        self, phrase_token: str, workflowStepUid: str, body: EditWorkflowStepDto
+        self,
+        workflowStepUid: str,
+        body: EditWorkflowStepDto,
+        phrase_token: Optional[str] = None,
     ) -> WorkflowStepDto:
         """
         Edit workflow step
 
-        :param phrase_token: string (required) - token to authenticate
         :param workflowStepUid: string (required), path.
         :param body: EditWorkflowStepDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: WorkflowStepDto
         """
@@ -96,7 +104,7 @@ class WorkflowStepOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return WorkflowStepDto(**r)

@@ -1,6 +1,10 @@
-class AsyncPhraseException(Exception):
+class PhraseTMSClientException(Exception):
     pass
 
 
-class UnableToAuthenticateError(AsyncPhraseException):
+class UnableToAuthenticateError(PhraseTMSClientException):
+    pass
+
+
+class NotAuthenticatedError(PhraseTMSClientException):
     pass

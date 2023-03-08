@@ -40,15 +40,20 @@ class TermBaseOperations:
         self.client = client
 
     def createTermByJob(
-        self, phrase_token: str, projectUid: str, jobUid: str, body: CreateTermsDto
+        self,
+        projectUid: str,
+        jobUid: str,
+        body: CreateTermsDto,
+        phrase_token: Optional[str] = None,
     ) -> TermPairDto:
         """
         Create term in job's term bases
         Create new term in the write term base assigned to the job
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param jobUid: string (required), path.
         :param body: CreateTermsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TermPairDto
         """
@@ -59,17 +64,22 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TermPairDto(**r)
 
-    def getTermBase(self, phrase_token: str, termBaseUid: str) -> TermBaseDto:
+    def getTermBase(
+        self,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> TermBaseDto:
         """
         Get term base
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TermBaseDto
         """
@@ -80,20 +90,24 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TermBaseDto(**r)
 
     def updateTermBase(
-        self, phrase_token: str, termBaseUid: str, body: TermBaseEditDto
+        self,
+        termBaseUid: str,
+        body: TermBaseEditDto,
+        phrase_token: Optional[str] = None,
     ) -> TermBaseDto:
         """
         Edit term base
         It is possible to add new languages only
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param body: TermBaseEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TermBaseDto
         """
@@ -104,21 +118,25 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TermBaseDto(**r)
 
     def deleteTermBase(
-        self, phrase_token: str, termBaseUid: str, purge: bool = "False"
+        self,
+        termBaseUid: str,
+        purge: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete term base
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param purge: boolean (optional), query. purge=false - the Termbase is can later be restored,
                     &#34;purge=true - the Termbase is completely deleted and cannot be restored.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -129,14 +147,13 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def listTermBases(
         self,
-        phrase_token: str,
         subDomainId: str = None,
         domainId: str = None,
         clientId: str = None,
@@ -144,11 +161,11 @@ class TermBaseOperations:
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoTermBaseDto:
         """
         List term bases
 
-        :param phrase_token: string (required) - token to authenticate
         :param subDomainId: string (optional), query.
         :param domainId: string (optional), query.
         :param clientId: string (optional), query.
@@ -156,6 +173,8 @@ class TermBaseOperations:
         :param name: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoTermBaseDto
         """
@@ -174,17 +193,22 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoTermBaseDto(**r)
 
-    def createTermBase(self, phrase_token: str, body: TermBaseEditDto) -> TermBaseDto:
+    def createTermBase(
+        self,
+        body: TermBaseEditDto,
+        phrase_token: Optional[str] = None,
+    ) -> TermBaseDto:
         """
         Create term base
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: TermBaseEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TermBaseDto
         """
@@ -195,30 +219,31 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TermBaseDto(**r)
 
     def importTermBase(
         self,
-        phrase_token: str,
         termBaseUid: str,
         body: InputStream,
         charset: str = "UTF-8",
         strictLangMatching: bool = "False",
         updateTerms: bool = "True",
+        phrase_token: Optional[str] = None,
     ) -> ImportTermBaseResponseDto:
         """
                 Upload term base
                 Terms can be imported from XLS/XLSX and TBX file formats into a term base.
         See <a target="_blank" href="https://help.memsource.com/hc/en-us/articles/115003681851-Term-Bases">Memsource Wiki</a>
-                :param phrase_token: string (required) - token to authenticate
                 :param termBaseUid: string (required), path.
                 :param body: InputStream (required), body.
                 :param charset: string (optional), query.
                 :param strictLangMatching: boolean (optional), query.
                 :param updateTerms: boolean (optional), query.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: ImportTermBaseResponseDto
         """
@@ -233,25 +258,26 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ImportTermBaseResponseDto(**r)
 
     def listConcepts(
         self,
-        phrase_token: str,
         termBaseUid: str,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> ConceptListResponseDto:
         """
         List concepts
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConceptListResponseDto
         """
@@ -262,20 +288,24 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConceptListResponseDto(**r)
 
     def createConcept(
-        self, phrase_token: str, termBaseUid: str, body: ConceptEditDto
+        self,
+        termBaseUid: str,
+        body: ConceptEditDto,
+        phrase_token: Optional[str] = None,
     ) -> ConceptWithMetadataDto:
         """
         Create concept
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param body: ConceptEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConceptWithMetadataDto
         """
@@ -286,20 +316,24 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConceptWithMetadataDto(**r)
 
     def deleteConcepts(
-        self, phrase_token: str, termBaseUid: str, body: ConceptListReference
+        self,
+        termBaseUid: str,
+        body: ConceptListReference,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete concepts
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param body: ConceptListReference (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -310,20 +344,24 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def getConcept(
-        self, phrase_token: str, conceptUid: str, termBaseUid: str
+        self,
+        conceptUid: str,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
     ) -> ConceptWithMetadataDto:
         """
         Get concept
 
-        :param phrase_token: string (required) - token to authenticate
         :param conceptUid: string (required), path.
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConceptWithMetadataDto
         """
@@ -334,21 +372,26 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConceptWithMetadataDto(**r)
 
     def updateConcept(
-        self, phrase_token: str, conceptUid: str, termBaseUid: str, body: ConceptEditDto
+        self,
+        conceptUid: str,
+        termBaseUid: str,
+        body: ConceptEditDto,
+        phrase_token: Optional[str] = None,
     ) -> ConceptWithMetadataDto:
         """
         Update concept
 
-        :param phrase_token: string (required) - token to authenticate
         :param conceptUid: string (required), path.
         :param termBaseUid: string (required), path.
         :param body: ConceptEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConceptWithMetadataDto
         """
@@ -359,20 +402,24 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConceptWithMetadataDto(**r)
 
     def createTerm(
-        self, phrase_token: str, termBaseUid: str, body: TermCreateDto
+        self,
+        termBaseUid: str,
+        body: TermCreateDto,
+        phrase_token: Optional[str] = None,
     ) -> TermDto:
         """
         Create term
         Set conceptId to assign the term to an existing concept, otherwise a new concept will be created.
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param body: TermCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TermDto
         """
@@ -383,17 +430,22 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TermDto(**r)
 
-    def clearTermBase(self, phrase_token: str, termBaseUid: str) -> None:
+    def clearTermBase(
+        self,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Clear term base
         Deletes all terms
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -404,18 +456,24 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
-    def getTerm(self, phrase_token: str, termId: str, termBaseUid: str) -> TermDto:
+    def getTerm(
+        self,
+        termId: str,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> TermDto:
         """
         Get term
 
-        :param phrase_token: string (required) - token to authenticate
         :param termId: string (required), path.
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TermDto
         """
@@ -426,21 +484,26 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TermDto(**r)
 
     def updateTerm(
-        self, phrase_token: str, termId: str, termBaseUid: str, body: TermEditDto
+        self,
+        termId: str,
+        termBaseUid: str,
+        body: TermEditDto,
+        phrase_token: Optional[str] = None,
     ) -> TermDto:
         """
         Edit term
 
-        :param phrase_token: string (required) - token to authenticate
         :param termId: string (required), path.
         :param termBaseUid: string (required), path.
         :param body: TermEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TermDto
         """
@@ -451,18 +514,24 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TermDto(**r)
 
-    def deleteTerm(self, phrase_token: str, termId: str, termBaseUid: str) -> None:
+    def deleteTerm(
+        self,
+        termId: str,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete term
 
-        :param phrase_token: string (required) - token to authenticate
         :param termId: string (required), path.
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -473,20 +542,24 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def deleteConcept(
-        self, phrase_token: str, conceptId: str, termBaseUid: str
+        self,
+        conceptId: str,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete concept
 
-        :param phrase_token: string (required) - token to authenticate
         :param conceptId: string (required), path.
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -497,20 +570,24 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def listTermsOfConcept(
-        self, phrase_token: str, conceptId: str, termBaseUid: str
+        self,
+        conceptId: str,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
     ) -> ConceptDto:
         """
         Get terms of concept
 
-        :param phrase_token: string (required) - token to authenticate
         :param conceptId: string (required), path.
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConceptDto
         """
@@ -521,19 +598,22 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConceptDto(**r)
 
     def getLastBackgroundTask(
-        self, phrase_token: str, termBaseUid: str
+        self,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
     ) -> BackgroundTasksTbDto:
         """
         Last import status
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: BackgroundTasksTbDto
         """
@@ -544,20 +624,24 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return BackgroundTasksTbDto(**r)
 
     def browseTerms(
-        self, phrase_token: str, termBaseUid: str, body: BrowseRequestDto
+        self,
+        termBaseUid: str,
+        body: BrowseRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> BrowseResponseListDto:
         """
         Browse term base
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param body: BrowseRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: BrowseResponseListDto
         """
@@ -568,20 +652,24 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return BrowseResponseListDto(**r)
 
     def searchTerms(
-        self, phrase_token: str, termBaseUid: str, body: TermBaseSearchRequestDto
+        self,
+        termBaseUid: str,
+        body: TermBaseSearchRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SearchResponseListTbDto:
         """
         Search term base
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param body: TermBaseSearchRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchResponseListTbDto
         """
@@ -592,27 +680,28 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchResponseListTbDto(**r)
 
     def exportTermBase(
         self,
-        phrase_token: str,
         termBaseUid: str,
         termStatus: str = None,
         format: str = "Tbx",
         charset: str = "UTF-8",
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
         Export term base
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
         :param termStatus: string (optional), query.
         :param format: string (optional), query.
         :param charset: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -623,17 +712,22 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
-    def getTermBaseMetadata(self, phrase_token: str, termBaseUid: str) -> MetadataTbDto:
+    def getTermBaseMetadata(
+        self,
+        termBaseUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> MetadataTbDto:
         """
         Get term base metadata
 
-        :param phrase_token: string (required) - token to authenticate
         :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: MetadataTbDto
         """
@@ -644,25 +738,26 @@ class TermBaseOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return MetadataTbDto(**r)
 
     def searchTermsByJob_1(
         self,
-        phrase_token: str,
         projectUid: str,
         jobUid: str,
         body: SearchTbByJobRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SearchTbResponseListDto:
         """
         Search job's term bases
         Search all read term bases assigned to the job
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param jobUid: string (required), path.
         :param body: SearchTbByJobRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchTbResponseListDto
         """
@@ -673,25 +768,26 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchTbResponseListDto(**r)
 
     def searchTermsInTextByJobV2(
         self,
-        phrase_token: str,
         projectUid: str,
         jobUid: str,
         body: SearchTbInTextByJobRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SearchInTextResponseList2Dto:
         """
         Search terms in text
         Search in text in all read term bases assigned to the job
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param jobUid: string (required), path.
         :param body: SearchTbInTextByJobRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchInTextResponseList2Dto
         """
@@ -704,7 +800,7 @@ class TermBaseOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchInTextResponseList2Dto(**r)

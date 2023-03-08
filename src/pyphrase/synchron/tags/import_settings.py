@@ -20,12 +20,13 @@ class ImportSettingsOperations:
 
     def getImportSettings(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> ImportSettingsDto:
         """
         Get organization's default import settings
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ImportSettingsDto
         """
@@ -36,17 +37,22 @@ class ImportSettingsOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ImportSettingsDto(**r)
 
-    def getImportSettings_1(self, phrase_token: str, uid: str) -> ImportSettingsDto:
+    def getImportSettings_1(
+        self,
+        uid: str,
+        phrase_token: Optional[str] = None,
+    ) -> ImportSettingsDto:
         """
         Get import settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param uid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ImportSettingsDto
         """
@@ -57,17 +63,22 @@ class ImportSettingsOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ImportSettingsDto(**r)
 
-    def deleteImportSettings(self, phrase_token: str, uid: str) -> None:
+    def deleteImportSettings(
+        self,
+        uid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete import settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param uid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -78,25 +89,26 @@ class ImportSettingsOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def listImportSettings(
         self,
-        phrase_token: str,
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoImportSettingsReference:
         """
         List import settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param name: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoImportSettingsReference
         """
@@ -107,20 +119,23 @@ class ImportSettingsOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoImportSettingsReference(**r)
 
     def createImportSettings(
-        self, phrase_token: str, body: ImportSettingsCreateDto
+        self,
+        body: ImportSettingsCreateDto,
+        phrase_token: Optional[str] = None,
     ) -> ImportSettingsDto:
         """
         Create import settings
         Pre-defined import settings is handy for [Create Job](#operation/createJob).
                   See [supported file types](https://wiki.memsource.com/wiki/API_File_Type_List)
-        :param phrase_token: string (required) - token to authenticate
         :param body: ImportSettingsCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ImportSettingsDto
         """
@@ -131,19 +146,22 @@ class ImportSettingsOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ImportSettingsDto(**r)
 
     def editImportSettings(
-        self, phrase_token: str, body: ImportSettingsEditDto
+        self,
+        body: ImportSettingsEditDto,
+        phrase_token: Optional[str] = None,
     ) -> ImportSettingsDto:
         """
         Edit import settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: ImportSettingsEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ImportSettingsDto
         """
@@ -154,7 +172,7 @@ class ImportSettingsOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ImportSettingsDto(**r)

@@ -26,12 +26,15 @@ class UserOperations:
     def __init__(self, client: AsyncPhraseTMSClient):
         self.client = client
 
-    async def deleteUser_1(self, phrase_token: str, userUid: str) -> None:
+    async def deleteUser_1(
+        self, userUid: str, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Delete user
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -42,14 +45,13 @@ class UserOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def listAssignedProjects(
         self,
-        phrase_token: str,
         userUid: str,
         projectName: str = None,
         filename: str = None,
@@ -59,11 +61,11 @@ class UserOperations:
         status: List[str] = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoProjectReference:
         """
         List assigned projects
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
         :param projectName: string (optional), query.
         :param filename: string (optional), query.
@@ -73,6 +75,8 @@ class UserOperations:
         :param status: array (optional), query.
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoProjectReference
         """
@@ -92,14 +96,13 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoProjectReference(**r)
 
     async def listTargetLangs(
         self,
-        phrase_token: str,
         userUid: str,
         filename: str = None,
         dueInHours: int = None,
@@ -108,11 +111,11 @@ class UserOperations:
         status: List[str] = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoString:
         """
         List assigned target languages
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
         :param filename: string (optional), query.
         :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
@@ -121,6 +124,8 @@ class UserOperations:
         :param status: array (optional), query.
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoString
         """
@@ -139,31 +144,32 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoString(**r)
 
     async def user_lastLogins(
         self,
-        phrase_token: str,
         order: List[str] = None,
         sort: List[str] = None,
         role: List[str] = None,
         userName: str = None,
         pageNumber: int = "0",
         pageSize: int = "100",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoLastLoginDto:
         """
         List last login dates
 
-        :param phrase_token: string (required) - token to authenticate
         :param order: array (optional), query.
         :param sort: array (optional), query.
         :param role: array (optional), query.
         :param userName: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 100, default 100.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoLastLoginDto
         """
@@ -181,14 +187,13 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoLastLoginDto(**r)
 
     async def listJobs(
         self,
-        phrase_token: str,
         userUid: str,
         filename: str = None,
         dueInHours: int = None,
@@ -198,11 +203,11 @@ class UserOperations:
         status: List[str] = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoAssignedJobDto:
         """
         List assigned jobs
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
         :param filename: string (optional), query.
         :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
@@ -212,6 +217,8 @@ class UserOperations:
         :param status: array (optional), query.
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoAssignedJobDto
         """
@@ -231,17 +238,20 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoAssignedJobDto(**r)
 
-    async def sendLoginInfo(self, phrase_token: str, userUid: str) -> None:
+    async def sendLoginInfo(
+        self, userUid: str, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Send login information
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -252,17 +262,20 @@ class UserOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
-    async def cancelDeletion(self, phrase_token: str, userUid: str) -> UserDto:
+    async def cancelDeletion(
+        self, userUid: str, phrase_token: Optional[str] = None
+    ) -> UserDto:
         """
         Restore user
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UserDto
         """
@@ -273,19 +286,20 @@ class UserOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UserDto(**r)
 
     async def loginActivity(
-        self, phrase_token: str, userUid: str
+        self, userUid: str, phrase_token: Optional[str] = None
     ) -> UserStatisticsListDto:
         """
         Login statistics
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UserStatisticsListDto
         """
@@ -296,14 +310,13 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UserStatisticsListDto(**r)
 
     async def getListOfUsersFiltered(
         self,
-        phrase_token: str,
         order: List[str] = None,
         sort: List[str] = None,
         role: List[str] = None,
@@ -316,11 +329,11 @@ class UserOperations:
         includeDeleted: bool = "False",
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoUserDto:
         """
         List users
 
-        :param phrase_token: string (required) - token to authenticate
         :param order: array (optional), query.
         :param sort: array (optional), query.
         :param role: array (optional), query.
@@ -333,6 +346,8 @@ class UserOperations:
         :param includeDeleted: boolean (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoUserDto
         """
@@ -356,14 +371,13 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoUserDto(**r)
 
     async def listWorkflowSteps(
         self,
-        phrase_token: str,
         userUid: str,
         filename: str = None,
         dueInHours: int = None,
@@ -372,11 +386,11 @@ class UserOperations:
         status: List[str] = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoWorkflowStepReference:
         """
         List assigned workflow steps
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
         :param filename: string (optional), query.
         :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
@@ -385,6 +399,8 @@ class UserOperations:
         :param status: array (optional), query.
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoWorkflowStepReference
         """
@@ -403,21 +419,25 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoWorkflowStepReference(**r)
 
     async def updatePassword(
-        self, phrase_token: str, userUid: str, body: UserPasswordEditDto
+        self,
+        userUid: str,
+        body: UserPasswordEditDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
                 Update password
                 * Password length must be between 8 and 255
         * Password must not be same as the username
-                :param phrase_token: string (required) - token to authenticate
                 :param userUid: string (required), path.
                 :param body: UserPasswordEditDto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: None
         """
@@ -428,17 +448,20 @@ class UserOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
-    async def getUserV3(self, phrase_token: str, userUid: str) -> UserDetailsDtoV3:
+    async def getUserV3(
+        self, userUid: str, phrase_token: Optional[str] = None
+    ) -> UserDetailsDtoV3:
         """
         Get user
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UserDetailsDtoV3
         """
@@ -449,20 +472,24 @@ class UserOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UserDetailsDtoV3(**r)
 
     async def updateUserV3(
-        self, phrase_token: str, userUid: str, body: AbstractUserEditDto
+        self,
+        userUid: str,
+        body: AbstractUserEditDto,
+        phrase_token: Optional[str] = None,
     ) -> UserDetailsDtoV3:
         """
         Edit user
 
-        :param phrase_token: string (required) - token to authenticate
         :param userUid: string (required), path.
         :param body: AbstractUserEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UserDetailsDtoV3
         """
@@ -473,19 +500,20 @@ class UserOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UserDetailsDtoV3(**r)
 
     async def createUserV3(
-        self, phrase_token: str, body: AbstractUserCreateDto
+        self, body: AbstractUserCreateDto, phrase_token: Optional[str] = None
     ) -> UserDetailsDtoV3:
         """
         Create user
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: AbstractUserCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UserDetailsDtoV3
         """
@@ -496,7 +524,7 @@ class UserOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UserDetailsDtoV3(**r)

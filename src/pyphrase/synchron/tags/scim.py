@@ -20,12 +20,13 @@ class ScimOperations:
 
     def getSchemas(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> ScimResourceSchema:
         """
         Get supported SCIM Schemas
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ScimResourceSchema
         """
@@ -36,17 +37,22 @@ class ScimOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ScimResourceSchema(**r)
 
-    def getSchemaByUrn(self, phrase_token: str, schemaUrn: str) -> ScimResourceSchema:
+    def getSchemaByUrn(
+        self,
+        schemaUrn: str,
+        phrase_token: Optional[str] = None,
+    ) -> ScimResourceSchema:
         """
         Get supported SCIM Schema by urn
 
-        :param phrase_token: string (required) - token to authenticate
         :param schemaUrn: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ScimResourceSchema
         """
@@ -57,19 +63,20 @@ class ScimOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ScimResourceSchema(**r)
 
     def getServiceProviderConfigDto(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> ServiceProviderConfigDto:
         """
         Retrieve the Service Provider's Configuration
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ServiceProviderConfigDto
         """
@@ -80,19 +87,20 @@ class ScimOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ServiceProviderConfigDto(**r)
 
     def getResourceTypes(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> ScimResourceTypeSchema:
         """
         List the types of SCIM Resources available
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ScimResourceTypeSchema
         """
@@ -103,17 +111,22 @@ class ScimOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ScimResourceTypeSchema(**r)
 
-    def getScimUser(self, phrase_token: str, userId: int) -> ScimUserCoreDto:
+    def getScimUser(
+        self,
+        userId: int,
+        phrase_token: Optional[str] = None,
+    ) -> ScimUserCoreDto:
         """
         Get user
 
-        :param phrase_token: string (required) - token to authenticate
         :param userId: integer (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ScimUserCoreDto
         """
@@ -124,20 +137,24 @@ class ScimOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ScimUserCoreDto(**r)
 
     def editUser(
-        self, phrase_token: str, userId: int, body: ScimUserCoreDto
+        self,
+        userId: int,
+        body: ScimUserCoreDto,
+        phrase_token: Optional[str] = None,
     ) -> ScimUserCoreDto:
         """
         Edit user using SCIM
 
-        :param phrase_token: string (required) - token to authenticate
         :param userId: integer (required), path.
         :param body: ScimUserCoreDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ScimUserCoreDto
         """
@@ -148,17 +165,22 @@ class ScimOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ScimUserCoreDto(**r)
 
-    def deleteUser(self, phrase_token: str, userId: int) -> None:
+    def deleteUser(
+        self,
+        userId: int,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete user using SCIM
 
-        :param phrase_token: string (required) - token to authenticate
         :param userId: integer (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -169,18 +191,24 @@ class ScimOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
-    def patchUser(self, phrase_token: str, userId: int, body: Any) -> ScimUserCoreDto:
+    def patchUser(
+        self,
+        userId: int,
+        body: Any,
+        phrase_token: Optional[str] = None,
+    ) -> ScimUserCoreDto:
         """
         Patch user using SCIM
 
-        :param phrase_token: string (required) - token to authenticate
         :param userId: integer (required), path.
         :param body: Any (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ScimUserCoreDto
         """
@@ -191,22 +219,23 @@ class ScimOperations:
         payload = body
 
         r = self.client.patch(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ScimUserCoreDto(**r)
 
     def searchUsers(
         self,
-        phrase_token: str,
         sortBy: str = None,
         attributes: str = None,
         filter: str = None,
         sortOrder: str = "ascending",
         startIndex: int = "1",
         count: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> Any:
         """
+                TODO
                 Search users
                 This operation supports <a href="http://ldapwiki.com/wiki/SCIM%20Filtering" target="_blank">SCIM Filter</a>,
         <a href="http://ldapwiki.com/wiki/SCIM%20Search%20Request" target="_blank">SCIM attributes</a> and
@@ -220,13 +249,14 @@ class ScimOperations:
           - `name.familyName`
           - `emails.value`
           - `meta.created`
-                :param phrase_token: string (required) - token to authenticate
                 :param sortBy: string (optional), query. See method description.
                 :param attributes: string (optional), query. See method description.
                 :param filter: string (optional), query. See method description.
                 :param sortOrder: string (optional), query. See method description.
                 :param startIndex: integer (optional), query. The 1-based index of the first search result. Default 1.
                 :param count: integer (optional), query. Non-negative Integer. Specifies the desired maximum number of search results per page; e.g., 10..
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return:
         """
@@ -244,13 +274,15 @@ class ScimOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     def createUserSCIM(
-        self, phrase_token: str, body: ScimUserCoreDto
+        self,
+        body: ScimUserCoreDto,
+        phrase_token: Optional[str] = None,
     ) -> ScimUserCoreDto:
         """
                 Create user using SCIM
@@ -277,8 +309,9 @@ class ScimOperations:
             }
         }
         ```
-                :param phrase_token: string (required) - token to authenticate
                 :param body: ScimUserCoreDto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: ScimUserCoreDto
         """
@@ -289,7 +322,7 @@ class ScimOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ScimUserCoreDto(**r)

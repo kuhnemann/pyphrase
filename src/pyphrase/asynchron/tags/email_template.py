@@ -17,13 +17,14 @@ class EmailTemplateOperations:
         self.client = client
 
     async def getOrgEmailTemplate(
-        self, phrase_token: str, templateUid: str
+        self, templateUid: str, phrase_token: Optional[str] = None
     ) -> OrganizationEmailTemplateDto:
         """
         Get email template
 
-        :param phrase_token: string (required) - token to authenticate
         :param templateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: OrganizationEmailTemplateDto
         """
@@ -34,25 +35,26 @@ class EmailTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return OrganizationEmailTemplateDto(**r)
 
     async def listOrgEmailTemplates(
         self,
-        phrase_token: str,
         type: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoOrganizationEmailTemplateDto:
         """
         List email templates
 
-        :param phrase_token: string (required) - token to authenticate
         :param type: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoOrganizationEmailTemplateDto
         """
@@ -63,7 +65,7 @@ class EmailTemplateOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoOrganizationEmailTemplateDto(**r)

@@ -1,3 +1,7 @@
-from .exceptions import AsyncPhraseException, UnableToAuthenticateError
+from .exceptions import (
+    NotAuthenticatedError,
+    PhraseTMSClientException,
+    UnableToAuthenticateError,
+)
 
-__all__ = [UnableToAuthenticateError, AsyncPhraseException]
+__all__ = [UnableToAuthenticateError, PhraseTMSClientException, NotAuthenticatedError]

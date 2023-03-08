@@ -4,8 +4,8 @@ from typing import Any, List, Optional
 import httpx
 from httpx import HTTPStatusError
 
-from ..exceptions import UnableToAuthenticateError
-from ..models import MemsourceAuthTokenModel, MemsourceResponse
+from ..exceptions import NotAuthenticatedError, UnableToAuthenticateError
+from ..models import MemsourceAuthTokenModel
 from .tags import (
     AdditionalWorkflowStepOperations,
     AnalysisOperations,
@@ -76,7 +76,8 @@ async def async_get_phrase_tms_token(user: str, pw: str) -> MemsourceAuthTokenMo
 
 
 class AsyncPhraseTMSClient:
-    def __init__(self):
+    def __init__(self, token: Optional[str] = None):
+        self.token = token
         self.additional_workflow_step = AdditionalWorkflowStepOperations(self)
         self.analysis = AnalysisOperations(self)
         self.async_request = AsyncRequestOperations(self)
@@ -120,19 +121,23 @@ class AsyncPhraseTMSClient:
         self.workflow_changes = WorkflowChangesOperations(self)
         self.provider = ProviderOperations(self)
 
-    @staticmethod
     async def get_bytestream(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> bytes:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         if params is None:
             params = {}
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         async with httpx.AsyncClient() as client:
             logger.info(url, params)
@@ -146,19 +151,23 @@ class AsyncPhraseTMSClient:
 
         return r.content
 
-    @staticmethod
     async def post_bytestream(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> bytes:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         if params is None:
             params = {}
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         if payload is not None and type(payload) != dict:
             try:
@@ -186,18 +195,22 @@ class AsyncPhraseTMSClient:
 
         return r.content
 
-    @staticmethod
     async def get(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         if params is None:
             params = {}
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         async with httpx.AsyncClient() as client:
             logger.info(url)
@@ -211,14 +224,19 @@ class AsyncPhraseTMSClient:
 
     @staticmethod
     async def post(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         if payload is not None and type(payload) != dict:
             try:
@@ -243,16 +261,20 @@ class AsyncPhraseTMSClient:
             raise Exception from exc
         return r.json()
 
-    @staticmethod
     async def put(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -273,16 +295,20 @@ class AsyncPhraseTMSClient:
 
         return r.json()
 
-    @staticmethod
     async def patch(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -303,16 +329,20 @@ class AsyncPhraseTMSClient:
 
         return r.json()
 
-    @staticmethod
     async def delete(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         async with httpx.AsyncClient() as client:
             r = await client.delete(url, headers=header, params=params, timeout=30.0)

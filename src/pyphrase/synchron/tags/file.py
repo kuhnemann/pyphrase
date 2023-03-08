@@ -17,12 +17,17 @@ class FileOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def getFileJson(self, phrase_token: str, fileUid: str) -> UploadedFileDto:
+    def getFileJson(
+        self,
+        fileUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> UploadedFileDto:
         """
         Get file
         Get uploaded file as <b>octet-stream</b> or as <b>json</b> based on 'Accept' header
-        :param phrase_token: string (required) - token to authenticate
         :param fileUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UploadedFileDto
         """
@@ -33,17 +38,22 @@ class FileOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UploadedFileDto(**r)
 
-    def deletesFile(self, phrase_token: str, fileUid: str) -> None:
+    def deletesFile(
+        self,
+        fileUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete file
 
-        :param phrase_token: string (required) - token to authenticate
         :param fileUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -54,31 +64,32 @@ class FileOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def getFiles(
         self,
-        phrase_token: str,
         biggerThan: int = None,
         createdBy: int = None,
         types: List[str] = None,
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoUploadedFileDto:
         """
         List files
 
-        :param phrase_token: string (required) - token to authenticate
         :param biggerThan: integer (optional), query. Size in bytes.
         :param createdBy: integer (optional), query.
         :param types: array (optional), query.
         :param name: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoUploadedFileDto
         """
@@ -96,19 +107,22 @@ class FileOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoUploadedFileDto(**r)
 
     def createUrlFile(
-        self, phrase_token: str, body: RemoteUploadedFileDto
+        self,
+        body: RemoteUploadedFileDto,
+        phrase_token: Optional[str] = None,
     ) -> UploadedFileDto:
         """
         Upload file
         Accepts multipart/form-data, application/octet-stream or application/json.
-        :param phrase_token: string (required) - token to authenticate
         :param body: RemoteUploadedFileDto (required), body. file.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UploadedFileDto
         """
@@ -119,7 +133,7 @@ class FileOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UploadedFileDto(**r)

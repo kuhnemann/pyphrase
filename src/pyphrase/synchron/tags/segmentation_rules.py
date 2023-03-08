@@ -20,18 +20,19 @@ class SegmentationRulesOperations:
 
     def getListOfSegmentationRules(
         self,
-        phrase_token: str,
         locales: List[str] = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoSegmentationRuleReference:
         """
         List segmentation rules
 
-        :param phrase_token: string (required) - token to authenticate
         :param locales: array (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoSegmentationRuleReference
         """
@@ -42,19 +43,22 @@ class SegmentationRulesOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoSegmentationRuleReference(**r)
 
     def createSegmentationRule(
-        self, phrase_token: str, body: InputStream
+        self,
+        body: InputStream,
+        phrase_token: Optional[str] = None,
     ) -> SegmentationRuleDto:
         """
         Create segmentation rule
         Creates new Segmentation Rule with file and segRule JSON Object as header parameter. The same object is used for GET action.
-        :param phrase_token: string (required) - token to authenticate
         :param body: InputStream (required), body. streamed file.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SegmentationRuleDto
         """
@@ -65,19 +69,22 @@ class SegmentationRulesOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SegmentationRuleDto(**r)
 
     def getSegmentationRule(
-        self, phrase_token: str, segRuleId: int
+        self,
+        segRuleId: int,
+        phrase_token: Optional[str] = None,
     ) -> SegmentationRuleDto:
         """
         Get segmentation rule
 
-        :param phrase_token: string (required) - token to authenticate
         :param segRuleId: integer (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SegmentationRuleDto
         """
@@ -88,20 +95,24 @@ class SegmentationRulesOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SegmentationRuleDto(**r)
 
     def updatesSegmentationRule(
-        self, phrase_token: str, segRuleId: int, body: EditSegmentationRuleDto
+        self,
+        segRuleId: int,
+        body: EditSegmentationRuleDto,
+        phrase_token: Optional[str] = None,
     ) -> SegmentationRuleDto:
         """
         Edit segmentation rule
 
-        :param phrase_token: string (required) - token to authenticate
         :param segRuleId: integer (required), path.
         :param body: EditSegmentationRuleDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SegmentationRuleDto
         """
@@ -112,17 +123,22 @@ class SegmentationRulesOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SegmentationRuleDto(**r)
 
-    def deletesSegmentationRule(self, phrase_token: str, segRuleId: int) -> None:
+    def deletesSegmentationRule(
+        self,
+        segRuleId: int,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete segmentation rule
 
-        :param phrase_token: string (required) - token to authenticate
         :param segRuleId: integer (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -133,7 +149,7 @@ class SegmentationRulesOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return

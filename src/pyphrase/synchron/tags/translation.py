@@ -21,14 +21,18 @@ class TranslationOperations:
         self.client = client
 
     def humanTranslate(
-        self, phrase_token: str, projectUid: str, body: HumanTranslateJobsDto
+        self,
+        projectUid: str,
+        body: HumanTranslateJobsDto,
+        phrase_token: Optional[str] = None,
     ) -> AsyncRequestWrapperDto:
         """
         Human translate (Gengo or Unbabel)
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: HumanTranslateJobsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncRequestWrapperDto
         """
@@ -39,25 +43,26 @@ class TranslationOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncRequestWrapperDto(**r)
 
     def machineTranslationJob(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: TranslationRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> MachineTranslateResponse:
         """
         Translate using machine translation
         Configured machine translate settings is used
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: TranslationRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: MachineTranslateResponse
         """
@@ -68,20 +73,24 @@ class TranslationOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return MachineTranslateResponse(**r)
 
     def preTranslate_1(
-        self, phrase_token: str, projectUid: str, body: PreTranslateJobsV2Dto
+        self,
+        projectUid: str,
+        body: PreTranslateJobsV2Dto,
+        phrase_token: Optional[str] = None,
     ) -> AsyncRequestWrapperV2Dto:
         """
         Pre-translate job
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: PreTranslateJobsV2Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncRequestWrapperV2Dto
         """
@@ -92,7 +101,7 @@ class TranslationOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncRequestWrapperV2Dto(**r)

@@ -2124,8 +2124,8 @@ class CostCenterReference(BaseModel):
 
 
 class MTSettingsPerLanguageReference(BaseModel):
-    targetLang: str = Field(
-        ..., description="mtSettings is set for whole project if targetLang == null"
+    targetLang: Optional[str] = Field(
+        None, description="mtSettings is set for whole project if targetLang == null"
     )
     machineTranslateSettings: Optional[MachineTranslateSettingsReference] = None
 

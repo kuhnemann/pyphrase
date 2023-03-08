@@ -26,12 +26,17 @@ class QualityAssuranceOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def makeDefault(self, phrase_token: str, profileUid: str) -> LqaProfileReferenceDto:
+    def makeDefault(
+        self,
+        profileUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> LqaProfileReferenceDto:
         """
         Make LQA profile default
 
-        :param phrase_token: string (required) - token to authenticate
         :param profileUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LqaProfileReferenceDto
         """
@@ -42,17 +47,22 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LqaProfileReferenceDto(**r)
 
-    def getLqaProfile(self, phrase_token: str, profileUid: str) -> LqaProfileDetailDto:
+    def getLqaProfile(
+        self,
+        profileUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> LqaProfileDetailDto:
         """
         Get LQA profile details
 
-        :param phrase_token: string (required) - token to authenticate
         :param profileUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LqaProfileDetailDto
         """
@@ -63,20 +73,24 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LqaProfileDetailDto(**r)
 
     def updateLqaProfile(
-        self, phrase_token: str, profileUid: str, body: UpdateLqaProfileDto
+        self,
+        profileUid: str,
+        body: UpdateLqaProfileDto,
+        phrase_token: Optional[str] = None,
     ) -> LqaProfileDetailDto:
         """
         Update LQA profile
 
-        :param phrase_token: string (required) - token to authenticate
         :param profileUid: string (required), path.
         :param body: UpdateLqaProfileDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LqaProfileDetailDto
         """
@@ -87,17 +101,22 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LqaProfileDetailDto(**r)
 
-    def deleteLqaProfile(self, phrase_token: str, profileUid: str) -> None:
+    def deleteLqaProfile(
+        self,
+        profileUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete LQA profile
 
-        :param phrase_token: string (required) - token to authenticate
         :param profileUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -108,14 +127,13 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def getLqaProfiles(
         self,
-        phrase_token: str,
         order: List[str] = None,
         sort: List[str] = None,
         dateCreated: str = None,
@@ -123,11 +141,11 @@ class QualityAssuranceOperations:
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "20",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoLqaProfileReferenceDto:
         """
         GET list LQA profiles
 
-        :param phrase_token: string (required) - token to authenticate
         :param order: array (optional), query.
         :param sort: array (optional), query.
         :param dateCreated: string (optional), query. It is used for filter the list by date created.
@@ -135,6 +153,8 @@ class QualityAssuranceOperations:
         :param name: string (optional), query. Name of LQA profiles, it is used for filter the list by name.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 20.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoLqaProfileReferenceDto
         """
@@ -153,19 +173,22 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoLqaProfileReferenceDto(**r)
 
     def createLqaProfile(
-        self, phrase_token: str, body: CreateLqaProfileDto
+        self,
+        body: CreateLqaProfileDto,
+        phrase_token: Optional[str] = None,
     ) -> LqaProfileDetailDto:
         """
         Create LQA profile
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateLqaProfileDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LqaProfileDetailDto
         """
@@ -176,19 +199,22 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LqaProfileDetailDto(**r)
 
     def duplicateProfile(
-        self, phrase_token: str, profileUid: str
+        self,
+        profileUid: str,
+        phrase_token: Optional[str] = None,
     ) -> LqaProfileReferenceDto:
         """
         Duplicate LQA profile
 
-        :param phrase_token: string (required) - token to authenticate
         :param profileUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LqaProfileReferenceDto
         """
@@ -199,19 +225,21 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LqaProfileReferenceDto(**r)
 
     def getLqaProfileAuthors(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> Any:
         """
+        TODO
         Get list of LQA profile authors
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return:
         """
@@ -222,25 +250,26 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     def updateIgnoredChecks(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: UpdateIgnoredChecksDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Edit ignored checks
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: UpdateIgnoredChecksDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -251,25 +280,26 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def addIgnoredWarnings(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: UpdateIgnoredWarningsDto,
+        phrase_token: Optional[str] = None,
     ) -> UpdateIgnoredWarningsDto:
         """
         Add ignored warnings
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: UpdateIgnoredWarningsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UpdateIgnoredWarningsDto
         """
@@ -280,25 +310,26 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UpdateIgnoredWarningsDto(**r)
 
     def deleteIgnoredWarnings(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: UpdateIgnoredWarningsDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete ignored warnings
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: UpdateIgnoredWarningsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -309,20 +340,24 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def enabledQualityChecksForJob(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self,
+        jobUid: str,
+        projectUid: str,
+        phrase_token: Optional[str] = None,
     ) -> QualityAssuranceChecksDtoV2:
         """
         Get QA settings for job
         Returns enabled quality assurance checks and settings for job.
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: QualityAssuranceChecksDtoV2
         """
@@ -335,19 +370,22 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return QualityAssuranceChecksDtoV2(**r)
 
     def enabledQualityChecksForJob_1(
-        self, phrase_token: str, projectUid: str
+        self,
+        projectUid: str,
+        phrase_token: Optional[str] = None,
     ) -> QualityAssuranceChecksDtoV2:
         """
         Get QA settings
         Returns enabled quality assurance checks and settings.
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: QualityAssuranceChecksDtoV2
         """
@@ -358,25 +396,26 @@ class QualityAssuranceOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return QualityAssuranceChecksDtoV2(**r)
 
     def runQaForJobPartV3(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: QualityAssuranceRunDtoV3,
+        phrase_token: Optional[str] = None,
     ) -> QualityAssuranceResponseDto:
         """
         Run quality assurance
         Call "Get QA settings" endpoint to get the list of enabled QA checks
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: QualityAssuranceRunDtoV3 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: QualityAssuranceResponseDto
         """
@@ -387,20 +426,24 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return QualityAssuranceResponseDto(**r)
 
     def runQaForJobPartsV3(
-        self, phrase_token: str, projectUid: str, body: QualityAssuranceBatchRunDtoV3
+        self,
+        projectUid: str,
+        body: QualityAssuranceBatchRunDtoV3,
+        phrase_token: Optional[str] = None,
     ) -> QualityAssuranceResponseDto:
         """
         Run quality assurance (batch)
         Call "Get QA settings" endpoint to get the list of enabled QA checks
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: QualityAssuranceBatchRunDtoV3 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: QualityAssuranceResponseDto
         """
@@ -411,20 +454,24 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return QualityAssuranceResponseDto(**r)
 
     def runQaForSegmentsV3(
-        self, phrase_token: str, projectUid: str, body: QualityAssuranceSegmentsRunDtoV3
+        self,
+        projectUid: str,
+        body: QualityAssuranceSegmentsRunDtoV3,
+        phrase_token: Optional[str] = None,
     ) -> QualityAssuranceResponseDto:
         """
         Run quality assurance on selected segments
         By default runs only fast running checks. Source and target language of jobs have to match.
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: QualityAssuranceSegmentsRunDtoV3 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: QualityAssuranceResponseDto
         """
@@ -435,7 +482,7 @@ class QualityAssuranceOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return QualityAssuranceResponseDto(**r)

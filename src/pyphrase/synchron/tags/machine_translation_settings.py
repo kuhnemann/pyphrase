@@ -18,12 +18,17 @@ class MachineTranslationSettingsOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def getStatus(self, phrase_token: str, mtsUid: str) -> MachineTranslateStatusDto:
+    def getStatus(
+        self,
+        mtsUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> MachineTranslateStatusDto:
         """
         Get status of machine translate engine
 
-        :param phrase_token: string (required) - token to authenticate
         :param mtsUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: MachineTranslateStatusDto
         """
@@ -34,19 +39,22 @@ class MachineTranslationSettingsOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return MachineTranslateStatusDto(**r)
 
     def getMTSettings(
-        self, phrase_token: str, mtsUid: str
+        self,
+        mtsUid: str,
+        phrase_token: Optional[str] = None,
     ) -> MachineTranslateSettingsPbmDto:
         """
         Get machine translate settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param mtsUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: MachineTranslateSettingsPbmDto
         """
@@ -57,25 +65,26 @@ class MachineTranslationSettingsOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return MachineTranslateSettingsPbmDto(**r)
 
     def getList(
         self,
-        phrase_token: str,
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoMachineTranslateSettingsPbmDto:
         """
         List machine translate settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param name: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoMachineTranslateSettingsPbmDto
         """
@@ -86,19 +95,20 @@ class MachineTranslationSettingsOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoMachineTranslateSettingsPbmDto(**r)
 
     def getMTTypes(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> TypesDto:
         """
         Get machine translate settings types
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TypesDto
         """
@@ -109,7 +119,7 @@ class MachineTranslationSettingsOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TypesDto(**r)

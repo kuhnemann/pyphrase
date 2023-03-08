@@ -19,12 +19,17 @@ class QuoteOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def get_2(self, phrase_token: str, quoteUid: str) -> QuoteDto:
+    def get_2(
+        self,
+        quoteUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> QuoteDto:
         """
         Get quote
 
-        :param phrase_token: string (required) - token to authenticate
         :param quoteUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: QuoteDto
         """
@@ -35,17 +40,22 @@ class QuoteOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return QuoteDto(**r)
 
-    def deleteQuote(self, phrase_token: str, quoteUid: str) -> None:
+    def deleteQuote(
+        self,
+        quoteUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete quote
 
-        :param phrase_token: string (required) - token to authenticate
         :param quoteUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -56,19 +66,22 @@ class QuoteOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def emailQuotes(
-        self, phrase_token: str, body: EmailQuotesRequestDto
+        self,
+        body: EmailQuotesRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> EmailQuotesResponseDto:
         """
         Email quotes
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: EmailQuotesRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: EmailQuotesResponseDto
         """
@@ -79,17 +92,22 @@ class QuoteOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return EmailQuotesResponseDto(**r)
 
-    def createQuoteV2(self, phrase_token: str, body: QuoteCreateV2Dto) -> QuoteV2Dto:
+    def createQuoteV2(
+        self,
+        body: QuoteCreateV2Dto,
+        phrase_token: Optional[str] = None,
+    ) -> QuoteV2Dto:
         """
         Create quote
         Either WorkflowSettings or Units must be sent for billingUnit "Hour".
-        :param phrase_token: string (required) - token to authenticate
         :param body: QuoteCreateV2Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: QuoteV2Dto
         """
@@ -100,7 +118,7 @@ class QuoteOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return QuoteV2Dto(**r)

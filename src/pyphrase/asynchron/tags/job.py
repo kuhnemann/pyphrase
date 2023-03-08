@@ -57,16 +57,20 @@ class JobOperations:
         self.client = client
 
     async def getHandoverFiles(
-        self, phrase_token: str, projectUid: str, jobUid: List[str] = None
+        self,
+        projectUid: str,
+        jobUid: List[str] = None,
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
                 Download handover file(s)
                 For downloading multiple files as ZIP file provide multiple IDs in query parameters.
         * For example `?jobUid={id1}&jobUid={id2}`
         * When no files matched given IDs error 404 is returned, otherwise ZIP file will include those that were found
-                :param phrase_token: string (required) - token to authenticate
                 :param projectUid: string (required), path.
                 :param jobUid: array (optional), query. JobPart Id of requested handover file.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: None
         """
@@ -77,13 +81,13 @@ class JobOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def uploadHandoverFile(
-        self, phrase_token: str, projectUid: str, body: InputStream
+        self, projectUid: str, body: InputStream, phrase_token: Optional[str] = None
     ) -> FileHandoverDto:
         """
                 Upload handover file
@@ -92,9 +96,10 @@ class JobOperations:
         * Jobs from connectors
         * Split jobs
         * Multilingual jobs
-                :param phrase_token: string (required) - token to authenticate
                 :param projectUid: string (required), path.
                 :param body: InputStream (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: FileHandoverDto
         """
@@ -105,20 +110,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return FileHandoverDto(**r)
 
     async def deleteHandoverFile(
-        self, phrase_token: str, projectUid: str, body: JobPartReferences
+        self,
+        projectUid: str,
+        body: JobPartReferences,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete handover file
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartReferences (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -129,13 +138,17 @@ class JobOperations:
         payload = body
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def split(
-        self, phrase_token: str, jobUid: str, projectUid: str, body: SplitJobActionDto
+        self,
+        jobUid: str,
+        projectUid: str,
+        body: SplitJobActionDto,
+        phrase_token: Optional[str] = None,
     ) -> JobPartsDto:
         """
                 Split job
@@ -147,10 +160,11 @@ class JobOperations:
         * **By document parts** - fill in `byDocumentParts`, works only with **PowerPoint** files
 
         Only one option at a time is allowed.
-                :param phrase_token: string (required) - token to authenticate
                 :param jobUid: string (required), path.
                 :param projectUid: string (required), path.
                 :param body: SplitJobActionDto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: JobPartsDto
         """
@@ -161,25 +175,26 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartsDto(**r)
 
     async def setStatus(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: JobStatusChangeActionDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Edit job status
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: JobStatusChangeActionDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -190,20 +205,21 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getPart(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> JobPartExtendedDto:
         """
         Get job
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobPartExtendedDto
         """
@@ -214,25 +230,26 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartExtendedDto(**r)
 
     async def editPart(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: JobPartUpdateSingleDto,
+        phrase_token: Optional[str] = None,
     ) -> JobPartExtendedDto:
         """
         Edit job
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: JobPartUpdateSingleDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobPartExtendedDto
         """
@@ -243,25 +260,26 @@ class JobOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartExtendedDto(**r)
 
     async def patchPart(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: JobPartPatchSingleDto,
+        phrase_token: Optional[str] = None,
     ) -> JobPartExtendedDto:
         """
         Patch job
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: JobPartPatchSingleDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobPartExtendedDto
         """
@@ -272,20 +290,21 @@ class JobOperations:
         payload = body
 
         r = await self.client.patch(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartExtendedDto(**r)
 
     async def getImportSettings_3(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> FileImportSettingsDto:
         """
         Get import settings for job
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: FileImportSettingsDto
         """
@@ -296,25 +315,26 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return FileImportSettingsDto(**r)
 
     async def editJobImportSettings(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: FileImportSettingsCreateDto,
+        phrase_token: Optional[str] = None,
     ) -> FileImportSettingsDto:
         """
         Edit job import settings
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: FileImportSettingsCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: FileImportSettingsDto
         """
@@ -325,25 +345,26 @@ class JobOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return FileImportSettingsDto(**r)
 
     async def pseudoTranslateJobPart(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: PseudoTranslateActionDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Pseudo-translates job
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: PseudoTranslateActionDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -354,20 +375,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def deleteAllTranslations(
-        self, phrase_token: str, projectUid: str, body: JobPartReadyReferences
+        self,
+        projectUid: str,
+        body: JobPartReadyReferences,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete all translations
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartReadyReferences (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -378,20 +403,21 @@ class JobOperations:
         payload = body
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def statusChanges(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> JobPartStatusChangesDto:
         """
         Get status changes
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobPartStatusChangesDto
         """
@@ -402,20 +428,24 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartStatusChangesDto(**r)
 
     async def copySourceToTarget(
-        self, phrase_token: str, projectUid: str, body: JobPartReadyReferences
+        self,
+        projectUid: str,
+        body: JobPartReadyReferences,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Copy Source to Target
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartReadyReferences (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -426,20 +456,21 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def copySourceToTargetJobPart(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> None:
         """
         Copy Source to Target job
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -450,20 +481,21 @@ class JobOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getTranslationResources(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> TranslationResourcesDto:
         """
         Get translation resources
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TranslationResourcesDto
         """
@@ -474,27 +506,28 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TranslationResourcesDto(**r)
 
     async def listSegments(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         beginIndex: int = "0",
         endIndex: int = "0",
+        phrase_token: Optional[str] = None,
     ) -> SegmentListDto:
         """
         Get segments
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param beginIndex: integer (optional), query.
         :param endIndex: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SegmentListDto
         """
@@ -505,20 +538,21 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SegmentListDto(**r)
 
     async def getOriginalFile(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> bytes:
         """
         Download original file
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -529,20 +563,21 @@ class JobOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def filePreviewJob(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> bytes:
         """
         Download preview file
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -553,21 +588,26 @@ class JobOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def filePreview(
-        self, phrase_token: str, jobUid: str, projectUid: str, body: InputStream
+        self,
+        jobUid: str,
+        projectUid: str,
+        body: InputStream,
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
         Download preview file
         Takes bilingual file (.mxliff only) as argument. If not passed, data will be taken from database
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: InputStream (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -578,20 +618,21 @@ class JobOperations:
         payload = body
 
         r = await self.client.post_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def getCompletedFileWarnings(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> TargetFileWarningsDto:
         """
         Get target file's warnings
         This call will return target file's warnings. This means even for other jobs that were created via 'split jobs' etc.
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TargetFileWarningsDto
         """
@@ -602,21 +643,26 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TargetFileWarningsDto(**r)
 
     async def previewUrls(
-        self, phrase_token: str, jobUid: str, projectUid: str, workflowLevel: int = "1"
+        self,
+        jobUid: str,
+        projectUid: str,
+        workflowLevel: int = "1",
+        phrase_token: Optional[str] = None,
     ) -> PreviewUrlsDto:
         """
         Get PDF preview
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param workflowLevel: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PreviewUrlsDto
         """
@@ -627,13 +673,13 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PreviewUrlsDto(**r)
 
     async def createJob(
-        self, phrase_token: str, projectUid: str, body: InputStream
+        self, projectUid: str, body: InputStream, phrase_token: Optional[str] = None
     ) -> JobListDto:
         """
                 Create job
@@ -745,9 +791,10 @@ class JobOperations:
           ]
         }
         ```
-                :param phrase_token: string (required) - token to authenticate
                 :param projectUid: string (required), path.
                 :param body: InputStream (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: JobListDto
         """
@@ -758,18 +805,18 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobListDto(**r)
 
     async def createJobFromAsyncDownloadTask(
         self,
-        phrase_token: str,
         projectUid: str,
         body: JobCreateRequestDto,
         downloadTaskId: str = None,
         continuous: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> JobListDto:
         """
                 Create job from connector asynchronous download task
@@ -864,11 +911,12 @@ class JobOperations:
           ]
         }
         ```
-                :param phrase_token: string (required) - token to authenticate
                 :param projectUid: string (required), path.
                 :param body: JobCreateRequestDto (required), body.
                 :param downloadTaskId: string (optional), query.
                 :param continuous: boolean (optional), query.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: JobListDto
         """
@@ -879,13 +927,13 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobListDto(**r)
 
     async def updateSource(
-        self, phrase_token: str, projectUid: str, body: InputStream
+        self, projectUid: str, body: InputStream, phrase_token: Optional[str] = None
     ) -> JobUpdateSourceResponseDto:
         """
                 Update source
@@ -936,9 +984,10 @@ class JobOperations:
           "callbackUrl": "https://my-shiny-service.com/consumeCallback"
         }
         ```
-                :param phrase_token: string (required) - token to authenticate
                 :param projectUid: string (required), path.
                 :param body: InputStream (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: JobUpdateSourceResponseDto
         """
@@ -949,13 +998,13 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobUpdateSourceResponseDto(**r)
 
     async def updateTarget(
-        self, phrase_token: str, projectUid: str, body: InputStream
+        self, projectUid: str, body: InputStream, phrase_token: Optional[str] = None
     ) -> JobUpdateSourceResponseDto:
         """
                 Update target
@@ -1003,9 +1052,10 @@ class JobOperations:
           "callbackUrl": "https://my-shiny-service.com/consumeCallback"
         }
         ```
-                :param phrase_token: string (required) - token to authenticate
                 :param projectUid: string (required), path.
                 :param body: InputStream (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: JobUpdateSourceResponseDto
         """
@@ -1016,20 +1066,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobUpdateSourceResponseDto(**r)
 
     async def editParts(
-        self, phrase_token: str, projectUid: str, body: JobPartUpdateBatchDto
+        self,
+        projectUid: str,
+        body: JobPartUpdateBatchDto,
+        phrase_token: Optional[str] = None,
     ) -> JobPartsDto:
         """
         Edit jobs (batch)
         Returns only jobs which were updated by the batch operation.
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartUpdateBatchDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobPartsDto
         """
@@ -1040,25 +1094,26 @@ class JobOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartsDto(**r)
 
     async def deleteParts(
         self,
-        phrase_token: str,
         projectUid: str,
         body: JobPartDeleteReferences,
         purge: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete job (batch)
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartDeleteReferences (required), body.
         :param purge: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -1069,20 +1124,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def notifyAssigned(
-        self, phrase_token: str, projectUid: str, body: NotifyJobPartsRequestDto
+        self,
+        projectUid: str,
+        body: NotifyJobPartsRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Notify assigned users
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: NotifyJobPartsRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -1093,27 +1152,28 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def comparePart(
         self,
-        phrase_token: str,
         projectUid: str,
         body: JobPartReadyReferences,
         atWorkflowLevel: int = "1",
         withWorkflowLevel: int = "1",
+        phrase_token: Optional[str] = None,
     ) -> ComparedSegmentsDto:
         """
         Compare jobs on workflow levels
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartReadyReferences (required), body.
         :param atWorkflowLevel: integer (optional), query.
         :param withWorkflowLevel: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ComparedSegmentsDto
         """
@@ -1127,27 +1187,28 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ComparedSegmentsDto(**r)
 
     async def getBilingualFile(
         self,
-        phrase_token: str,
         projectUid: str,
         body: GetBilingualFileDto,
         format: str = "MXLF",
         preview: bool = "True",
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
         Download bilingual file
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: GetBilingualFileDto (required), body.
         :param format: string (optional), query.
         :param preview: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -1158,20 +1219,21 @@ class JobOperations:
         payload = body
 
         r = await self.client.post_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def getPartsWorkflowStep(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> ProjectWorkflowStepDto:
         """
         Get job's workflowStep
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProjectWorkflowStepDto
         """
@@ -1182,20 +1244,24 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProjectWorkflowStepDto(**r)
 
     async def searchPartsInProject(
-        self, phrase_token: str, projectUid: str, body: SearchJobsRequestDto
+        self,
+        projectUid: str,
+        body: SearchJobsRequestDto,
+        phrase_token: Optional[str] = None,
     ) -> SearchJobsDto:
         """
         Search jobs in project
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: SearchJobsRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchJobsDto
         """
@@ -1206,20 +1272,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchJobsDto(**r)
 
     async def getSegmentsCount(
-        self, phrase_token: str, projectUid: str, body: JobPartReadyReferences
+        self,
+        projectUid: str,
+        body: JobPartReadyReferences,
+        phrase_token: Optional[str] = None,
     ) -> SegmentsCountsResponseListDto:
         """
         Get segments count
         Provides segments count (progress data)
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartReadyReferences (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SegmentsCountsResponseListDto
         """
@@ -1230,20 +1300,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SegmentsCountsResponseListDto(**r)
 
     async def pseudoTranslate_1(
-        self, phrase_token: str, projectUid: str, body: PseudoTranslateWrapperDto
+        self,
+        projectUid: str,
+        body: PseudoTranslateWrapperDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Pseudo-translate job
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: PseudoTranslateWrapperDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -1254,20 +1328,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def deleteAllTranslations_1(
-        self, phrase_token: str, projectUid: str, body: JobPartReadyDeleteTranslationDto
+        self,
+        projectUid: str,
+        body: JobPartReadyDeleteTranslationDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete specific translations
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobPartReadyDeleteTranslationDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -1278,21 +1356,23 @@ class JobOperations:
         payload = body
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def completedFile_1(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self, jobUid: str, projectUid: str, phrase_token: Optional[str] = None
     ) -> Any:
         """
+            TODO
             Download target file (async)
             This call will create async request for downloading target file with translation that can be downloaded when
         finished. This means even for other jobs that were created via 'split jobs' etc.
-            :param phrase_token: string (required) - token to authenticate
             :param jobUid: string (required), path.
             :param projectUid: string (required), path.
+
+            :param phrase_token: string (optional) - if not supplied, client will look token from init
 
             :return:
         """
@@ -1303,28 +1383,29 @@ class JobOperations:
         payload = None
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def downloadCompletedFile(
         self,
-        phrase_token: str,
         asyncRequestId: str,
         jobUid: str,
         projectUid: str,
         format: str = "ORIGINAL",
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
             Download target file based on async request
             This call will return target file with translation. This means even for other jobs that were created via
         'split jobs' etc.
-            :param phrase_token: string (required) - token to authenticate
             :param asyncRequestId: string (required), path.
             :param jobUid: string (required), path.
             :param projectUid: string (required), path.
             :param format: string (optional), query.
+
+            :param phrase_token: string (optional) - if not supplied, client will look token from init
 
             :return: None
         """
@@ -1335,14 +1416,13 @@ class JobOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def listPartsV2(
         self,
-        phrase_token: str,
         projectUid: str,
         assignedVendor: int = None,
         targetLang: str = None,
@@ -1354,11 +1434,11 @@ class JobOperations:
         pageSize: int = "50",
         count: bool = "False",
         workflowLevel: int = "1",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoJobPartReferenceV2:
         """
         List jobs
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param assignedVendor: integer (optional), query.
         :param targetLang: string (optional), query.
@@ -1370,6 +1450,8 @@ class JobOperations:
         :param pageSize: integer (optional), query.
         :param count: boolean (optional), query.
         :param workflowLevel: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoJobPartReferenceV2
         """
@@ -1391,13 +1473,16 @@ class JobOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoJobPartReferenceV2(**r)
 
     async def webEditorLinkV2(
-        self, phrase_token: str, projectUid: str, body: CreateWebEditorLinkDtoV2
+        self,
+        projectUid: str,
+        body: CreateWebEditorLinkDtoV2,
+        phrase_token: Optional[str] = None,
     ) -> WebEditorLinkDtoV2:
         """
                 Get Web Editor URL
@@ -1475,9 +1560,10 @@ class JobOperations:
             ]
         }
         ```
-                :param phrase_token: string (required) - token to authenticate
                 :param projectUid: string (required), path.
                 :param body: CreateWebEditorLinkDtoV2 (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: WebEditorLinkDtoV2
         """
@@ -1488,19 +1574,20 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return WebEditorLinkDtoV2(**r)
 
     async def patchUpdateJobParts(
-        self, phrase_token: str, body: JobPartPatchBatchDto
+        self, body: JobPartPatchBatchDto, phrase_token: Optional[str] = None
     ) -> JobPartPatchResultDto:
         """
         Edit jobs (with possible partial updates)
         Allows partial update, not breaking whole batch if single job fails and returns list of errors
-        :param phrase_token: string (required) - token to authenticate
         :param body: JobPartPatchBatchDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobPartPatchResultDto
         """
@@ -1511,25 +1598,26 @@ class JobOperations:
         payload = body
 
         r = await self.client.patch(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartPatchResultDto(**r)
 
     async def searchByJob3(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: SearchTMByJobRequestDtoV3,
+        phrase_token: Optional[str] = None,
     ) -> SearchResponseListTmDtoV3:
         """
         Search job's translation memories
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: SearchTMByJobRequestDtoV3 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchResponseListTmDtoV3
         """
@@ -1540,25 +1628,26 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchResponseListTmDtoV3(**r)
 
     async def wildCardSearchByJob3(
         self,
-        phrase_token: str,
         jobUid: str,
         projectUid: str,
         body: WildCardSearchByJobRequestDtoV3,
+        phrase_token: Optional[str] = None,
     ) -> SearchResponseListTmDtoV3:
         """
         Wildcard search job's translation memories
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
         :param body: WildCardSearchByJobRequestDtoV3 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: SearchResponseListTmDtoV3
         """
@@ -1571,20 +1660,24 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return SearchResponseListTmDtoV3(**r)
 
     async def exportToOnlineRepository(
-        self, phrase_token: str, projectUid: str, body: JobExportActionDto
+        self,
+        projectUid: str,
+        body: JobExportActionDto,
+        phrase_token: Optional[str] = None,
     ) -> JobExportResponseDto:
         """
         Export jobs to online repository
 
-        :param phrase_token: string (required) - token to authenticate
         :param projectUid: string (required), path.
         :param body: JobExportActionDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobExportResponseDto
         """
@@ -1595,7 +1688,7 @@ class JobOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobExportResponseDto(**r)

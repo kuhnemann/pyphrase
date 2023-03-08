@@ -22,18 +22,19 @@ class WebhookOperations:
 
     async def replayLast(
         self,
-        phrase_token: str,
         status: str = None,
         events: List[str] = None,
         numberOfCalls: int = "5",
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Replay last webhook calls
         Replays specified number of last Webhook calls from oldest to the newest one
-        :param phrase_token: string (required) - token to authenticate
         :param status: string (optional), query. Status of Webhook calls to filter by.
         :param events: array (optional), query. List of Webhook events to filter by.
         :param numberOfCalls: integer (optional), query. Number of calls to be replayed.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -44,31 +45,32 @@ class WebhookOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getWebhookCallsList(
         self,
-        phrase_token: str,
         parentUid: str = None,
         webhookUid: str = None,
         status: str = None,
         events: List[str] = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoWebhookCallDto:
         """
         Lists webhook calls
 
-        :param phrase_token: string (required) - token to authenticate
         :param parentUid: string (optional), query. UID of parent webhook call to filter by.
         :param webhookUid: string (optional), query. UID of Webhook to filter by.
         :param status: string (optional), query. Status of Webhook calls to filter by.
         :param events: array (optional), query. List of Webhook events to filter by.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoWebhookCallDto
         """
@@ -86,19 +88,20 @@ class WebhookOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoWebhookCallDto(**r)
 
     async def replayWebhookCalls(
-        self, phrase_token: str, body: ReplayRequestDto
+        self, body: ReplayRequestDto, phrase_token: Optional[str] = None
     ) -> None:
         """
         Replay webhook calls
         Replays given list of Webhook Calls in specified order in the request
-        :param phrase_token: string (required) - token to authenticate
         :param body: ReplayRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -109,17 +112,20 @@ class WebhookOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
-    async def getWebHook_1(self, phrase_token: str, webHookUid: str) -> WebHookDtoV2:
+    async def getWebHook_1(
+        self, webHookUid: str, phrase_token: Optional[str] = None
+    ) -> WebHookDtoV2:
         """
         Get webhook
 
-        :param phrase_token: string (required) - token to authenticate
         :param webHookUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: WebHookDtoV2
         """
@@ -130,20 +136,24 @@ class WebhookOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return WebHookDtoV2(**r)
 
     async def updateWebHook_1(
-        self, phrase_token: str, webHookUid: str, body: CreateWebHookDto
+        self,
+        webHookUid: str,
+        body: CreateWebHookDto,
+        phrase_token: Optional[str] = None,
     ) -> WebHookDtoV2:
         """
         Edit webhook
 
-        :param phrase_token: string (required) - token to authenticate
         :param webHookUid: string (required), path.
         :param body: CreateWebHookDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: WebHookDtoV2
         """
@@ -154,17 +164,20 @@ class WebhookOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return WebHookDtoV2(**r)
 
-    async def deleteWebHook_1(self, phrase_token: str, webHookUid: str) -> None:
+    async def deleteWebHook_1(
+        self, webHookUid: str, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Delete webhook
 
-        :param phrase_token: string (required) - token to authenticate
         :param webHookUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -175,19 +188,20 @@ class WebhookOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getWebhookPreviews(
-        self, phrase_token: str, events: List[str] = None
+        self, events: List[str] = None, phrase_token: Optional[str] = None
     ) -> WebhookPreviewsDto:
         """
         Get webhook body previews
 
-        :param phrase_token: string (required) - token to authenticate
         :param events: array (optional), query. Filter by webhook events, example for multiple: ?events=JOB_CREATED&amp;events=JOB_UPDATED.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: WebhookPreviewsDto
         """
@@ -198,20 +212,21 @@ class WebhookOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return WebhookPreviewsDto(**r)
 
     async def sendTestWebhook(
-        self, phrase_token: str, webhookUid: str, event: str
+        self, webhookUid: str, event: str, phrase_token: Optional[str] = None
     ) -> None:
         """
         Send test webhook
 
-        :param phrase_token: string (required) - token to authenticate
         :param webhookUid: string (required), path. UID of the webhook.
         :param event: string (required), query. Event of test webhook.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -222,14 +237,13 @@ class WebhookOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getWebHookList_1(
         self,
-        phrase_token: str,
         sortField: str = None,
         modifiedBy: List[str] = None,
         createdBy: List[str] = None,
@@ -240,11 +254,11 @@ class WebhookOperations:
         pageNumber: int = "0",
         pageSize: int = "50",
         sortTrend: str = "ASC",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoWebHookDtoV2:
         """
         Lists webhooks
 
-        :param phrase_token: string (required) - token to authenticate
         :param sortField: string (optional), query. Sort by this field.
         :param modifiedBy: array (optional), query. Filter by webhook updaters UIDs.
         :param createdBy: array (optional), query. Filter by webhook creators UIDs.
@@ -255,6 +269,8 @@ class WebhookOperations:
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
         :param sortTrend: string (optional), query. Sort direction.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoWebHookDtoV2
         """
@@ -276,19 +292,20 @@ class WebhookOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoWebHookDtoV2(**r)
 
     async def createWebHook_1(
-        self, phrase_token: str, body: CreateWebHookDto
+        self, body: CreateWebHookDto, phrase_token: Optional[str] = None
     ) -> WebHookDtoV2:
         """
         Create webhook
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateWebHookDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: WebHookDtoV2
         """
@@ -299,7 +316,7 @@ class WebhookOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return WebHookDtoV2(**r)

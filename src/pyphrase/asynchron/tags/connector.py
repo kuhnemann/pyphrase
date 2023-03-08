@@ -24,15 +24,20 @@ class ConnectorOperations:
         self.client = client
 
     async def getFile(
-        self, phrase_token: str, file: str, folder: str, connectorId: str
+        self,
+        file: str,
+        folder: str,
+        connectorId: str,
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
         Download file
         Download a file from a subfolder of the selected connector
-        :param phrase_token: string (required) - token to authenticate
         :param file: string (required), path.
         :param folder: string (required), path.
         :param connectorId: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: InputStreamLength
         """
@@ -43,17 +48,20 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
-    async def getConnector(self, phrase_token: str, connectorId: str) -> ConnectorDto:
+    async def getConnector(
+        self, connectorId: str, phrase_token: Optional[str] = None
+    ) -> ConnectorDto:
         """
         Get a connector
 
-        :param phrase_token: string (required) - token to authenticate
         :param connectorId: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConnectorDto
         """
@@ -64,25 +72,26 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConnectorDto(**r)
 
     async def editConnector(
         self,
-        phrase_token: str,
         connectorId: str,
         body: AbstractConnectorDto,
         connectionTest: bool = None,
+        phrase_token: Optional[str] = None,
     ) -> ConnectorCreateResponseDto:
         """
         Edit connector
         Edit selected connector
-        :param phrase_token: string (required) - token to authenticate
         :param connectorId: string (required), path.
         :param body: AbstractConnectorDto (required), body.
         :param connectionTest: boolean (optional), query. For running connection test.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConnectorCreateResponseDto
         """
@@ -93,19 +102,20 @@ class ConnectorOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConnectorCreateResponseDto(**r)
 
     async def getConnectorList(
-        self, phrase_token: str, type: str = None
+        self, type: str = None, phrase_token: Optional[str] = None
     ) -> ConnectorListDto:
         """
         List connectors
 
-        :param phrase_token: string (required) - token to authenticate
         :param type: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConnectorListDto
         """
@@ -116,31 +126,32 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConnectorListDto(**r)
 
     async def getFolder(
         self,
-        phrase_token: str,
         folder: str,
         connectorId: str,
         projectUid: str = None,
         fileType: str = "ALL",
         sort: str = "NAME",
         direction: str = "ASCENDING",
+        phrase_token: Optional[str] = None,
     ) -> FileListDto:
         """
         List files in a subfolder
         List files in a subfolder of the selected connector
-        :param phrase_token: string (required) - token to authenticate
         :param folder: string (required), path.
         :param connectorId: string (required), path.
         :param projectUid: string (optional), query.
         :param fileType: string (optional), query.
         :param sort: string (optional), query.
         :param direction: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: FileListDto
         """
@@ -156,20 +167,21 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return FileListDto(**r)
 
     async def uploadFile(
-        self, phrase_token: str, folder: str, connectorId: str
+        self, folder: str, connectorId: str, phrase_token: Optional[str] = None
     ) -> UploadResultDto:
         """
         Upload a file to a subfolder of the selected connector
         Upload a file to a subfolder of the selected connector
-        :param phrase_token: string (required) - token to authenticate
         :param folder: string (required), path.
         :param connectorId: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UploadResultDto
         """
@@ -180,27 +192,28 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return UploadResultDto(**r)
 
     async def getRootFolder(
         self,
-        phrase_token: str,
         connectorId: str,
         fileType: str = "ALL",
         sort: str = "NAME",
         direction: str = "ASCENDING",
+        phrase_token: Optional[str] = None,
     ) -> FileListDto:
         """
         List files in root
         List files in a root folder of the selected connector
-        :param phrase_token: string (required) - token to authenticate
         :param connectorId: string (required), path.
         :param fileType: string (optional), query.
         :param sort: string (optional), query.
         :param direction: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: FileListDto
         """
@@ -211,29 +224,30 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return FileListDto(**r)
 
     async def getFile_1(
         self,
-        phrase_token: str,
         file: str,
         folder: str,
         connectorId: str,
         body: GetFileRequestParamsDto,
+        phrase_token: Optional[str] = None,
     ) -> AsyncFileOpResponseDto:
         """
                 Download file (async)
                 Create an asynchronous request to download a file from a (sub)folder of the selected connector.
         After a callback with successful response is received, prepared file can be downloaded by [Download prepared file](#operation/getPreparedFile)
         or [Create job from connector asynchronous download task](#operation/createJobFromAsyncDownloadTask).
-                :param phrase_token: string (required) - token to authenticate
                 :param file: string (required), path.
                 :param folder: string (required), path.
                 :param connectorId: string (required), path.
                 :param body: GetFileRequestParamsDto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: AsyncFileOpResponseDto
         """
@@ -244,22 +258,28 @@ class ConnectorOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncFileOpResponseDto(**r)
 
     async def getPreparedFile(
-        self, phrase_token: str, taskId: str, file: str, folder: str, connectorId: str
+        self,
+        taskId: str,
+        file: str,
+        folder: str,
+        connectorId: str,
+        phrase_token: Optional[str] = None,
     ) -> bytes:
         """
         Download prepared file
         Download the file by referencing successfully finished async download request [Connector - Download file (async)](#operation/getFile_1).
-        :param phrase_token: string (required) - token to authenticate
         :param taskId: string (required), path.
         :param file: string (required), path.
         :param folder: string (required), path.
         :param connectorId: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: InputStreamLength
         """
@@ -270,27 +290,28 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.get_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     async def uploadFile_1(
         self,
-        phrase_token: str,
         fileName: str,
         folder: str,
         connectorId: str,
         mimeType: str = None,
+        phrase_token: Optional[str] = None,
     ) -> AsyncFileOpResponseDto:
         """
         Upload file (async)
         Upload a file to a subfolder of the selected connector
-        :param phrase_token: string (required) - token to authenticate
         :param fileName: string (required), path.
         :param folder: string (required), path.
         :param connectorId: string (required), path.
         :param mimeType: string (optional), query. Mime type of the file to upload.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncFileOpResponseDto
         """
@@ -301,7 +322,7 @@ class ConnectorOperations:
         payload = None
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncFileOpResponseDto(**r)

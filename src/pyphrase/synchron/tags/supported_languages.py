@@ -15,12 +15,13 @@ class SupportedLanguagesOperations:
 
     def listOfLanguages(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> LanguageListDto:
         """
         List supported languages
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LanguageListDto
         """
@@ -31,7 +32,7 @@ class SupportedLanguagesOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LanguageListDto(**r)

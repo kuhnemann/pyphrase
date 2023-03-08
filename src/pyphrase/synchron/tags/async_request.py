@@ -18,13 +18,16 @@ class AsyncRequestOperations:
         self.client = client
 
     def getAsyncRequest(
-        self, phrase_token: str, asyncRequestId: int
+        self,
+        asyncRequestId: int,
+        phrase_token: Optional[str] = None,
     ) -> AsyncRequestDto:
         """
         Get asynchronous request
 
-        :param phrase_token: string (required) - token to authenticate
         :param asyncRequestId: integer (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncRequestDto
         """
@@ -35,25 +38,26 @@ class AsyncRequestOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncRequestDto(**r)
 
     def listPendingRequests(
         self,
-        phrase_token: str,
         all: bool = "False",
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoAsyncRequestDto:
         """
         List pending requests
 
-        :param phrase_token: string (required) - token to authenticate
         :param all: boolean (optional), query. Pending requests for organization instead of current user. Only for ADMIN..
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoAsyncRequestDto
         """
@@ -64,19 +68,20 @@ class AsyncRequestOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoAsyncRequestDto(**r)
 
     def getCurrentLimitStatus(
         self,
-        phrase_token: str,
+        phrase_token: Optional[str] = None,
     ) -> AsyncRequestStatusDto:
         """
         Get current limits
 
-        :param phrase_token: string (required) - token to authenticate
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncRequestStatusDto
         """
@@ -87,7 +92,7 @@ class AsyncRequestOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AsyncRequestStatusDto(**r)

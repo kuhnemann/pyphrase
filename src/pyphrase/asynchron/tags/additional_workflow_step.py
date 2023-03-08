@@ -17,12 +17,13 @@ class AdditionalWorkflowStepOperations:
     def __init__(self, client: AsyncPhraseTMSClient):
         self.client = client
 
-    async def deleteAWFStep(self, phrase_token: str, id: str) -> None:
+    async def deleteAWFStep(self, id: str, phrase_token: Optional[str] = None) -> None:
         """
         Delete additional workflow step
 
-        :param phrase_token: string (required) - token to authenticate
         :param id: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -33,25 +34,26 @@ class AdditionalWorkflowStepOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def listAWFSteps(
         self,
-        phrase_token: str,
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoAdditionalWorkflowStepDto:
         """
         List additional workflow steps
 
-        :param phrase_token: string (required) - token to authenticate
         :param name: string (optional), query. Name of the additional workflow step to filter.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoAdditionalWorkflowStepDto
         """
@@ -62,19 +64,20 @@ class AdditionalWorkflowStepOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoAdditionalWorkflowStepDto(**r)
 
     async def createAWFStep(
-        self, phrase_token: str, body: AdditionalWorkflowStepRequestDto
+        self, body: AdditionalWorkflowStepRequestDto, phrase_token: Optional[str] = None
     ) -> AdditionalWorkflowStepDto:
         """
         Create additional workflow step
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: AdditionalWorkflowStepRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AdditionalWorkflowStepDto
         """
@@ -85,7 +88,7 @@ class AdditionalWorkflowStepOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return AdditionalWorkflowStepDto(**r)

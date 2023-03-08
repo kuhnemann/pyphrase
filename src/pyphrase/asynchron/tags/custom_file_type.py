@@ -20,14 +20,18 @@ class CustomFileTypeOperations:
         self.client = client
 
     async def getAllCustomFileType(
-        self, phrase_token: str, pageNumber: int = "0", pageSize: int = "50"
+        self,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoCustomFileTypeDto:
         """
         Get All Custom file type
 
-        :param phrase_token: string (required) - token to authenticate
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoCustomFileTypeDto
         """
@@ -38,19 +42,20 @@ class CustomFileTypeOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoCustomFileTypeDto(**r)
 
     async def createCustomFileTypes(
-        self, phrase_token: str, body: CreateCustomFileTypeDto
+        self, body: CreateCustomFileTypeDto, phrase_token: Optional[str] = None
     ) -> CustomFileTypeDto:
         """
         Create custom file type
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: CreateCustomFileTypeDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: CustomFileTypeDto
         """
@@ -61,19 +66,20 @@ class CustomFileTypeOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return CustomFileTypeDto(**r)
 
     async def deleteBatchCustomFileType(
-        self, phrase_token: str, body: DeleteCustomFileTypeDto
+        self, body: DeleteCustomFileTypeDto, phrase_token: Optional[str] = None
     ) -> None:
         """
         Delete multiple Custom file type
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: DeleteCustomFileTypeDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -84,19 +90,20 @@ class CustomFileTypeOperations:
         payload = body
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getCustomFileType(
-        self, phrase_token: str, customFileTypeUid: str
+        self, customFileTypeUid: str, phrase_token: Optional[str] = None
     ) -> CustomFileTypeDto:
         """
         Get Custom file type
 
-        :param phrase_token: string (required) - token to authenticate
         :param customFileTypeUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: CustomFileTypeDto
         """
@@ -107,20 +114,24 @@ class CustomFileTypeOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return CustomFileTypeDto(**r)
 
     async def updateCustomFileType(
-        self, phrase_token: str, customFileTypeUid: str, body: UpdateCustomFileTypeDto
+        self,
+        customFileTypeUid: str,
+        body: UpdateCustomFileTypeDto,
+        phrase_token: Optional[str] = None,
     ) -> CustomFileTypeDto:
         """
         Update Custom file type
 
-        :param phrase_token: string (required) - token to authenticate
         :param customFileTypeUid: string (required), path.
         :param body: UpdateCustomFileTypeDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: CustomFileTypeDto
         """
@@ -131,19 +142,20 @@ class CustomFileTypeOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return CustomFileTypeDto(**r)
 
     async def deleteCustomFileType(
-        self, phrase_token: str, customFileTypeUid: str
+        self, customFileTypeUid: str, phrase_token: Optional[str] = None
     ) -> None:
         """
         Delete Custom file type
 
-        :param phrase_token: string (required) - token to authenticate
         :param customFileTypeUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -154,7 +166,7 @@ class CustomFileTypeOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return

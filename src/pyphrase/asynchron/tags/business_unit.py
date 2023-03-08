@@ -18,13 +18,14 @@ class BusinessUnitOperations:
         self.client = client
 
     async def getBusinessUnit(
-        self, phrase_token: str, businessUnitUid: str
+        self, businessUnitUid: str, phrase_token: Optional[str] = None
     ) -> BusinessUnitDto:
         """
         Get business unit
 
-        :param phrase_token: string (required) - token to authenticate
         :param businessUnitUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: BusinessUnitDto
         """
@@ -35,20 +36,24 @@ class BusinessUnitOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return BusinessUnitDto(**r)
 
     async def updateBusinessUnit(
-        self, phrase_token: str, businessUnitUid: str, body: BusinessUnitEditDto
+        self,
+        businessUnitUid: str,
+        body: BusinessUnitEditDto,
+        phrase_token: Optional[str] = None,
     ) -> BusinessUnitDto:
         """
         Edit business unit
 
-        :param phrase_token: string (required) - token to authenticate
         :param businessUnitUid: string (required), path.
         :param body: BusinessUnitEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: BusinessUnitDto
         """
@@ -59,17 +64,20 @@ class BusinessUnitOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return BusinessUnitDto(**r)
 
-    async def deleteBusinessUnit(self, phrase_token: str, businessUnitUid: str) -> None:
+    async def deleteBusinessUnit(
+        self, businessUnitUid: str, phrase_token: Optional[str] = None
+    ) -> None:
         """
         Delete business unit
 
-        :param phrase_token: string (required) - token to authenticate
         :param businessUnitUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -80,31 +88,32 @@ class BusinessUnitOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def listBusinessUnits(
         self,
-        phrase_token: str,
         createdBy: str = None,
         name: str = None,
         sort: str = "NAME",
         order: str = "ASC",
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoBusinessUnitDto:
         """
         List business units
 
-        :param phrase_token: string (required) - token to authenticate
         :param createdBy: string (optional), query. Uid of user.
         :param name: string (optional), query. Unique name of the business unit.
         :param sort: string (optional), query.
         :param order: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoBusinessUnitDto
         """
@@ -122,19 +131,20 @@ class BusinessUnitOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoBusinessUnitDto(**r)
 
     async def createBusinessUnit(
-        self, phrase_token: str, body: BusinessUnitEditDto
+        self, body: BusinessUnitEditDto, phrase_token: Optional[str] = None
     ) -> BusinessUnitDto:
         """
         Create business unit
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: BusinessUnitEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: BusinessUnitDto
         """
@@ -145,7 +155,7 @@ class BusinessUnitOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return BusinessUnitDto(**r)

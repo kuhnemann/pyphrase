@@ -14,14 +14,18 @@ class ProviderOperations:
         self.client = client
 
     def listProviders_4(
-        self, phrase_token: str, jobUid: str, projectUid: str
+        self,
+        jobUid: str,
+        projectUid: str,
+        phrase_token: Optional[str] = None,
     ) -> ProviderListDtoV2:
         """
         Get suggested providers
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ProviderListDtoV2
         """
@@ -32,7 +36,7 @@ class ProviderOperations:
         payload = None
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ProviderListDtoV2(**r)

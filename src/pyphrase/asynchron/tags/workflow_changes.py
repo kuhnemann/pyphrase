@@ -14,13 +14,14 @@ class WorkflowChangesOperations:
         self.client = client
 
     async def downloadWorkflowChanges(
-        self, phrase_token: str, body: WorkflowChangesDto
+        self, body: WorkflowChangesDto, phrase_token: Optional[str] = None
     ) -> Response:
         """
         Download workflow changes report
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: WorkflowChangesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: Response
         """
@@ -31,7 +32,7 @@ class WorkflowChangesOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return Response(**r)

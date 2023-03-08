@@ -22,13 +22,14 @@ class NetRateSchemeOperations:
         self.client = client
 
     async def getDiscountScheme(
-        self, phrase_token: str, netRateSchemeUid: str
+        self, netRateSchemeUid: str, phrase_token: Optional[str] = None
     ) -> NetRateScheme:
         """
         Get net rate scheme
 
-        :param phrase_token: string (required) - token to authenticate
         :param netRateSchemeUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: NetRateScheme
         """
@@ -39,20 +40,24 @@ class NetRateSchemeOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return NetRateScheme(**r)
 
     async def updateDiscountScheme(
-        self, phrase_token: str, netRateSchemeUid: str, body: NetRateSchemeEdit
+        self,
+        netRateSchemeUid: str,
+        body: NetRateSchemeEdit,
+        phrase_token: Optional[str] = None,
     ) -> NetRateScheme:
         """
         Edit net rate scheme
 
-        :param phrase_token: string (required) - token to authenticate
         :param netRateSchemeUid: string (required), path.
         :param body: NetRateSchemeEdit (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: NetRateScheme
         """
@@ -63,20 +68,24 @@ class NetRateSchemeOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return NetRateScheme(**r)
 
     async def getDiscountSchemes(
-        self, phrase_token: str, pageNumber: int = "0", pageSize: int = "50"
+        self,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoNetRateSchemeReference:
         """
         List net rate schemes
 
-        :param phrase_token: string (required) - token to authenticate
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoNetRateSchemeReference
         """
@@ -87,19 +96,20 @@ class NetRateSchemeOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoNetRateSchemeReference(**r)
 
     async def createDiscountScheme(
-        self, phrase_token: str, body: DiscountSchemeCreateDto
+        self, body: DiscountSchemeCreateDto, phrase_token: Optional[str] = None
     ) -> NetRateScheme:
         """
         Create net rate scheme
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: DiscountSchemeCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: NetRateScheme
         """
@@ -110,20 +120,24 @@ class NetRateSchemeOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return NetRateScheme(**r)
 
     async def getDiscountSchemeWorkflowStep(
-        self, phrase_token: str, netRateSchemeWorkflowStepId: int, netRateSchemeUid: str
+        self,
+        netRateSchemeWorkflowStepId: int,
+        netRateSchemeUid: str,
+        phrase_token: Optional[str] = None,
     ) -> NetRateSchemeWorkflowStep:
         """
         Get scheme for workflow step
 
-        :param phrase_token: string (required) - token to authenticate
         :param netRateSchemeWorkflowStepId: integer (required), path.
         :param netRateSchemeUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: NetRateSchemeWorkflowStep
         """
@@ -134,25 +148,26 @@ class NetRateSchemeOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return NetRateSchemeWorkflowStep(**r)
 
     async def editDiscountSchemeWorkflowStep(
         self,
-        phrase_token: str,
         netRateSchemeWorkflowStepId: int,
         netRateSchemeUid: str,
         body: NetRateSchemeWorkflowStepEdit,
+        phrase_token: Optional[str] = None,
     ) -> NetRateSchemeWorkflowStep:
         """
         Edit scheme for workflow step
 
-        :param phrase_token: string (required) - token to authenticate
         :param netRateSchemeWorkflowStepId: integer (required), path.
         :param netRateSchemeUid: string (required), path.
         :param body: NetRateSchemeWorkflowStepEdit (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: NetRateSchemeWorkflowStep
         """
@@ -163,25 +178,26 @@ class NetRateSchemeOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return NetRateSchemeWorkflowStep(**r)
 
     async def getDiscountSchemeWorkflowSteps(
         self,
-        phrase_token: str,
         netRateSchemeUid: str,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoNetRateSchemeWorkflowStepReference:
         """
         List schemes for workflow step
 
-        :param phrase_token: string (required) - token to authenticate
         :param netRateSchemeUid: string (required), path.
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoNetRateSchemeWorkflowStepReference
         """
@@ -192,7 +208,7 @@ class NetRateSchemeOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoNetRateSchemeWorkflowStepReference(**r)

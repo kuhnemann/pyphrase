@@ -18,12 +18,17 @@ class GlossaryOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def getGlossary(self, phrase_token: str, glossaryUid: str) -> GlossaryDto:
+    def getGlossary(
+        self,
+        glossaryUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> GlossaryDto:
         """
         Get glossary
 
-        :param phrase_token: string (required) - token to authenticate
         :param glossaryUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: GlossaryDto
         """
@@ -34,20 +39,24 @@ class GlossaryOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return GlossaryDto(**r)
 
     def updateGlossary(
-        self, phrase_token: str, glossaryUid: str, body: GlossaryEditDto
+        self,
+        glossaryUid: str,
+        body: GlossaryEditDto,
+        phrase_token: Optional[str] = None,
     ) -> GlossaryDto:
         """
         Edit glossary
         Languages can only be added, their removal is not supported
-        :param phrase_token: string (required) - token to authenticate
         :param glossaryUid: string (required), path.
         :param body: GlossaryEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: GlossaryDto
         """
@@ -58,21 +67,25 @@ class GlossaryOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return GlossaryDto(**r)
 
     def deleteGlossary(
-        self, phrase_token: str, glossaryUid: str, purge: bool = "False"
+        self,
+        glossaryUid: str,
+        purge: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete glossary
 
-        :param phrase_token: string (required) - token to authenticate
         :param glossaryUid: string (required), path.
         :param purge: boolean (optional), query. purge=false - the Glossary can later be restored,
                     &#39;purge=true - the Glossary is completely deleted and cannot be restored.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -83,27 +96,28 @@ class GlossaryOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def listGlossaries(
         self,
-        phrase_token: str,
         lang: List[str] = None,
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoGlossaryDto:
         """
         List glossaries
 
-        :param phrase_token: string (required) - token to authenticate
         :param lang: array (optional), query. Language of the glossary.
         :param name: string (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoGlossaryDto
         """
@@ -119,17 +133,22 @@ class GlossaryOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoGlossaryDto(**r)
 
-    def createGlossary(self, phrase_token: str, body: GlossaryEditDto) -> GlossaryDto:
+    def createGlossary(
+        self,
+        body: GlossaryEditDto,
+        phrase_token: Optional[str] = None,
+    ) -> GlossaryDto:
         """
         Create glossary
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: GlossaryEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: GlossaryDto
         """
@@ -140,20 +159,24 @@ class GlossaryOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return GlossaryDto(**r)
 
     def activateGlossary(
-        self, phrase_token: str, glossaryUid: str, body: GlossaryActivationDto
+        self,
+        glossaryUid: str,
+        body: GlossaryActivationDto,
+        phrase_token: Optional[str] = None,
     ) -> GlossaryDto:
         """
         Activate/Deactivate glossary
 
-        :param phrase_token: string (required) - token to authenticate
         :param glossaryUid: string (required), path.
         :param body: GlossaryActivationDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: GlossaryDto
         """
@@ -164,7 +187,7 @@ class GlossaryOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return GlossaryDto(**r)

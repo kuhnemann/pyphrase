@@ -23,18 +23,19 @@ class ConversationsOperations:
 
     async def listAllConversations(
         self,
-        phrase_token: str,
         jobUid: str,
         since: str = None,
         includeDeleted: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> ConversationListDto:
         """
         List all conversations
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param since: string (optional), query.
         :param includeDeleted: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConversationListDto
         """
@@ -45,19 +46,20 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConversationListDto(**r)
 
     async def findConversations(
-        self, phrase_token: str, body: FindConversationsDto
+        self, body: FindConversationsDto, phrase_token: Optional[str] = None
     ) -> ConversationListDto:
         """
         Find all conversation
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: FindConversationsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ConversationListDto
         """
@@ -68,21 +70,26 @@ class ConversationsOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ConversationListDto(**r)
 
     async def deleteLQAComment(
-        self, phrase_token: str, commentId: str, conversationId: str, jobUid: str
+        self,
+        commentId: str,
+        conversationId: str,
+        jobUid: str,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete LQA comment
 
-        :param phrase_token: string (required) - token to authenticate
         :param commentId: string (required), path.
         :param conversationId: string (required), path.
         :param jobUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -93,20 +100,21 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def getLQAConversation(
-        self, phrase_token: str, conversationId: str, jobUid: str
+        self, conversationId: str, jobUid: str, phrase_token: Optional[str] = None
     ) -> LQAConversationDto:
         """
         Get LQA conversation
 
-        :param phrase_token: string (required) - token to authenticate
         :param conversationId: string (required), path.
         :param jobUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LQAConversationDto
         """
@@ -117,20 +125,21 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LQAConversationDto(**r)
 
     async def deleteLQAConversation(
-        self, phrase_token: str, conversationId: str, jobUid: str
+        self, conversationId: str, jobUid: str, phrase_token: Optional[str] = None
     ) -> None:
         """
         Delete LQA conversation
 
-        :param phrase_token: string (required) - token to authenticate
         :param conversationId: string (required), path.
         :param jobUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -141,25 +150,26 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def listLQAConversations(
         self,
-        phrase_token: str,
         jobUid: str,
         since: str = None,
         includeDeleted: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> LQAConversationsListDto:
         """
         List LQA conversations
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param since: string (optional), query.
         :param includeDeleted: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LQAConversationsListDto
         """
@@ -170,20 +180,21 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return LQAConversationsListDto(**r)
 
     async def getPlainConversation(
-        self, phrase_token: str, conversationId: str, jobUid: str
+        self, conversationId: str, jobUid: str, phrase_token: Optional[str] = None
     ) -> PlainConversationDto:
         """
         Get plain conversation
 
-        :param phrase_token: string (required) - token to authenticate
         :param conversationId: string (required), path.
         :param jobUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PlainConversationDto
         """
@@ -194,25 +205,26 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PlainConversationDto(**r)
 
     async def updatePlainConversation(
         self,
-        phrase_token: str,
         conversationId: str,
         jobUid: str,
         body: EditPlainConversationDto,
+        phrase_token: Optional[str] = None,
     ) -> PlainConversationDto:
         """
         Edit plain conversation
 
-        :param phrase_token: string (required) - token to authenticate
         :param conversationId: string (required), path.
         :param jobUid: string (required), path.
         :param body: EditPlainConversationDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PlainConversationDto
         """
@@ -223,20 +235,21 @@ class ConversationsOperations:
         payload = body
 
         r = await self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PlainConversationDto(**r)
 
     async def deletePlainConversation(
-        self, phrase_token: str, conversationId: str, jobUid: str
+        self, conversationId: str, jobUid: str, phrase_token: Optional[str] = None
     ) -> None:
         """
         Delete plain conversation
 
-        :param phrase_token: string (required) - token to authenticate
         :param conversationId: string (required), path.
         :param jobUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -247,25 +260,26 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     async def listPlainConversations(
         self,
-        phrase_token: str,
         jobUid: str,
         since: str = None,
         includeDeleted: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> PlainConversationsListDto:
         """
         List plain conversations
 
-        :param phrase_token: string (required) - token to authenticate
         :param jobUid: string (required), path.
         :param since: string (optional), query.
         :param includeDeleted: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PlainConversationsListDto
         """
@@ -276,21 +290,26 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PlainConversationsListDto(**r)
 
     async def deletePlainComment(
-        self, phrase_token: str, commentId: str, conversationId: str, jobUid: str
+        self,
+        commentId: str,
+        conversationId: str,
+        jobUid: str,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Delete plain comment
 
-        :param phrase_token: string (required) - token to authenticate
         :param commentId: string (required), path.
         :param conversationId: string (required), path.
         :param jobUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -301,7 +320,7 @@ class ConversationsOperations:
         payload = None
 
         r = await self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return

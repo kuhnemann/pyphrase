@@ -17,14 +17,18 @@ class MachineTranslationOperations:
         self.client = client
 
     async def machineTranslation(
-        self, phrase_token: str, mtSettingsUid: str, body: TranslationRequestExtendedDto
+        self,
+        mtSettingsUid: str,
+        body: TranslationRequestExtendedDto,
+        phrase_token: Optional[str] = None,
     ) -> MachineTranslateResponse:
         """
         Translate with MT
 
-        :param phrase_token: string (required) - token to authenticate
         :param mtSettingsUid: string (required), path.
         :param body: TranslationRequestExtendedDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: MachineTranslateResponse
         """
@@ -35,7 +39,7 @@ class MachineTranslationOperations:
         payload = body
 
         r = await self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return MachineTranslateResponse(**r)

@@ -24,13 +24,16 @@ class PriceListOperations:
         self.client = client
 
     def getPriceList(
-        self, phrase_token: str, priceListUid: str
+        self,
+        priceListUid: str,
+        phrase_token: Optional[str] = None,
     ) -> TranslationPriceListDto:
         """
         Get price list
 
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TranslationPriceListDto
         """
@@ -41,20 +44,24 @@ class PriceListOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TranslationPriceListDto(**r)
 
     def updatePriceList(
-        self, phrase_token: str, priceListUid: str, body: TranslationPriceListCreateDto
+        self,
+        priceListUid: str,
+        body: TranslationPriceListCreateDto,
+        phrase_token: Optional[str] = None,
     ) -> TranslationPriceListDto:
         """
         Update price list
 
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
         :param body: TranslationPriceListCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TranslationPriceListDto
         """
@@ -65,17 +72,22 @@ class PriceListOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TranslationPriceListDto(**r)
 
-    def deletePriceList(self, phrase_token: str, priceListUid: str) -> None:
+    def deletePriceList(
+        self,
+        priceListUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
         """
         Delete price list
 
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -86,20 +98,24 @@ class PriceListOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def getListOfPriceList(
-        self, phrase_token: str, pageNumber: int = "0", pageSize: int = "50"
+        self,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoTranslationPriceListDto:
         """
         List price lists
 
-        :param phrase_token: string (required) - token to authenticate
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoTranslationPriceListDto
         """
@@ -110,19 +126,22 @@ class PriceListOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoTranslationPriceListDto(**r)
 
     def createPriceList(
-        self, phrase_token: str, body: TranslationPriceListCreateDto
+        self,
+        body: TranslationPriceListCreateDto,
+        phrase_token: Optional[str] = None,
     ) -> TranslationPriceListDto:
         """
         Create price list
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: TranslationPriceListCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TranslationPriceListDto
         """
@@ -133,29 +152,30 @@ class PriceListOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TranslationPriceListDto(**r)
 
     def getPricesWithWorkflowSteps(
         self,
-        phrase_token: str,
         priceListUid: str,
         targetLanguages: List[str] = None,
         sourceLanguages: List[str] = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        phrase_token: Optional[str] = None,
     ) -> PageDtoTranslationPriceSetDto:
         """
         List price sets
 
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
         :param targetLanguages: array (optional), query.
         :param sourceLanguages: array (optional), query.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoTranslationPriceSetDto
         """
@@ -171,20 +191,24 @@ class PriceListOperations:
         payload = None
 
         r = self.client.get(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return PageDtoTranslationPriceSetDto(**r)
 
     def createLanguagePair(
-        self, phrase_token: str, priceListUid: str, body: TranslationPriceSetCreateDto
+        self,
+        priceListUid: str,
+        body: TranslationPriceSetCreateDto,
+        phrase_token: Optional[str] = None,
     ) -> TranslationPriceSetListDto:
         """
         Add language pairs
 
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
         :param body: TranslationPriceSetCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TranslationPriceSetListDto
         """
@@ -195,23 +219,24 @@ class PriceListOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TranslationPriceSetListDto(**r)
 
     def deleteLanguagePairs(
         self,
-        phrase_token: str,
         priceListUid: str,
         body: TranslationPriceSetBulkDeleteDto,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Remove language pairs
 
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
         :param body: TranslationPriceSetBulkDeleteDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -222,25 +247,26 @@ class PriceListOperations:
         payload = body
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def deleteLanguagePair(
         self,
-        phrase_token: str,
         targetLanguage: str,
         sourceLanguage: str,
         priceListUid: str,
+        phrase_token: Optional[str] = None,
     ) -> None:
         """
         Remove language pair
 
-        :param phrase_token: string (required) - token to authenticate
         :param targetLanguage: string (required), path.
         :param sourceLanguage: string (required), path.
         :param priceListUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -251,23 +277,24 @@ class PriceListOperations:
         payload = None
 
         r = self.client.delete(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return
 
     def setMinimumPriceForSet(
         self,
-        phrase_token: str,
         priceListUid: str,
         body: TranslationPriceSetBulkMinimumPricesDto,
+        phrase_token: Optional[str] = None,
     ) -> TranslationPriceListDto:
         """
         Edit minimum prices
 
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
         :param body: TranslationPriceSetBulkMinimumPricesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TranslationPriceListDto
         """
@@ -278,23 +305,24 @@ class PriceListOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TranslationPriceListDto(**r)
 
     def setPrices(
         self,
-        phrase_token: str,
         priceListUid: str,
         body: TranslationPriceSetBulkPricesDto,
+        phrase_token: Optional[str] = None,
     ) -> TranslationPriceListDto:
         """
         Edit prices
         If object contains only price, all languages and workflow steps will be updated
-        :param phrase_token: string (required) - token to authenticate
         :param priceListUid: string (required), path.
         :param body: TranslationPriceSetBulkPricesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: TranslationPriceListDto
         """
@@ -305,7 +333,7 @@ class PriceListOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return TranslationPriceListDto(**r)

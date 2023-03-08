@@ -14,15 +14,16 @@ class BilingualFileOperations:
         self.client = client
 
     def convertBilingualFile(
-        self, phrase_token: str, body: InputStream, to: str, frm: str
+        self, body: InputStream, to: str, frm: str, phrase_token: Optional[str] = None
     ) -> bytes:
         """
         Convert bilingual file
 
-        :param phrase_token: string (required) - token to authenticate
         :param body: InputStream (required), body.
         :param to: string (required), query.
         :param frm: string (required), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -33,27 +34,28 @@ class BilingualFileOperations:
         payload = body
 
         r = self.client.post_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r
 
     def uploadBilingualFile(
         self,
-        phrase_token: str,
         body: InputStream,
         format: str = "MXLF",
         saveToTransMemory: str = "Confirmed",
         setCompleted: bool = "False",
+        phrase_token: Optional[str] = None,
     ) -> JobPartsDto:
         """
         Upload bilingual file
         Returns updated job parts
-        :param phrase_token: string (required) - token to authenticate
         :param body: InputStream (required), body.
         :param format: string (optional), query.
         :param saveToTransMemory: string (optional), query.
         :param setCompleted: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: JobPartsDto
         """
@@ -68,20 +70,24 @@ class BilingualFileOperations:
         payload = body
 
         r = self.client.put(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return JobPartsDto(**r)
 
     def compareBilingualFile(
-        self, phrase_token: str, body: InputStream, workflowLevel: int = "1"
+        self,
+        body: InputStream,
+        workflowLevel: int = "1",
+        phrase_token: Optional[str] = None,
     ) -> ComparedSegmentsDto:
         """
         Compare bilingual file
         Compares bilingual file to job state. Returns list of compared segments.
-        :param phrase_token: string (required) - token to authenticate
         :param body: InputStream (required), body.
         :param workflowLevel: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: ComparedSegmentsDto
         """
@@ -92,17 +98,20 @@ class BilingualFileOperations:
         payload = body
 
         r = self.client.post(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return ComparedSegmentsDto(**r)
 
-    def getPreviewFile(self, phrase_token: str, body: InputStream) -> bytes:
+    def getPreviewFile(
+        self, body: InputStream, phrase_token: Optional[str] = None
+    ) -> bytes:
         """
         Download preview
         Supports mxliff format
-        :param phrase_token: string (required) - token to authenticate
         :param body: InputStream (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: None
         """
@@ -113,7 +122,7 @@ class BilingualFileOperations:
         payload = body
 
         r = self.client.post_bytestream(
-            phrase_token, endpoint, params=params, payload=payload, files=files
+            endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
         return r

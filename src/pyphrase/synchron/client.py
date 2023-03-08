@@ -4,8 +4,8 @@ from typing import Any, List, Optional
 import httpx
 from httpx import HTTPStatusError
 
-from ..exceptions import UnableToAuthenticateError
-from ..models import MemsourceAuthTokenModel, MemsourceResponse
+from ..exceptions import NotAuthenticatedError, UnableToAuthenticateError
+from ..models import MemsourceAuthTokenModel
 from .tags import (
     AdditionalWorkflowStepOperations,
     AnalysisOperations,
@@ -59,7 +59,6 @@ logger = logging.getLogger(__name__)
 def sync_get_phrase_tms_token(user: str, pw: str) -> MemsourceAuthTokenModel:
     url = f"{MEMSOURCE_BASE_URL}/api2/v1/auth/login"
     payload = {"userName": user, "password": pw}
-
     _r = httpx.post(url, json=payload)
     r = _r.json()
     token = r.get("token")
@@ -76,7 +75,8 @@ def sync_get_phrase_tms_token(user: str, pw: str) -> MemsourceAuthTokenModel:
 
 
 class SyncPhraseTMSClient:
-    def __init__(self):
+    def __init__(self, token: Optional[str] = None):
+        self.token = token
         self.additional_workflow_step = AdditionalWorkflowStepOperations(self)
         self.analysis = AnalysisOperations(self)
         self.async_request = AsyncRequestOperations(self)
@@ -120,20 +120,25 @@ class SyncPhraseTMSClient:
         self.workflow_changes = WorkflowChangesOperations(self)
         self.provider = ProviderOperations(self)
 
-    @staticmethod
     def get_bytestream(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> bytes:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         if params is None:
             params = {}
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
+        logger.info(url, params)
         r = httpx.get(url, params=params, headers=header, timeout=60.0)
 
         try:
@@ -144,19 +149,23 @@ class SyncPhraseTMSClient:
 
         return r.content
 
-    @staticmethod
     def post_bytestream(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> bytes:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         if params is None:
             params = {}
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         if payload is not None and type(payload) != dict:
             try:
@@ -165,6 +174,7 @@ class SyncPhraseTMSClient:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
 
+        logger.info(url, params)
         r = httpx.post(
             url, json=payload, headers=header, params=params, files=files, timeout=60.0
         )
@@ -177,20 +187,25 @@ class SyncPhraseTMSClient:
 
         return r.content
 
-    @staticmethod
     def get(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         if params is None:
             params = {}
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
-        resp = httpx.get(url, params=params, headers=header, timeout=30.0)
+        logger.info(url)
+        resp = httpx.get(url, params={k: v for k, v in params.items() if v is not None}, headers=header, timeout=30.0)
         try:
             resp.raise_for_status()
         except HTTPStatusError as exc:
@@ -200,14 +215,19 @@ class SyncPhraseTMSClient:
 
     @staticmethod
     def post(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         if payload is not None and type(payload) != dict:
             try:
@@ -217,8 +237,10 @@ class SyncPhraseTMSClient:
                 raise Exception from e
 
         r = httpx.post(
-            url, json=payload, headers=header, params=params, files=files, timeout=30.0
+            url,
+            json=payload, headers=header, params={k: v for k, v in params.items() if v is not None}, files=files, timeout=30.0
         )
+
         try:
             r.raise_for_status()
         except HTTPStatusError as exc:
@@ -226,16 +248,20 @@ class SyncPhraseTMSClient:
             raise Exception from exc
         return r.json()
 
-    @staticmethod
     def put(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -253,16 +279,20 @@ class SyncPhraseTMSClient:
 
         return r.json()
 
-    @staticmethod
-    async def patch(
-        phrase_token: str,
+    def patch(
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -280,16 +310,20 @@ class SyncPhraseTMSClient:
 
         return r.json()
 
-    @staticmethod
     def delete(
-        phrase_token: str,
+        self,
         path: str,
+        phrase_token: Optional[str] = None,
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
     ) -> dict:
+        token = phrase_token or self.token
+        if token is None:
+            raise NotAuthenticatedError
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
-        header = {"Authorization": phrase_token}
+        header = {"Authorization": token}
 
         r = httpx.delete(url, headers=header, params=params, timeout=30.0)
 
