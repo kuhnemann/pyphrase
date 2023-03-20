@@ -127,6 +127,8 @@ class SyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> bytes:
         token = phrase_token or self.token
         if token is None:
@@ -137,7 +139,8 @@ class SyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
-
+        if headers is not None:
+            header.update(headers)
         logger.info(url, params)
         r = httpx.get(url, params=params, headers=header, timeout=60.0)
 
@@ -156,6 +159,8 @@ class SyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> bytes:
         token = phrase_token or self.token
         if token is None:
@@ -166,6 +171,8 @@ class SyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         if payload is not None and type(payload) != dict:
             try:
@@ -176,7 +183,13 @@ class SyncPhraseTMSClient:
 
         logger.info(url, params)
         r = httpx.post(
-            url, json=payload, headers=header, params=params, files=files, timeout=60.0
+            url,
+            json=payload,
+            headers=header,
+            params=params,
+            files=files,
+            content=content,
+            timeout=30.0,
         )
 
         try:
@@ -194,6 +207,8 @@ class SyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -201,11 +216,15 @@ class SyncPhraseTMSClient:
 
         if params is None:
             params = {}
+        params = {k: v for k, v in params.items() if v is not None}
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         logger.info(url)
-        resp = httpx.get(url, params={k: v for k, v in params.items() if v is not None}, headers=header, timeout=30.0)
+        resp = httpx.get(url, params=params, headers=header, timeout=30.0)
         try:
             resp.raise_for_status()
         except HTTPStatusError as exc:
@@ -221,6 +240,8 @@ class SyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -228,6 +249,8 @@ class SyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         if payload is not None and type(payload) != dict:
             try:
@@ -238,7 +261,12 @@ class SyncPhraseTMSClient:
 
         r = httpx.post(
             url,
-            json=payload, headers=header, params={k: v for k, v in params.items() if v is not None}, files=files, timeout=30.0
+            json=payload,
+            headers=header,
+            params=params,
+            files=files,
+            content=content,
+            timeout=30.0,
         )
 
         try:
@@ -255,6 +283,8 @@ class SyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -262,6 +292,8 @@ class SyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -269,7 +301,15 @@ class SyncPhraseTMSClient:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
 
-        r = httpx.put(url, json=payload, headers=header, params=params, timeout=30.0)
+        r = httpx.put(
+            url,
+            json=payload,
+            headers=header,
+            params=params,
+            files=files,
+            content=content,
+            timeout=30.0,
+        )
 
         try:
             r.raise_for_status()
@@ -286,6 +326,8 @@ class SyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -293,6 +335,8 @@ class SyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -300,7 +344,15 @@ class SyncPhraseTMSClient:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
 
-        r = httpx.patch(url, json=payload, headers=header, params=params, timeout=30.0)
+        r = httpx.patch(
+            url,
+            json=payload,
+            headers=header,
+            params=params,
+            files=files,
+            content=content,
+            timeout=30.0,
+        )
 
         try:
             r.raise_for_status()
@@ -317,6 +369,8 @@ class SyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -324,6 +378,8 @@ class SyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         r = httpx.delete(url, headers=header, params=params, timeout=30.0)
 

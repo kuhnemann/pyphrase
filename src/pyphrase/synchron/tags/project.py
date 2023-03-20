@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pprint
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, List, Optional, Union
 
@@ -188,7 +187,6 @@ class ProjectOperations:
         r = self.client.get(
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
-        pprint.pprint(r)
 
         return PageDtoAbstractProjectDto(**r)
 

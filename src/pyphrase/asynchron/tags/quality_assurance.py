@@ -222,7 +222,6 @@ class QualityAssuranceOperations:
 
     async def getLqaProfileAuthors(self, phrase_token: Optional[str] = None) -> Any:
         """
-        TODO
         Get list of LQA profile authors
 
 

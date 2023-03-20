@@ -702,7 +702,9 @@ class JobOperations:
     def createJob(
         self,
         projectUid: str,
-        body: InputStream,
+        body: bytes,
+        fileName: str,
+        metadata: JobCreateRequestDto,
         phrase_token: Optional[str] = None,
     ) -> JobListDto:
         """
@@ -824,12 +826,23 @@ class JobOperations:
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs"
         params = {}
+        headers = {
+            "Memsource": metadata.json(exclude_none=True),
+            "Content-disposition": f"filename*=UTF-8''{fileName}",
+        }
+        payload = None
+        content = body
 
         files = None
-        payload = body
 
         r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
+            endpoint,
+            phrase_token,
+            params=params,
+            payload=payload,
+            content=content,
+            files=files,
+            headers=headers,
         )
 
         return JobListDto(**r)
@@ -1401,7 +1414,6 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> Any:
         """
-            TODO
             Download target file (async)
             This call will create async request for downloading target file with translation that can be downloaded when
         finished. This means even for other jobs that were created via 'split jobs' etc.

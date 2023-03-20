@@ -128,6 +128,7 @@ class AsyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
     ) -> bytes:
         token = phrase_token or self.token
         if token is None:
@@ -138,6 +139,8 @@ class AsyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         async with httpx.AsyncClient() as client:
             logger.info(url, params)
@@ -158,6 +161,8 @@ class AsyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> bytes:
         token = phrase_token or self.token
         if token is None:
@@ -168,6 +173,8 @@ class AsyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         if payload is not None and type(payload) != dict:
             try:
@@ -202,6 +209,7 @@ class AsyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -209,8 +217,11 @@ class AsyncPhraseTMSClient:
 
         if params is None:
             params = {}
+        params = {k: v for k, v in params.items() if v is not None}
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         async with httpx.AsyncClient() as client:
             logger.info(url)
@@ -230,6 +241,8 @@ class AsyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -237,6 +250,8 @@ class AsyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         if payload is not None and type(payload) != dict:
             try:
@@ -252,6 +267,7 @@ class AsyncPhraseTMSClient:
                 headers=header,
                 params=params,
                 files=files,
+                content=content,
                 timeout=30.0,
             )
         try:
@@ -268,6 +284,8 @@ class AsyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -275,6 +293,8 @@ class AsyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -284,7 +304,13 @@ class AsyncPhraseTMSClient:
 
         async with httpx.AsyncClient() as client:
             r = await client.put(
-                url, json=payload, headers=header, params=params, timeout=30.0
+                url,
+                json=payload,
+                headers=header,
+                params=params,
+                files=files,
+                content=content,
+                timeout=30.0,
             )
 
         try:
@@ -302,6 +328,8 @@ class AsyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
+        content: Optional[bytes] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -309,6 +337,8 @@ class AsyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
                 payload = payload.dict()
@@ -318,7 +348,13 @@ class AsyncPhraseTMSClient:
 
         async with httpx.AsyncClient() as client:
             r = await client.patch(
-                url, json=payload, headers=header, params=params, timeout=30.0
+                url,
+                json=payload,
+                headers=header,
+                params=params,
+                files=files,
+                content=content,
+                timeout=30.0,
             )
 
         try:
@@ -336,6 +372,7 @@ class AsyncPhraseTMSClient:
         params: Optional[dict] = None,
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
+        headers: Optional[dict] = None,
     ) -> dict:
         token = phrase_token or self.token
         if token is None:
@@ -343,6 +380,8 @@ class AsyncPhraseTMSClient:
 
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
+        if headers is not None:
+            header.update(headers)
 
         async with httpx.AsyncClient() as client:
             r = await client.delete(url, headers=header, params=params, timeout=30.0)

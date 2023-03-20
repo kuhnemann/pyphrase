@@ -218,7 +218,6 @@ class ScimOperations:
         phrase_token: Optional[str] = None,
     ) -> Any:
         """
-                TODO
                 Search users
                 This operation supports <a href="http://ldapwiki.com/wiki/SCIM%20Filtering" target="_blank">SCIM Filter</a>,
         <a href="http://ldapwiki.com/wiki/SCIM%20Search%20Request" target="_blank">SCIM attributes</a> and
