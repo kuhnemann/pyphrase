@@ -8,8 +8,16 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, confloat, conint, constr
+from pydantic import BaseModel as OriginalBaseModel
 
+from pydantic import Field, confloat, conint, constr
+
+
+class BaseModel(OriginalBaseModel):
+    class Config:
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat() + "Z"
+        }
 
 class Model(BaseModel):
     __root__: Any
@@ -85,7 +93,7 @@ class Action(Enum):
 
 class ErrorDetailDto(BaseModel):
     code: Optional[str] = Field(None, description="Code, e.g. NOT_FOUND.")
-    args: Optional[Dict[str, Dict[str, Any]]] = Field(
+    args: Optional[Dict] = Field(
         None, description='Related arguments, e.g. number => "hello world"'
     )
     message: Optional[str] = Field(None, description="Optional human-readable message.")
@@ -583,7 +591,7 @@ class ConnectorErrorDetailDto(BaseModel):
     code: Optional[str] = None
     message: Optional[str] = None
     messageCode: Optional[str] = None
-    args: Optional[Dict[str, Dict[str, Any]]] = None
+    args: Optional[Dict] = None
     skipPrefix: Optional[bool] = None
 
 
@@ -987,7 +995,7 @@ class MultilingualCsvSettingsDto(BaseModel):
     delimiterType: Optional[DelimiterType1] = Field(None, description="Default: COMMA")
     importRows: Optional[str] = None
     maxLenColumns: Optional[str] = None
-    allTargetColumns: Optional[Dict[str, str]] = Field(
+    allTargetColumns: Optional[Dict] = Field(
         None, description='Format: "language":"column"; example: {"en": "A", "sk": "B"}'
     )
     nonEmptySegmentAction: Optional[NonEmptySegmentAction] = None
@@ -1003,7 +1011,7 @@ class NonEmptySegmentAction1(Enum):
 
 class MultilingualXlsSettingsDto(BaseModel):
     sourceColumn: Optional[str] = None
-    targetColumns: Optional[Dict[str, str]] = Field(
+    targetColumns: Optional[Dict] = Field(
         None, description='Format: "language":"column"; example: {"en": "A", "sk": "B"}'
     )
     contextNoteColumn: Optional[str] = None
@@ -1027,7 +1035,7 @@ class NonEmptySegmentAction2(Enum):
 class MultilingualXmlSettingsDto(BaseModel):
     translatableElementsXPath: Optional[str] = None
     sourceElementsXPath: Optional[str] = None
-    targetElementsXPaths: Optional[Dict[str, str]] = Field(
+    targetElementsXPaths: Optional[Dict] = Field(
         None,
         description='\'Format: "language":"xpath";\n            example = \'{"en": "tuv[@lang=\'en\']/seg", "sk": "tuv[@lang=\'sk\']/seg"}',
     )
@@ -1673,7 +1681,7 @@ class MemTransMachineTranslateSettingsDto(BaseModel):
     mtQualityEstimation: Optional[bool] = None
     enabled: Optional[bool] = None
     glossarySupported: Optional[bool] = None
-    args: Optional[Dict[str, str]] = None
+    args: Optional[Dict] = None
     langs: Optional[MachineTranslateSettingsLangsDto] = None
     charCount: Optional[int] = Field(
         None, description="Unknown value is represented by value: -1"
@@ -1820,7 +1828,7 @@ class MachineTranslateSettingsDto(BaseModel):
     includeTags: Optional[bool] = None
     mtQualityEstimation: Optional[bool] = None
     enabled: Optional[bool] = None
-    args: Optional[Dict[str, str]] = None
+    args: Optional[Dict] = None  # TODO: fix this
     langs: Optional[MachineTranslateSettingsLangsDto] = None
 
 
@@ -1833,7 +1841,7 @@ class MachineTranslateSettingsPbmDto(BaseModel):
     default_: Optional[bool] = None
     includeTags: Optional[bool] = None
     mtQualityEstimation: Optional[bool] = None
-    args: Optional[Dict[str, str]] = None
+    args: Optional[Dict] = None  # TODO: update
     payForMtPossible: Optional[bool] = None
     payForMtActive: Optional[bool] = None
     charCount: Optional[int] = None
@@ -2135,7 +2143,7 @@ class VOID(QACheckDtoV2):
 
 
 class EditQASettingsDtoV2(BaseModel):
-    checks: Optional[List[Dict[str, Dict[str, Any]]]] = Field(
+    checks: Optional[List[Dict]] = Field(
         None,
         description="checks",
         example='\n        {\n            "ignorable": false,\n            "enabled": true,\n            "type": "VOID",\n            "instant": false,\n            "name": "emptyTarget"\n        },\n        {\n            "ignorable": false,\n            "enabled": true,\n            "value": 12,\n            "type": "NUMBER",\n            "name": "targetLength"\n        },\n        {\n            "ignorable": false,\n            "enabled": true,\n            "value": "ASAP, irony",\n            "type": "STRING",\n            "instant": true,\n            "name": "forbiddenStrings"\n        },\n        {\n            "enabled": true,\n            "profile": "jiris",\n            "ignorable": true,\n            "type": "MORAVIA",\n            "name": "moravia"\n        },\n        {\n            "rules": [\n                {\n                    "description": "Description",\n                    "sourceRegexp": ".+",\n                    "targetRegexp": ".+",\n                    "ignorable": true\n                },\n                {\n                    "description": "Description",\n                    "sourceRegexp": "i+",\n                    "targetRegexp": "e+",\n                    "ignorable": false\n                }\n            ],\n            "type": "REGEX",\n            "name": "regexp"\n        }\n    ',
@@ -2190,8 +2198,8 @@ class CostCenterReference(BaseModel):
 
 
 class MTSettingsPerLanguageReference(BaseModel):
-    targetLang: str = Field(
-        ..., description="mtSettings is set for whole project if targetLang == null"
+    targetLang: Optional[str] = Field(
+        None, description="mtSettings is set for whole project if targetLang == null"
     )
     machineTranslateSettings: Optional[MachineTranslateSettingsReference] = None
 
@@ -2545,7 +2553,7 @@ class ProjectWorkflowStepReference(BaseModel):
 
 class JobPartReadyReferences(BaseModel):
     jobs: List[UidReference] = Field(..., max_items=100, min_items=1)
-    getParts: Optional[Dict[str, Any]] = None
+    getParts: Optional[Dict] = None
 
 
 class SubstituteDto(BaseModel):
@@ -2719,7 +2727,7 @@ class JobUpdateSourceResponseDto(BaseModel):
 
 class JobPartDeleteReferences(BaseModel):
     jobs: List[UidReference] = Field(..., max_items=100, min_items=1)
-    getParts: Optional[Dict[str, Any]] = None
+    getParts: Optional[Dict] = None
 
 
 class Level(Enum):
@@ -3685,7 +3693,7 @@ class TermBaseSearchRequestDto(BaseModel):
 
 class MetadataTbDto(BaseModel):
     termsCount: Optional[int] = None
-    metadataByLanguage: Optional[Dict[str, int]] = None
+    metadataByLanguage: Optional[Dict] = None
 
 
 class SearchRequestDto(BaseModel):
@@ -4117,7 +4125,7 @@ class Action2(Enum):
 
 class ErrorDetailDtoV2(BaseModel):
     code: Optional[str] = Field(None, description="Code, e.g. NOT_FOUND.")
-    args: Optional[Dict[str, Dict[str, Any]]] = Field(
+    args: Optional[Dict] = Field(
         None, description='Related arguments, e.g. number => "hello world"'
     )
     message: Optional[str] = Field(None, description="Optional human-readable message.")
@@ -4212,7 +4220,7 @@ class GetFileRequestParamsDto(BaseModel):
 
 
 class Response(BaseModel):
-    context: Optional[Dict[str, Dict[str, Any]]] = None
+    context: Optional[Dict] = None
     done: Optional[bool] = None
     cancelled: Optional[bool] = None
 
@@ -4825,7 +4833,7 @@ class LoginOtherV3Dto(BaseModel):
 
 class ErrorDetailDtoV3(BaseModel):
     code: Optional[str] = Field(None, description="Code, e.g. NOT_FOUND.")
-    args: Optional[Dict[str, Dict[str, Any]]] = Field(
+    args: Optional[Dict] = Field(
         None, description='Related arguments, e.g. number => "hello world"'
     )
     message: Optional[str] = Field(None, description="Optional human-readable message.")
@@ -6636,7 +6644,7 @@ class JobPartReadyDeleteTranslationDto(BaseModel):
     workflowLevel: Optional[int] = Field(
         None, description="Specifies workflow level for all jobs"
     )
-    getParts: Optional[Dict[str, Any]] = None
+    getParts: Optional[Dict] = None
 
 
 class PseudoTranslateActionDtoV2(BaseModel):

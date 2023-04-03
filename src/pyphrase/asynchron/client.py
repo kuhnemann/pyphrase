@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Any, List, Optional
 
@@ -178,7 +179,8 @@ class AsyncPhraseTMSClient:
 
         if payload is not None and type(payload) != dict:
             try:
-                payload = payload.dict()
+                _p = payload.json(exclude_none=True)
+                payload = json.loads(_p)
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -233,7 +235,6 @@ class AsyncPhraseTMSClient:
             raise Exception from exc
         return resp.json()
 
-    @staticmethod
     async def post(
         self,
         path: str,
@@ -255,7 +256,8 @@ class AsyncPhraseTMSClient:
 
         if payload is not None and type(payload) != dict:
             try:
-                payload = payload.dict()
+                _p = payload.json(exclude_none=True)
+                payload = json.loads(_p)
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -297,7 +299,8 @@ class AsyncPhraseTMSClient:
             header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
-                payload = payload.dict()
+                _p = payload.json(exclude_none=True)
+                payload = json.loads(_p)
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -341,7 +344,8 @@ class AsyncPhraseTMSClient:
             header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
-                payload = payload.dict()
+                _p = payload.json(exclude_none=True)
+                payload = json.loads(_p)
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
