@@ -1,6 +1,7 @@
 import json
 import logging
-from typing import Any, List, Optional
+from json import JSONDecodeError
+from typing import Any, List, Optional, Union
 
 import httpx
 from httpx import HTTPStatusError
@@ -377,7 +378,7 @@ class AsyncPhraseTMSClient:
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
-    ) -> dict:
+    ) -> Optional[Union[dict, Any]]:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -396,4 +397,7 @@ class AsyncPhraseTMSClient:
             logger.exception(f"Call failed: {r.content} // {url} - {payload}")
             raise Exception from exc
 
-        return r.json()
+        try:
+            return r.json()
+        except JSONDecodeError:
+            return r.content

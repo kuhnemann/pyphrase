@@ -1,6 +1,7 @@
 import json
 import logging
-from typing import Any, List, Optional
+from json import JSONDecodeError
+from typing import Any, List, Optional, Union
 
 import httpx
 from httpx import HTTPStatusError
@@ -375,7 +376,7 @@ class SyncPhraseTMSClient:
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
         content: Optional[bytes] = None,
-    ) -> dict:
+    ) -> Optional[Union[dict, Any]]:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -392,5 +393,7 @@ class SyncPhraseTMSClient:
         except HTTPStatusError as exc:
             logger.exception(f"Call failed: {r.content} // {url} - {payload}")
             raise Exception from exc
-
-        return r.json()
+        try:
+            return r.json()
+        except JSONDecodeError:
+            return r.content
