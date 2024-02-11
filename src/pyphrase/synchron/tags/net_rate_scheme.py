@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -91,7 +90,7 @@ class NetRateSchemeOperations:
 
         :return: PageDtoNetRateSchemeReference
         """
-        endpoint = f"/api2/v1/netRateSchemes"
+        endpoint = "/api2/v1/netRateSchemes"
         params = {"pageNumber": pageNumber, "pageSize": pageSize}
 
         files = None
@@ -117,7 +116,7 @@ class NetRateSchemeOperations:
 
         :return: NetRateScheme
         """
-        endpoint = f"/api2/v1/netRateSchemes"
+        endpoint = "/api2/v1/netRateSchemes"
         params = {}
 
         files = None

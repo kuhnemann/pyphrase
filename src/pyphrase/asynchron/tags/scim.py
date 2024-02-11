@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
 
 from ...models.phrase_models import (
     ScimResourceSchema,
-    ScimResourceTypeSchema,
     ScimUserCoreDto,
     ServiceProviderConfigDto,
 )
@@ -17,29 +15,6 @@ from ...models.phrase_models import (
 class ScimOperations:
     def __init__(self, client: AsyncPhraseTMSClient):
         self.client = client
-
-    async def getSchemas(
-        self, phrase_token: Optional[str] = None
-    ) -> ScimResourceSchema:
-        """
-        Get supported SCIM Schemas
-
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: ScimResourceSchema
-        """
-        endpoint = f"/api2/v1/scim/Schemas"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = await self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return ScimResourceSchema(**r)
 
     async def getSchemaByUrn(
         self, schemaUrn: str, phrase_token: Optional[str] = None
@@ -76,7 +51,7 @@ class ScimOperations:
 
         :return: ServiceProviderConfigDto
         """
-        endpoint = f"/api2/v1/scim/ServiceProviderConfig"
+        endpoint = "/api2/v1/scim/ServiceProviderConfig"
         params = {}
 
         files = None
@@ -88,18 +63,16 @@ class ScimOperations:
 
         return ServiceProviderConfigDto(**r)
 
-    async def getResourceTypes(
-        self, phrase_token: Optional[str] = None
-    ) -> ScimResourceTypeSchema:
+    async def getResourceTypes(self, phrase_token: Optional[str] = None) -> dict:
         """
         List the types of SCIM Resources available
 
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: ScimResourceTypeSchema
+        :return:
         """
-        endpoint = f"/api2/v1/scim/ResourceTypes"
+        endpoint = "/api2/v1/scim/ResourceTypes"
         params = {}
 
         files = None
@@ -109,7 +82,28 @@ class ScimOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return ScimResourceTypeSchema(**r)
+        return r
+
+    async def getSchemas(self, phrase_token: Optional[str] = None) -> dict:
+        """
+        Get supported SCIM Schemas
+
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return:
+        """
+        endpoint = "/api2/v1/scim/Schemas"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = await self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return r
 
     async def getScimUser(
         self, userId: int, phrase_token: Optional[str] = None
@@ -216,7 +210,7 @@ class ScimOperations:
         startIndex: int = "1",
         count: int = "50",
         phrase_token: Optional[str] = None,
-    ) -> Any:
+    ) -> dict:
         """
                 Search users
                 This operation supports <a href="http://ldapwiki.com/wiki/SCIM%20Filtering" target="_blank">SCIM Filter</a>,
@@ -242,7 +236,7 @@ class ScimOperations:
 
                 :return:
         """
-        endpoint = f"/api2/v1/scim/Users"
+        endpoint = "/api2/v1/scim/Users"
         params = {
             "filter": filter,
             "attributes": attributes,
@@ -295,7 +289,7 @@ class ScimOperations:
 
                 :return: ScimUserCoreDto
         """
-        endpoint = f"/api2/v1/scim/Users"
+        endpoint = "/api2/v1/scim/Users"
         params = {}
 
         files = None

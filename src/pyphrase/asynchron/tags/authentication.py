@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -40,7 +39,7 @@ class AuthenticationOperations:
 
         :return: LoginResponseDto
         """
-        endpoint = f"/api2/v1/auth/login"
+        endpoint = "/api2/v1/auth/login"
         params = {}
 
         files = None
@@ -64,7 +63,7 @@ class AuthenticationOperations:
 
         :return: None
         """
-        endpoint = f"/api2/v1/auth/logout"
+        endpoint = "/api2/v1/auth/logout"
         params = {"token": token}
 
         files = None
@@ -88,7 +87,7 @@ class AuthenticationOperations:
 
         :return: LoginToSessionResponseDto
         """
-        endpoint = f"/api2/v1/auth/loginToSession"
+        endpoint = "/api2/v1/auth/loginToSession"
         params = {}
 
         files = None
@@ -112,7 +111,7 @@ class AuthenticationOperations:
 
         :return: LoginResponseDto
         """
-        endpoint = f"/api2/v1/auth/loginOther"
+        endpoint = "/api2/v1/auth/loginOther"
         params = {}
 
         files = None
@@ -133,7 +132,7 @@ class AuthenticationOperations:
 
         :return: LoginUserDto
         """
-        endpoint = f"/api2/v1/auth/whoAmI"
+        endpoint = "/api2/v1/auth/whoAmI"
         params = {}
 
         files = None
@@ -157,7 +156,7 @@ class AuthenticationOperations:
 
         :return: LoginResponseDto
         """
-        endpoint = f"/api2/v1/auth/loginWithGoogle"
+        endpoint = "/api2/v1/auth/loginWithGoogle"
         params = {}
 
         files = None
@@ -181,7 +180,7 @@ class AuthenticationOperations:
 
         :return: LoginResponseDto
         """
-        endpoint = f"/api2/v1/auth/loginWithApple/refreshToken"
+        endpoint = "/api2/v1/auth/loginWithApple/refreshToken"
         params = {}
 
         files = None
@@ -209,7 +208,7 @@ class AuthenticationOperations:
 
         :return: LoginResponseDto
         """
-        endpoint = f"/api2/v1/auth/loginWithApple/code"
+        endpoint = "/api2/v1/auth/loginWithApple/code"
         params = {"native": native}
 
         files = None
@@ -233,7 +232,7 @@ class AuthenticationOperations:
 
         :return: AppleTokenResponseDto
         """
-        endpoint = f"/api2/v1/auth/refreshAppleToken"
+        endpoint = "/api2/v1/auth/refreshAppleToken"
         params = {"token": token}
 
         files = None
@@ -257,7 +256,7 @@ class AuthenticationOperations:
 
         :return: LoginResponseV3Dto
         """
-        endpoint = f"/api2/v3/auth/login"
+        endpoint = "/api2/v3/auth/login"
         params = {}
 
         files = None
@@ -281,7 +280,7 @@ class AuthenticationOperations:
 
         :return: LoginToSessionResponseV3Dto
         """
-        endpoint = f"/api2/v3/auth/loginToSession"
+        endpoint = "/api2/v3/auth/loginToSession"
         params = {}
 
         files = None
@@ -305,7 +304,7 @@ class AuthenticationOperations:
 
         :return: LoginResponseV3Dto
         """
-        endpoint = f"/api2/v3/auth/loginOther"
+        endpoint = "/api2/v3/auth/loginOther"
         params = {}
 
         files = None

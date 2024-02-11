@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -11,6 +10,7 @@ from ...models.phrase_models import (
     LqaProfileDetailDto,
     LqaProfileReferenceDto,
     PageDtoLqaProfileReferenceDto,
+    PageDtoUserReference,
     QualityAssuranceBatchRunDtoV3,
     QualityAssuranceChecksDtoV2,
     QualityAssuranceResponseDto,
@@ -26,31 +26,77 @@ class QualityAssuranceOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def makeDefault(
+    def getLqaProfiles(
         self,
-        profileUid: str,
+        order: List[str] = None,
+        sort: List[str] = None,
+        dateCreated: str = None,
+        createdBy: str = None,
+        name: str = None,
+        pageNumber: int = "0",
+        pageSize: int = "20",
         phrase_token: Optional[str] = None,
-    ) -> LqaProfileReferenceDto:
+    ) -> PageDtoLqaProfileReferenceDto:
         """
-        Make LQA profile default
+        GET list LQA profiles
 
-        :param profileUid: string (required), path.
+        :param order: array (optional), query.
+        :param sort: array (optional), query.
+        :param dateCreated: string (optional), query. It is used for filter the list by date created.
+        :param createdBy: string (optional), query. It is used for filter the list by who created the profile.
+        :param name: string (optional), query. Name of LQA profiles, it is used for filter the list by name.
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 20.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: LqaProfileReferenceDto
+        :return: PageDtoLqaProfileReferenceDto
         """
-        endpoint = f"/api2/v1/lqa/profiles/{profileUid}/default"
-        params = {}
+        endpoint = "/api2/v1/lqa/profiles"
+        params = {
+            "name": name,
+            "createdBy": createdBy,
+            "dateCreated": dateCreated,
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+            "sort": sort,
+            "order": order,
+        }
 
         files = None
         payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoLqaProfileReferenceDto(**r)
+
+    def createLqaProfile(
+        self,
+        body: CreateLqaProfileDto,
+        phrase_token: Optional[str] = None,
+    ) -> LqaProfileDetailDto:
+        """
+        Create LQA profile
+
+        :param body: CreateLqaProfileDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: LqaProfileDetailDto
+        """
+        endpoint = "/api2/v1/lqa/profiles"
+        params = {}
+
+        files = None
+        payload = body
 
         r = self.client.post(
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return LqaProfileReferenceDto(**r)
+        return LqaProfileDetailDto(**r)
 
     def getLqaProfile(
         self,
@@ -132,42 +178,20 @@ class QualityAssuranceOperations:
 
         return
 
-    def getLqaProfiles(
+    def getLqaProfileDefaultValues(
         self,
-        order: List[str] = None,
-        sort: List[str] = None,
-        dateCreated: str = None,
-        createdBy: str = None,
-        name: str = None,
-        pageNumber: int = "0",
-        pageSize: int = "20",
         phrase_token: Optional[str] = None,
-    ) -> PageDtoLqaProfileReferenceDto:
+    ) -> LqaProfileDetailDto:
         """
-        GET list LQA profiles
+        Get LQA profile default values
 
-        :param order: array (optional), query.
-        :param sort: array (optional), query.
-        :param dateCreated: string (optional), query. It is used for filter the list by date created.
-        :param createdBy: string (optional), query. It is used for filter the list by who created the profile.
-        :param name: string (optional), query. Name of LQA profiles, it is used for filter the list by name.
-        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
-        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 20.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: PageDtoLqaProfileReferenceDto
+        :return: LqaProfileDetailDto
         """
-        endpoint = f"/api2/v1/lqa/profiles"
-        params = {
-            "name": name,
-            "createdBy": createdBy,
-            "dateCreated": dateCreated,
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-            "sort": sort,
-            "order": order,
-        }
+        endpoint = "/api2/v1/lqa/profiles/defaultValues"
+        params = {}
 
         files = None
         payload = None
@@ -176,33 +200,33 @@ class QualityAssuranceOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return PageDtoLqaProfileReferenceDto(**r)
+        return LqaProfileDetailDto(**r)
 
-    def createLqaProfile(
+    def makeDefault(
         self,
-        body: CreateLqaProfileDto,
+        profileUid: str,
         phrase_token: Optional[str] = None,
-    ) -> LqaProfileDetailDto:
+    ) -> LqaProfileReferenceDto:
         """
-        Create LQA profile
+        Make LQA profile default
 
-        :param body: CreateLqaProfileDto (required), body.
+        :param profileUid: string (required), path.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: LqaProfileDetailDto
+        :return: LqaProfileReferenceDto
         """
-        endpoint = f"/api2/v1/lqa/profiles"
+        endpoint = f"/api2/v1/lqa/profiles/{profileUid}/default"
         params = {}
 
         files = None
-        payload = body
+        payload = None
 
         r = self.client.post(
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return LqaProfileDetailDto(**r)
+        return LqaProfileReferenceDto(**r)
 
     def duplicateProfile(
         self,
@@ -233,7 +257,7 @@ class QualityAssuranceOperations:
     def getLqaProfileAuthors(
         self,
         phrase_token: Optional[str] = None,
-    ) -> Any:
+    ) -> dict:
         """
         Get list of LQA profile authors
 
@@ -242,7 +266,7 @@ class QualityAssuranceOperations:
 
         :return:
         """
-        endpoint = f"/api2/v1/lqa/profiles/authors"
+        endpoint = "/api2/v1/lqa/profiles/authors"
         params = {}
 
         files = None
@@ -253,36 +277,6 @@ class QualityAssuranceOperations:
         )
 
         return r
-
-    def updateIgnoredChecks(
-        self,
-        jobUid: str,
-        projectUid: str,
-        body: UpdateIgnoredChecksDto,
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-        Edit ignored checks
-
-        :param jobUid: string (required), path.
-        :param projectUid: string (required), path.
-        :param body: UpdateIgnoredChecksDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}/qualityAssurances/ignoreChecks"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
 
     def addIgnoredWarnings(
         self,
@@ -344,6 +338,64 @@ class QualityAssuranceOperations:
 
         return
 
+    def updateIgnoredChecks(
+        self,
+        jobUid: str,
+        projectUid: str,
+        body: UpdateIgnoredChecksDto,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Edit ignored checks
+
+        :param jobUid: string (required), path.
+        :param projectUid: string (required), path.
+        :param body: UpdateIgnoredChecksDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}/qualityAssurances/ignoreChecks"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
+
+    def getLqaProfileAuthorsV2(
+        self,
+        pageNumber: int = "0",
+        pageSize: int = "20",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoUserReference:
+        """
+        Get list of LQA profile authors
+
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 20.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PageDtoUserReference
+        """
+        endpoint = "/api2/v2/lqa/profiles/authors"
+        params = {"pageNumber": pageNumber, "pageSize": pageSize}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoUserReference(**r)
+
     def enabledQualityChecksForJob(
         self,
         jobUid: str,
@@ -399,6 +451,66 @@ class QualityAssuranceOperations:
         )
 
         return QualityAssuranceChecksDtoV2(**r)
+
+    def addIgnoredWarnings_1(
+        self,
+        projectUid: str,
+        body: UpdateIgnoredWarningsDto,
+        phrase_token: Optional[str] = None,
+    ) -> UpdateIgnoredWarningsDto:
+        """
+        Add ignored warnings
+
+        :param projectUid: string (required), path.
+        :param body: UpdateIgnoredWarningsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: UpdateIgnoredWarningsDto
+        """
+        endpoint = (
+            f"/api2/v2/projects/{projectUid}/jobs/qualityAssurances/ignoredWarnings"
+        )
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return UpdateIgnoredWarningsDto(**r)
+
+    def deleteIgnoredWarnings_1(
+        self,
+        projectUid: str,
+        body: UpdateIgnoredWarningsDto,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Delete ignored warnings
+
+        :param projectUid: string (required), path.
+        :param body: UpdateIgnoredWarningsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = (
+            f"/api2/v2/projects/{projectUid}/jobs/qualityAssurances/ignoredWarnings"
+        )
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.delete(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
 
     def runQaForJobPartV3(
         self,

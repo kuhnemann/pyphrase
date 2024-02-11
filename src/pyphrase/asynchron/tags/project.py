@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+import logging
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -11,14 +11,19 @@ from ...models.phrase_models import (
     AbstractProjectDtoV2,
     AddTargetLangDto,
     AddWorkflowStepsDto,
+    AdminProjectManager,
     AnalyseSettingsDto,
     AssignableTemplatesDto,
     AssignVendorDto,
     AsyncRequestWrapperV2Dto,
+    Buyer,
     CloneProjectDto,
+    CreateCustomFieldInstancesDto,
     CreateProjectFromTemplateAsyncV2Dto,
     CreateProjectFromTemplateV2Dto,
     CreateProjectV3Dto,
+    CustomFieldInstanceDto,
+    CustomFieldInstancesDto,
     EditProjectMTSettingsDto,
     EditProjectMTSettPerLangListDto,
     EditProjectSecuritySettingsDtoV2,
@@ -35,12 +40,13 @@ from ...models.phrase_models import (
     MTSettingsPerLanguageListDto,
     PageDtoAbstractProjectDto,
     PageDtoAnalyseReference,
+    PageDtoCustomFieldInstanceDto,
     PageDtoProviderReference,
     PageDtoQuoteDto,
     PageDtoTermBaseDto,
     PageDtoTransMemoryDto,
     PatchProjectDto,
-    PreTranslateSettingsV3Dto,
+    PreTranslateSettingsV4Dto,
     ProjectSecuritySettingsDtoV2,
     ProjectTermBaseListDto,
     ProjectTransMemoryListDtoV3,
@@ -53,32 +59,34 @@ from ...models.phrase_models import (
     SetProjectStatusDto,
     SetProjectTransMemoriesV3Dto,
     SetTermBaseDto,
+    UpdateCustomFieldInstanceDto,
+    UpdateCustomFieldInstancesDto,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class ProjectOperations:
     def __init__(self, client: AsyncPhraseTMSClient):
         self.client = client
 
-    async def assignLinguistsFromTemplateToJobParts(
+    async def addWorkflowSteps(
         self,
         projectUid: str,
-        templateUid: str,
-        body: JobPartReferences,
+        body: AddWorkflowStepsDto,
         phrase_token: Optional[str] = None,
-    ) -> JobPartsDto:
+    ) -> None:
         """
-        Assigns providers from template (specific jobs)
+        Add workflow steps
 
         :param projectUid: string (required), path.
-        :param templateUid: string (required), path.
-        :param body: JobPartReferences (required), body.
+        :param body: AddWorkflowStepsDto (required), body.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: JobPartsDto
+        :return: None
         """
-        endpoint = f"/api2/v1/projects/{projectUid}/applyTemplate/{templateUid}/assignProviders/forJobParts"
+        endpoint = f"/api2/v1/projects/{projectUid}/workflowSteps"
         params = {}
 
         files = None
@@ -88,119 +96,33 @@ class ProjectOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return JobPartsDto(**r)
-
-    async def listProjects(
-        self,
-        nameOrInternalId: str = None,
-        buyerId: int = None,
-        jobStatusGroup: str = None,
-        jobStatuses: List[str] = None,
-        ownerId: int = None,
-        sourceLangs: List[str] = None,
-        createdInLastHours: int = None,
-        dueInHours: int = None,
-        costCenterName: str = None,
-        costCenterId: int = None,
-        subDomainName: str = None,
-        subDomainId: int = None,
-        domainName: str = None,
-        domainId: int = None,
-        targetLangs: List[str] = None,
-        statuses: List[str] = None,
-        businessUnitName: str = None,
-        businessUnitId: int = None,
-        clientName: str = None,
-        clientId: int = None,
-        name: str = None,
-        pageNumber: int = "0",
-        pageSize: int = "50",
-        includeArchived: bool = "False",
-        archivedOnly: bool = "False",
-        phrase_token: Optional[str] = None,
-    ) -> PageDtoAbstractProjectDto:
-        """
-        List projects
-
-        :param nameOrInternalId: string (optional), query. Name or internal ID of project.
-        :param buyerId: integer (optional), query.
-        :param jobStatusGroup: string (optional), query. Allowed for linguists only.
-        :param jobStatuses: array (optional), query. Allowed for linguists only.
-        :param ownerId: integer (optional), query.
-        :param sourceLangs: array (optional), query.
-        :param createdInLastHours: integer (optional), query.
-        :param dueInHours: integer (optional), query. -1 for projects that are overdue.
-        :param costCenterName: string (optional), query.
-        :param costCenterId: integer (optional), query.
-        :param subDomainName: string (optional), query.
-        :param subDomainId: integer (optional), query.
-        :param domainName: string (optional), query.
-        :param domainId: integer (optional), query.
-        :param targetLangs: array (optional), query.
-        :param statuses: array (optional), query.
-        :param businessUnitName: string (optional), query.
-        :param businessUnitId: integer (optional), query.
-        :param clientName: string (optional), query.
-        :param clientId: integer (optional), query.
-        :param name: string (optional), query.
-        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
-        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
-        :param includeArchived: boolean (optional), query. List also archived projects.
-        :param archivedOnly: boolean (optional), query. List only archived projects, regardless of `includeArchived`.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PageDtoAbstractProjectDto
-        """
-        endpoint = f"/api2/v1/projects"
-        params = {
-            "name": name,
-            "clientId": clientId,
-            "clientName": clientName,
-            "businessUnitId": businessUnitId,
-            "businessUnitName": businessUnitName,
-            "statuses": statuses,
-            "targetLangs": targetLangs,
-            "domainId": domainId,
-            "domainName": domainName,
-            "subDomainId": subDomainId,
-            "subDomainName": subDomainName,
-            "costCenterId": costCenterId,
-            "costCenterName": costCenterName,
-            "dueInHours": dueInHours,
-            "createdInLastHours": createdInLastHours,
-            "sourceLangs": sourceLangs,
-            "ownerId": ownerId,
-            "jobStatuses": jobStatuses,
-            "jobStatusGroup": jobStatusGroup,
-            "buyerId": buyerId,
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-            "nameOrInternalId": nameOrInternalId,
-            "includeArchived": includeArchived,
-            "archivedOnly": archivedOnly,
-        }
-
-        files = None
-        payload = None
-
-        r = await self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PageDtoAbstractProjectDto(**r)
+        return
 
     async def getProject(
         self, projectUid: str, phrase_token: Optional[str] = None
-    ) -> AbstractProjectDto:
+    ) -> AdminProjectManager | Buyer | AbstractProjectDto:
         """
-        Get project
+                Get project
+                This API call retrieves information specific to a project.
 
-        :param projectUid: string (required), path.
+        The level of detail in the response varies based on the user's role. Admins, Project Managers, Vendors, Buyers, and
+        Linguists receive different responses, detailed below.
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        - Details about predefined system metadata, such as client, domain, subdomain, cost center, business unit, or status.
+        Note that [Custom Fields](#operation/getCustomField_1), if added to projects, are not included here and require
+        retrieval via a dedicated Custom Fields API call. Metadata exposed to Linguists or Vendors might differ from what's
+        visible to Admins or Project Managers.
+        - [Workflow Step](https://support.phrase.com/hc/en-us/articles/5709717879324-Workflow-TMS-) information, crucial for
+        user or vendor assignments through APIs. When projects are created, each workflow step's global ID instantiates into a
+        project-specific workflow step ID necessary for user assignments. Attempting to assign the global workflow step ID
+        (found under Settings or via Workflow Step APIs) results in an error, as only the project-specific step can be assigned.
+        - Progress information indicating the total number of jobs across all workflow steps in the project, alongside the
+        proportion of completed and overdue jobs.
+                :param projectUid: string (required), path.
 
-        :return: AbstractProjectDto
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: AbstractProjectDto
         """
         endpoint = f"/api2/v1/projects/{projectUid}"
         params = {}
@@ -212,7 +134,17 @@ class ProjectOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return AbstractProjectDto(**r)
+        user_role = r.get("userRole")
+        match user_role:
+            case "PROJECT_MANAGER":
+                return AdminProjectManager(**r)
+            case "BUYER":
+                return Buyer(**r)
+            case _:
+                logger.warning(
+                    f"{user_role=} - might want to check this because all data will not be available."
+                )
+                return AbstractProjectDto(**r)
 
     async def deleteProject(
         self, projectUid: str, purge: bool = "False", phrase_token: Optional[str] = None
@@ -264,6 +196,224 @@ class ProjectOperations:
 
         return AbstractProjectDto(**r)
 
+    async def listProjects(
+        self,
+        nameOrInternalId: str = None,
+        buyerId: int = None,
+        jobStatusGroup: str = None,
+        jobStatuses: List[str] = None,
+        ownerId: int = None,
+        sourceLangs: List[str] = None,
+        createdInLastHours: int = None,
+        dueInHours: int = None,
+        costCenterName: str = None,
+        costCenterId: int = None,
+        subDomainName: str = None,
+        subDomainId: int = None,
+        domainName: str = None,
+        domainId: int = None,
+        targetLangs: List[str] = None,
+        statuses: List[str] = None,
+        businessUnitName: str = None,
+        businessUnitId: int = None,
+        clientName: str = None,
+        clientId: int = None,
+        name: str = None,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        includeArchived: bool = "False",
+        archivedOnly: bool = "False",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoAbstractProjectDto:
+        """
+                List projects
+                API call to retrieve a paginated list of projects. Contains a subset of information contained in
+        [Get project](#operation/getProject) API call.
+
+        Utilize the query parameters below to refine the search criteria:
+
+        - **name** - The full project name or a portion of it. For instance, using `name=GUI` or `name=02` will find projects
+        named `GUI02`.
+        - **clientId** - The client's ID within the system, not interchangeable with its UID.
+        - **clientName** - The complete or partial name of the client. For example, using `clientName=GUI` or `clientName=02`
+        will find projects associated with the client `GUI02`.
+        - **businessUnitId** - The business unit's ID within the system, not interchangeable with its UID.
+        - **businessUnitName** - The complete or partial name of the business unit. For instance, using `businessUnitName=GUI`
+        or `businessUnitName=02` will find projects linked to the business unit `GUI02`.
+        - **statuses** - A list of project statuses. When adding multiple statuses, include each as a dedicated query
+        parameter, e.g., `statuses=ASSIGNED&statuses=COMPLETED`.
+        - **domainId** - The domain's ID within the system, not interchangeable with its UID.
+        - **domainName** - The complete or partial name of the domain. Using `domainName=GUI` or `domainName=02` will find
+        projects associated with the domain `GUI02`.
+        - **subDomainId** - The subdomain's ID within the system, not interchangeable with its UID.
+        - **subDomainName** - The complete or partial name of the subdomain. For example, using `subDomainName=GUI` or
+        `subDomainName=02` will find projects linked to the subdomain `GUI02`.
+        - **costCenterId** - The cost center's ID within the system, not interchangeable with its UID.
+        - **costCenterName** - The complete or partial name of the cost center. For instance, using `costCenterName=GUI` or
+        `costCenterName=02` will find projects associated with the cost center `GUI02`.
+        - **dueInHours** - Filter for jobs with due dates less than or equal to the specified number of hours.
+        - **createdInLastHours** - Filter for jobs created within the specified number of hours.
+        - **ownerId** - The user ID who owns the project within the system, not interchangeable with its UID.
+        - **jobStatuses** - A list of statuses for jobs within the projects. Include each status as a dedicated query parameter,
+        e.g., `jobStatuses=ASSIGNED&jobStatuses=COMPLETED`.
+        - **jobStatusGroup** - The name of the status group used to filter projects containing at least one job with the
+        specified status, similar to the status filter in the Projects list for a Linguist user.
+        - **buyerId** - The Buyer's ID.
+        - **pageNumber** - Indicates the desired page number (zero-based) to retrieve. The total number of pages is returned in
+        the `totalPages` field within each response.
+        - **pageSize** - Indicates the page size, affecting the `totalPages` retrieved in each response and potentially
+        influencing the number of iterations needed to obtain all projects.
+        - **nameOrInternalId** - Specify either the project name or Internal ID (the sequence number in the project list
+        displayed in the UI).
+        - **includeArchived** - A boolean parameter to include archived projects in the search.
+        - **archivedOnly** - A boolean search indicating whether only archived projects should be searched.
+                :param nameOrInternalId: string (optional), query. Name or internal ID of project.
+                :param buyerId: integer (optional), query.
+                :param jobStatusGroup: string (optional), query. Allowed for linguists only.
+                :param jobStatuses: array (optional), query. Allowed for linguists only.
+                :param ownerId: integer (optional), query.
+                :param sourceLangs: array (optional), query.
+                :param createdInLastHours: integer (optional), query.
+                :param dueInHours: integer (optional), query. -1 for projects that are overdue.
+                :param costCenterName: string (optional), query.
+                :param costCenterId: integer (optional), query.
+                :param subDomainName: string (optional), query.
+                :param subDomainId: integer (optional), query.
+                :param domainName: string (optional), query.
+                :param domainId: integer (optional), query.
+                :param targetLangs: array (optional), query.
+                :param statuses: array (optional), query.
+                :param businessUnitName: string (optional), query.
+                :param businessUnitId: integer (optional), query.
+                :param clientName: string (optional), query.
+                :param clientId: integer (optional), query.
+                :param name: string (optional), query.
+                :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+                :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+                :param includeArchived: boolean (optional), query. List also archived projects.
+                :param archivedOnly: boolean (optional), query. List only archived projects, regardless of `includeArchived`.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: PageDtoAbstractProjectDto
+        """
+        endpoint = "/api2/v1/projects"
+        params = {
+            "name": name,
+            "clientId": clientId,
+            "clientName": clientName,
+            "businessUnitId": businessUnitId,
+            "businessUnitName": businessUnitName,
+            "statuses": statuses,
+            "targetLangs": targetLangs,
+            "domainId": domainId,
+            "domainName": domainName,
+            "subDomainId": subDomainId,
+            "subDomainName": subDomainName,
+            "costCenterId": costCenterId,
+            "costCenterName": costCenterName,
+            "dueInHours": dueInHours,
+            "createdInLastHours": createdInLastHours,
+            "sourceLangs": sourceLangs,
+            "ownerId": ownerId,
+            "jobStatuses": jobStatuses,
+            "jobStatusGroup": jobStatusGroup,
+            "buyerId": buyerId,
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+            "nameOrInternalId": nameOrInternalId,
+            "includeArchived": includeArchived,
+            "archivedOnly": archivedOnly,
+        }
+
+        files = None
+        payload = None
+
+        r = await self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoAbstractProjectDto(**r)
+
+    async def assignableTemplates(
+        self, projectUid: str, phrase_token: Optional[str] = None
+    ) -> AssignableTemplatesDto:
+        """
+        List assignable templates
+
+        :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AssignableTemplatesDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/assignableTemplates"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = await self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AssignableTemplatesDto(**r)
+
+    async def assignLinguistsFromTemplate(
+        self, projectUid: str, templateUid: str, phrase_token: Optional[str] = None
+    ) -> JobPartsDto:
+        """
+        Assigns providers from template
+
+        :param projectUid: string (required), path.
+        :param templateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: JobPartsDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/applyTemplate/{templateUid}/assignProviders"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return JobPartsDto(**r)
+
+    async def assignLinguistsFromTemplateToJobParts(
+        self,
+        projectUid: str,
+        templateUid: str,
+        body: JobPartReferences,
+        phrase_token: Optional[str] = None,
+    ) -> JobPartsDto:
+        """
+        Assigns providers from template (specific jobs)
+
+        :param projectUid: string (required), path.
+        :param templateUid: string (required), path.
+        :param body: JobPartReferences (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: JobPartsDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/applyTemplate/{templateUid}/assignProviders/forJobParts"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return JobPartsDto(**r)
+
     async def addTargetLanguageToProject(
         self,
         projectUid: str,
@@ -281,34 +431,6 @@ class ProjectOperations:
         :return: None
         """
         endpoint = f"/api2/v1/projects/{projectUid}/targetLangs"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
-
-    async def addWorkflowSteps(
-        self,
-        projectUid: str,
-        body: AddWorkflowStepsDto,
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-        Add workflow steps
-
-        :param projectUid: string (required), path.
-        :param body: AddWorkflowStepsDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v1/projects/{projectUid}/workflowSteps"
         params = {}
 
         files = None
@@ -436,55 +558,6 @@ class ProjectOperations:
         )
 
         return
-
-    async def assignableTemplates(
-        self, projectUid: str, phrase_token: Optional[str] = None
-    ) -> AssignableTemplatesDto:
-        """
-        List assignable templates
-
-        :param projectUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AssignableTemplatesDto
-        """
-        endpoint = f"/api2/v1/projects/{projectUid}/assignableTemplates"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = await self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AssignableTemplatesDto(**r)
-
-    async def assignLinguistsFromTemplate(
-        self, projectUid: str, templateUid: str, phrase_token: Optional[str] = None
-    ) -> JobPartsDto:
-        """
-        Assigns providers from template
-
-        :param projectUid: string (required), path.
-        :param templateUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: JobPartsDto
-        """
-        endpoint = f"/api2/v1/projects/{projectUid}/applyTemplate/{templateUid}/assignProviders"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = await self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return JobPartsDto(**r)
 
     async def getFinancialSettings(
         self, projectUid: str, phrase_token: Optional[str] = None
@@ -829,6 +902,187 @@ class ProjectOperations:
 
         return FileNamingSettingsDto(**r)
 
+    async def getCustomFieldsPage(
+        self,
+        projectUid: str,
+        sortField: str = None,
+        modifiedBy: List[str] = None,
+        createdBy: List[str] = None,
+        pageNumber: int = "0",
+        pageSize: int = "20",
+        sortTrend: str = "ASC",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoCustomFieldInstanceDto:
+        """
+        Get custom fields of project (page)
+
+        :param projectUid: string (required), path.
+        :param sortField: string (optional), query. Sort by this field.
+        :param modifiedBy: array (optional), query. Filter by webhook updaters UIDs.
+        :param createdBy: array (optional), query. Filter by webhook creators UIDs.
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 20.
+        :param sortTrend: string (optional), query. Sort direction.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PageDtoCustomFieldInstanceDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/customFields"
+        params = {
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+            "createdBy": createdBy,
+            "modifiedBy": modifiedBy,
+            "sortField": sortField,
+            "sortTrend": sortTrend,
+        }
+
+        files = None
+        payload = None
+
+        r = await self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoCustomFieldInstanceDto(**r)
+
+    async def createCustomFields(
+        self,
+        projectUid: str,
+        body: CreateCustomFieldInstancesDto,
+        phrase_token: Optional[str] = None,
+    ) -> CustomFieldInstancesDto:
+        """
+        Create custom field instances
+
+        :param projectUid: string (required), path.
+        :param body: CreateCustomFieldInstancesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: CustomFieldInstancesDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/customFields"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return CustomFieldInstancesDto(**r)
+
+    async def editCustomFields(
+        self,
+        projectUid: str,
+        body: UpdateCustomFieldInstancesDto,
+        phrase_token: Optional[str] = None,
+    ) -> CustomFieldInstancesDto:
+        """
+        Edit custom fields of the project (batch)
+
+        :param projectUid: string (required), path.
+        :param body: UpdateCustomFieldInstancesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: CustomFieldInstancesDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/customFields"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return CustomFieldInstancesDto(**r)
+
+    async def getCustomField_1(
+        self, fieldInstanceUid: str, projectUid: str, phrase_token: Optional[str] = None
+    ) -> CustomFieldInstanceDto:
+        """
+        Get custom field of project
+
+        :param fieldInstanceUid: string (required), path.
+        :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: CustomFieldInstanceDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/customFields/{fieldInstanceUid}"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = await self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return CustomFieldInstanceDto(**r)
+
+    async def editCustomField(
+        self,
+        fieldInstanceUid: str,
+        projectUid: str,
+        body: UpdateCustomFieldInstanceDto,
+        phrase_token: Optional[str] = None,
+    ) -> CustomFieldInstanceDto:
+        """
+        Edit custom field of project
+
+        :param fieldInstanceUid: string (required), path.
+        :param projectUid: string (required), path.
+        :param body: UpdateCustomFieldInstanceDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: CustomFieldInstanceDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/customFields/{fieldInstanceUid}"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return CustomFieldInstanceDto(**r)
+
+    async def deleteCustomField_1(
+        self, fieldInstanceUid: str, projectUid: str, phrase_token: Optional[str] = None
+    ) -> dict:
+        """
+        Delete custom field of project
+
+        :param fieldInstanceUid: string (required), path.
+        :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return:
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/customFields/{fieldInstanceUid}"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = await self.client.delete(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return r
+
     async def getProjectTermBases(
         self, projectUid: str, phrase_token: Optional[str] = None
     ) -> ProjectTermBaseListDto:
@@ -1012,90 +1266,6 @@ class ProjectOperations:
 
         return SearchResponseListTmDto(**r)
 
-    async def setProjectQASettingsV2(
-        self,
-        projectUid: str,
-        body: EditQASettingsDtoV2,
-        phrase_token: Optional[str] = None,
-    ) -> QASettingsDtoV2:
-        """
-        Edit quality assurance settings
-
-        :param projectUid: string (required), path.
-        :param body: EditQASettingsDtoV2 (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: QASettingsDtoV2
-        """
-        endpoint = f"/api2/v2/projects/{projectUid}/qaSettings"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return QASettingsDtoV2(**r)
-
-    async def createProjectFromTemplateV2(
-        self,
-        templateUid: str,
-        body: CreateProjectFromTemplateV2Dto,
-        phrase_token: Optional[str] = None,
-    ) -> AbstractProjectDtoV2:
-        """
-        Create project from template
-
-        :param templateUid: string (required), path.
-        :param body: CreateProjectFromTemplateV2Dto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AbstractProjectDtoV2
-        """
-        endpoint = f"/api2/v2/projects/applyTemplate/{templateUid}"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AbstractProjectDtoV2(**r)
-
-    async def createProjectFromTemplateV2Async(
-        self,
-        templateUid: str,
-        body: CreateProjectFromTemplateAsyncV2Dto,
-        phrase_token: Optional[str] = None,
-    ) -> AsyncRequestWrapperV2Dto:
-        """
-        Create project from template (async)
-
-        :param templateUid: string (required), path.
-        :param body: CreateProjectFromTemplateAsyncV2Dto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AsyncRequestWrapperV2Dto
-        """
-        endpoint = f"/api2/v2/projects/applyTemplate/async/{templateUid}"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AsyncRequestWrapperV2Dto(**r)
-
     async def getProjectAccessSettingsV2(
         self, projectUid: str, phrase_token: Optional[str] = None
     ) -> ProjectSecuritySettingsDtoV2:
@@ -1204,6 +1374,90 @@ class ProjectOperations:
 
         return AbstractProjectDtoV2(**r)
 
+    async def setProjectQASettingsV2(
+        self,
+        projectUid: str,
+        body: EditQASettingsDtoV2,
+        phrase_token: Optional[str] = None,
+    ) -> QASettingsDtoV2:
+        """
+        Edit quality assurance settings
+
+        :param projectUid: string (required), path.
+        :param body: EditQASettingsDtoV2 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: QASettingsDtoV2
+        """
+        endpoint = f"/api2/v2/projects/{projectUid}/qaSettings"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return QASettingsDtoV2(**r)
+
+    async def createProjectFromTemplateV2(
+        self,
+        templateUid: str,
+        body: CreateProjectFromTemplateV2Dto,
+        phrase_token: Optional[str] = None,
+    ) -> AbstractProjectDtoV2:
+        """
+        Create project from template
+
+        :param templateUid: string (required), path.
+        :param body: CreateProjectFromTemplateV2Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AbstractProjectDtoV2
+        """
+        endpoint = f"/api2/v2/projects/applyTemplate/{templateUid}"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AbstractProjectDtoV2(**r)
+
+    async def createProjectFromTemplateV2Async(
+        self,
+        templateUid: str,
+        body: CreateProjectFromTemplateAsyncV2Dto,
+        phrase_token: Optional[str] = None,
+    ) -> AsyncRequestWrapperV2Dto:
+        """
+        Create project from template (async)
+
+        :param templateUid: string (required), path.
+        :param body: CreateProjectFromTemplateAsyncV2Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AsyncRequestWrapperV2Dto
+        """
+        endpoint = f"/api2/v2/projects/applyTemplate/async/{templateUid}"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AsyncRequestWrapperV2Dto(**r)
+
     async def listProviders_3(
         self, projectUid: str, phrase_token: Optional[str] = None
     ) -> ProviderListDtoV2:
@@ -1227,82 +1481,6 @@ class ProjectOperations:
         )
 
         return ProviderListDtoV2(**r)
-
-    async def getPreTranslateSettingsForProject_2(
-        self, projectUid: str, phrase_token: Optional[str] = None
-    ) -> PreTranslateSettingsV3Dto:
-        """
-        Get Pre-translate settings
-
-        :param projectUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PreTranslateSettingsV3Dto
-        """
-        endpoint = f"/api2/v3/projects/{projectUid}/preTranslateSettings"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = await self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PreTranslateSettingsV3Dto(**r)
-
-    async def editProjectPreTranslateSettings_2(
-        self,
-        projectUid: str,
-        body: PreTranslateSettingsV3Dto,
-        phrase_token: Optional[str] = None,
-    ) -> PreTranslateSettingsV3Dto:
-        """
-        Update Pre-translate settings
-
-        :param projectUid: string (required), path.
-        :param body: PreTranslateSettingsV3Dto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PreTranslateSettingsV3Dto
-        """
-        endpoint = f"/api2/v3/projects/{projectUid}/preTranslateSettings"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PreTranslateSettingsV3Dto(**r)
-
-    async def createProjectV3(
-        self, body: CreateProjectV3Dto, phrase_token: Optional[str] = None
-    ) -> AbstractProjectDtoV2:
-        """
-        Create project
-
-        :param body: CreateProjectV3Dto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AbstractProjectDtoV2
-        """
-        endpoint = f"/api2/v3/projects"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AbstractProjectDtoV2(**r)
 
     async def listByProjectV3(
         self,
@@ -1351,6 +1529,30 @@ class ProjectOperations:
         )
 
         return PageDtoAnalyseReference(**r)
+
+    async def createProjectV3(
+        self, body: CreateProjectV3Dto, phrase_token: Optional[str] = None
+    ) -> AbstractProjectDtoV2:
+        """
+        Create project
+
+        :param body: CreateProjectV3Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AbstractProjectDtoV2
+        """
+        endpoint = "/api2/v3/projects"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AbstractProjectDtoV2(**r)
 
     async def getProjectTransMemories_1(
         self,
@@ -1411,3 +1613,55 @@ class ProjectOperations:
         )
 
         return ProjectTransMemoryListDtoV3(**r)
+
+    async def getProjectPreTranslateSettingsV4(
+        self, projectUid: str, phrase_token: Optional[str] = None
+    ) -> PreTranslateSettingsV4Dto:
+        """
+        Get project pre-translate settings
+
+        :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PreTranslateSettingsV4Dto
+        """
+        endpoint = f"/api2/v4/projects/{projectUid}/preTranslateSettings"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = await self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PreTranslateSettingsV4Dto(**r)
+
+    async def updateProjectPreTranslateSettingsV4(
+        self,
+        projectUid: str,
+        body: PreTranslateSettingsV4Dto,
+        phrase_token: Optional[str] = None,
+    ) -> PreTranslateSettingsV4Dto:
+        """
+        Update project pre-translate settings
+
+        :param projectUid: string (required), path.
+        :param body: PreTranslateSettingsV4Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PreTranslateSettingsV4Dto
+        """
+        endpoint = f"/api2/v4/projects/{projectUid}/preTranslateSettings"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PreTranslateSettingsV4Dto(**r)

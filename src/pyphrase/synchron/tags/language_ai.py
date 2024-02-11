@@ -5,35 +5,33 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
 
-from ...models.phrase_models import Response, WorkflowChangesDto
+from ...models.phrase_models import ConsumedMtusDto
 
 
-class WorkflowChangesOperations:
+class LanguageAiOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
 
-    def downloadWorkflowChanges(
+    def getConsumedMtus(
         self,
-        body: WorkflowChangesDto,
         phrase_token: Optional[str] = None,
-    ) -> Response:
+    ) -> ConsumedMtusDto:
         """
-        Download workflow changes report
+        Total amount of consumed MTUs in the current month
 
-        :param body: WorkflowChangesDto (required), body.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: Response
+        :return: ConsumedMtusDto
         """
-        endpoint = "/api2/v2/jobs/workflowChanges"
+        endpoint = "/api2/v1/mtuUsage"
         params = {}
 
         files = None
-        payload = body
+        payload = None
 
-        r = self.client.post(
+        r = self.client.get(
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return Response(**r)
+        return ConsumedMtusDto(**r)

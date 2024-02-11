@@ -8,6 +8,7 @@ from .client import ClientOperations
 from .connector import ConnectorOperations
 from .conversations import ConversationsOperations
 from .cost_center import CostCenterOperations
+from .custom_fields import CustomFieldsOperations
 from .custom_file_type import CustomFileTypeOperations
 from .domain import DomainOperations
 from .email_template import EmailTemplateOperations
@@ -15,6 +16,7 @@ from .file import FileOperations
 from .glossary import GlossaryOperations
 from .import_settings import ImportSettingsOperations
 from .job import JobOperations
+from .language_ai import LanguageAiOperations
 from .language_quality_assessment import LanguageQualityAssessmentOperations
 from .machine_translation import MachineTranslationOperations
 from .machine_translation_settings import MachineTranslationSettingsOperations
@@ -40,6 +42,7 @@ from .vendor import VendorOperations
 from .webhook import WebhookOperations
 from .workflow_changes import WorkflowChangesOperations
 from .workflow_step import WorkflowStepOperations
+from .xml_assistant import XmlAssistantOperations
 
 all = [
     AdditionalWorkflowStepOperations,
@@ -52,6 +55,7 @@ all = [
     ConnectorOperations,
     ConversationsOperations,
     CostCenterOperations,
+    CustomFieldsOperations,
     CustomFileTypeOperations,
     NetRateSchemeOperations,
     DomainOperations,
@@ -66,6 +70,7 @@ all = [
     MachineTranslationSettingsOperations,
     MachineTranslationOperations,
     MappingOperations,
+    LanguageAiOperations,
     ImportSettingsOperations,
     ProjectOperations,
     TranslationOperations,
@@ -82,6 +87,7 @@ all = [
     VendorOperations,
     WebhookOperations,
     WorkflowStepOperations,
+    XmlAssistantOperations,
     WorkflowChangesOperations,
     ProviderOperations,
 ]

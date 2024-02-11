@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -85,7 +84,7 @@ class QuoteOperations:
 
         :return: EmailQuotesResponseDto
         """
-        endpoint = f"/api2/v1/quotes/email"
+        endpoint = "/api2/v1/quotes/email"
         params = {}
 
         files = None
@@ -111,7 +110,7 @@ class QuoteOperations:
 
         :return: QuoteV2Dto
         """
-        endpoint = f"/api2/v2/quotes"
+        endpoint = "/api2/v2/quotes"
         params = {}
 
         files = None

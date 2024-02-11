@@ -1,35 +1,97 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
 
 from ...models.phrase_models import (
     AbstractAnalyseSettingsDto,
+    CreateCustomFieldInstancesDto,
+    CustomFieldInstanceDto,
+    CustomFieldInstancesDto,
     EditAnalyseSettingsDto,
     EditProjectSecuritySettingsDtoV2,
+    EditQASettingsDtoV2,
+    FileImportSettingsCreateDto,
     FileImportSettingsDto,
     MTSettingsPerLanguageListDto,
+    PageDtoCustomFieldInstanceDto,
     PageDtoProjectTemplateReference,
     PageDtoTransMemoryDto,
-    PreTranslateSettingsV3Dto,
+    PreTranslateSettingsV4Dto,
     ProjectSecuritySettingsDtoV2,
+    ProjectTemplate,
     ProjectTemplateCreateActionDto,
-    ProjectTemplateDto,
     ProjectTemplateEditDto,
     ProjectTemplateTermBaseListDto,
     ProjectTemplateTransMemoryListDtoV3,
     ProjectTemplateTransMemoryListV2Dto,
+    QASettingsDtoV2,
     SetProjectTemplateTermBaseDto,
     SetProjectTemplateTransMemoriesV2Dto,
+    UpdateCustomFieldInstanceDto,
+    UpdateCustomFieldInstancesDto,
 )
 
 
 class ProjectTemplateOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
+
+    def getProjectTemplateQASettings(
+        self,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> QASettingsDtoV2:
+        """
+        Get quality assurance settings
+
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: QASettingsDtoV2
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/qaSettings"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return QASettingsDtoV2(**r)
+
+    def setProjectTemplateQASettings(
+        self,
+        projectTemplateUid: str,
+        body: EditQASettingsDtoV2,
+        phrase_token: Optional[str] = None,
+    ) -> QASettingsDtoV2:
+        """
+        Edit quality assurance settings
+
+        :param projectTemplateUid: string (required), path.
+        :param body: EditQASettingsDtoV2 (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: QASettingsDtoV2
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/qaSettings"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return QASettingsDtoV2(**r)
 
     def relevantTransMemories(
         self,
@@ -102,27 +164,53 @@ class ProjectTemplateOperations:
         phrase_token: Optional[str] = None,
     ) -> PageDtoProjectTemplateReference:
         """
-        List project templates
+                List project templates
+                API call to list [project templates](https://support.phrase.com/hc/en-us/articles/5709647439772-Project-Templates-TMS-).
 
-        :param businessUnitName: string (optional), query.
-        :param costCenterName: string (optional), query.
-        :param costCenterId: integer (optional), query.
-        :param subDomainName: string (optional), query.
-        :param domainName: string (optional), query.
-        :param ownerUid: string (optional), query.
-        :param clientName: string (optional), query.
-        :param clientId: integer (optional), query.
-        :param name: string (optional), query.
-        :param sort: string (optional), query.
-        :param direction: string (optional), query.
-        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
-        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+        Use the query parameters below to refine your search criteria for project templates:
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        - **name** - The full project template name or a portion of it. For example, using `name=GUI` or `name=02`
+        will locate project templates named `GUI02`.
+        - **clientId** - The client's ID within the system, not interchangeable with its UID.
+        - **clientName** - The complete or partial name of the client. For instance, using `clientName=GUI` or `clientName=02`
+        will find project templates associated with the client `GUI02`.
+        - **ownerUid** - The user UID who owns the project template within the system, interchangeable with its ID.
+        - **domainName** - The complete or partial name of the domain. Using `domainName=GUI` or `domainName=02` will find
+        project templates associated with the domain `GUI02`.
+        - **subDomainName** - The complete or partial name of the subdomain. For instance, using `subDomainName=GUI` or
+        `subDomainName=02` will locate project templates linked to the subdomain `GUI02`.
+        - **costCenterId** - The cost center's ID within the system, not interchangeable with its UID.
+        - **costCenterName** - The complete or partial name of the cost center. For example, using `costCenterName=GUI` or
+        `costCenterName=02` will find project templates associated with the cost center `GUI02`.
+        - **businessUnitName** - The complete or partial name of the business unit. For instance, using `businessUnitName=GUI`
+        or `businessUnitName=02` will locate project templates linked to the business unit `GUI02`.
+        - **sort** - Determines if the resulting list of project templates should be sorted by their names or the date they
+        were created. This field supports either `dateCreated` or `templateName` as values.
+        - **direction** - Indicates the sorting order for the resulting list by using either `asc` (ascending) or `desc`
+        (descending) values.
+        - **pageNumber** - Indicates the desired page number (zero-based) to retrieve. The total number of pages is returned in
+        the `totalPages` field within each response.
+        - **pageSize** - Indicates the page size, affecting the `totalPages` retrieved in each response and potentially
+        impacting the number of iterations needed to obtain all project templates.
+                :param businessUnitName: string (optional), query.
+                :param costCenterName: string (optional), query.
+                :param costCenterId: integer (optional), query.
+                :param subDomainName: string (optional), query.
+                :param domainName: string (optional), query.
+                :param ownerUid: string (optional), query.
+                :param clientName: string (optional), query.
+                :param clientId: integer (optional), query.
+                :param name: string (optional), query.
+                :param sort: string (optional), query.
+                :param direction: string (optional), query.
+                :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+                :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
 
-        :return: PageDtoProjectTemplateReference
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: PageDtoProjectTemplateReference
         """
-        endpoint = f"/api2/v1/projectTemplates"
+        endpoint = "/api2/v1/projectTemplates"
         params = {
             "name": name,
             "clientId": clientId,
@@ -152,7 +240,7 @@ class ProjectTemplateOperations:
         self,
         body: ProjectTemplateCreateActionDto,
         phrase_token: Optional[str] = None,
-    ) -> ProjectTemplateDto:
+    ) -> ProjectTemplate:
         """
         Create project template
 
@@ -160,9 +248,9 @@ class ProjectTemplateOperations:
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: ProjectTemplateDto
+        :return: ProjectTemplate
         """
-        endpoint = f"/api2/v1/projectTemplates"
+        endpoint = "/api2/v1/projectTemplates"
         params = {}
 
         files = None
@@ -172,7 +260,221 @@ class ProjectTemplateOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return ProjectTemplateDto(**r)
+        return ProjectTemplate(**r)
+
+    def getProjectTemplate(
+        self,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> ProjectTemplate:
+        """
+        Get project template
+        Note: importSettings in response is deprecated and will be always null
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: ProjectTemplate
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return ProjectTemplate(**r)
+
+    def editProjectTemplate(
+        self,
+        projectTemplateUid: str,
+        body: ProjectTemplateEditDto,
+        phrase_token: Optional[str] = None,
+    ) -> ProjectTemplate:
+        """
+        Edit project template
+
+        :param projectTemplateUid: string (required), path.
+        :param body: ProjectTemplateEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: ProjectTemplate
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return ProjectTemplate(**r)
+
+    def deleteProjectTemplate(
+        self,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Delete project template
+
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.delete(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
+
+    def getAnalyseSettingsForProjectTemplate(
+        self,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> AbstractAnalyseSettingsDto:
+        """
+        Get analyse settings
+
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AbstractAnalyseSettingsDto
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/analyseSettings"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AbstractAnalyseSettingsDto(**r)
+
+    def updateAnalyseSettingsForProjectTemplate(
+        self,
+        projectTemplateUid: str,
+        body: EditAnalyseSettingsDto,
+        phrase_token: Optional[str] = None,
+    ) -> AbstractAnalyseSettingsDto:
+        """
+        Edit analyse settings
+
+        :param projectTemplateUid: string (required), path.
+        :param body: EditAnalyseSettingsDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AbstractAnalyseSettingsDto
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/analyseSettings"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AbstractAnalyseSettingsDto(**r)
+
+    def getImportSettingsForProjectTemplate(
+        self,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> FileImportSettingsDto:
+        """
+        Get import settings
+
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: FileImportSettingsDto
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/importSettings"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return FileImportSettingsDto(**r)
+
+    def editProjectTemplateImportSettings(
+        self,
+        projectTemplateUid: str,
+        body: FileImportSettingsCreateDto,
+        phrase_token: Optional[str] = None,
+    ) -> FileImportSettingsDto:
+        """
+        Edit project template import settings
+
+        :param projectTemplateUid: string (required), path.
+        :param body: FileImportSettingsCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: FileImportSettingsDto
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/importSettings"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return FileImportSettingsDto(**r)
+
+    def getMachineTranslateSettingsForProjectTemplate(
+        self,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> MTSettingsPerLanguageListDto:
+        """
+        Get project template machine translate settings
+
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: MTSettingsPerLanguageListDto
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/mtSettings"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return MTSettingsPerLanguageListDto(**r)
 
     def getProjectTemplateTermBases(
         self,
@@ -282,22 +584,41 @@ class ProjectTemplateOperations:
 
         return ProjectSecuritySettingsDtoV2(**r)
 
-    def getProjectTemplate(
+    def getCustomFieldsPage_1(
         self,
         projectTemplateUid: str,
+        sortField: str = None,
+        modifiedBy: List[str] = None,
+        createdBy: List[str] = None,
+        pageNumber: int = "0",
+        pageSize: int = "20",
+        sortTrend: str = "ASC",
         phrase_token: Optional[str] = None,
-    ) -> ProjectTemplateDto:
+    ) -> PageDtoCustomFieldInstanceDto:
         """
-        Get project template
-        Note: importSettings in response is deprecated and will be always null
+        Get custom fields of project template (page)
+
         :param projectTemplateUid: string (required), path.
+        :param sortField: string (optional), query. Sort by this field.
+        :param modifiedBy: array (optional), query. Filter by webhook updaters UIDs.
+        :param createdBy: array (optional), query. Filter by webhook creators UIDs.
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 20.
+        :param sortTrend: string (optional), query. Sort direction.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: ProjectTemplateDto
+        :return: PageDtoCustomFieldInstanceDto
         """
-        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}"
-        params = {}
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/customFields"
+        params = {
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+            "createdBy": createdBy,
+            "modifiedBy": modifiedBy,
+            "sortField": sortField,
+            "sortTrend": sortTrend,
+        }
 
         files = None
         payload = None
@@ -306,25 +627,53 @@ class ProjectTemplateOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return ProjectTemplateDto(**r)
+        return PageDtoCustomFieldInstanceDto(**r)
 
-    def editProjectTemplate(
+    def createCustomFields_1(
         self,
         projectTemplateUid: str,
-        body: ProjectTemplateEditDto,
+        body: CreateCustomFieldInstancesDto,
         phrase_token: Optional[str] = None,
-    ) -> ProjectTemplateDto:
+    ) -> CustomFieldInstancesDto:
         """
-        Edit project template
+        Create custom field instances
 
         :param projectTemplateUid: string (required), path.
-        :param body: ProjectTemplateEditDto (required), body.
+        :param body: CreateCustomFieldInstancesDto (required), body.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: ProjectTemplateDto
+        :return: CustomFieldInstancesDto
         """
-        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}"
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/customFields"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return CustomFieldInstancesDto(**r)
+
+    def editCustomFields_1(
+        self,
+        projectTemplateUid: str,
+        body: UpdateCustomFieldInstancesDto,
+        phrase_token: Optional[str] = None,
+    ) -> CustomFieldInstancesDto:
+        """
+        Edit custom fields of the project template (batch)
+
+        :param projectTemplateUid: string (required), path.
+        :param body: UpdateCustomFieldInstancesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: CustomFieldInstancesDto
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/customFields"
         params = {}
 
         files = None
@@ -334,23 +683,83 @@ class ProjectTemplateOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return ProjectTemplateDto(**r)
+        return CustomFieldInstancesDto(**r)
 
-    def deleteProjectTemplate(
+    def getCustomField_2(
         self,
+        fieldInstanceUid: str,
         projectTemplateUid: str,
         phrase_token: Optional[str] = None,
-    ) -> None:
+    ) -> CustomFieldInstanceDto:
         """
-        Delete project template
+        Get custom field of project template
 
+        :param fieldInstanceUid: string (required), path.
         :param projectTemplateUid: string (required), path.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: None
+        :return: CustomFieldInstanceDto
         """
-        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}"
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/customFields/{fieldInstanceUid}"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return CustomFieldInstanceDto(**r)
+
+    def editCustomField_1(
+        self,
+        fieldInstanceUid: str,
+        projectTemplateUid: str,
+        body: UpdateCustomFieldInstanceDto,
+        phrase_token: Optional[str] = None,
+    ) -> CustomFieldInstanceDto:
+        """
+        Edit custom field of project template
+
+        :param fieldInstanceUid: string (required), path.
+        :param projectTemplateUid: string (required), path.
+        :param body: UpdateCustomFieldInstanceDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: CustomFieldInstanceDto
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/customFields/{fieldInstanceUid}"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return CustomFieldInstanceDto(**r)
+
+    def deleteCustomField_2(
+        self,
+        fieldInstanceUid: str,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> dict:
+        """
+        Delete custom field of project template
+
+        :param fieldInstanceUid: string (required), path.
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return:
+        """
+        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/customFields/{fieldInstanceUid}"
         params = {}
 
         files = None
@@ -360,113 +769,7 @@ class ProjectTemplateOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return
-
-    def getAnalyseSettingsForProjectTemplate(
-        self,
-        projectTemplateUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> AbstractAnalyseSettingsDto:
-        """
-        Get analyse settings
-
-        :param projectTemplateUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AbstractAnalyseSettingsDto
-        """
-        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/analyseSettings"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AbstractAnalyseSettingsDto(**r)
-
-    def updateAnalyseSettingsForProjectTemplate(
-        self,
-        projectTemplateUid: str,
-        body: EditAnalyseSettingsDto,
-        phrase_token: Optional[str] = None,
-    ) -> AbstractAnalyseSettingsDto:
-        """
-        Edit analyse settings
-
-        :param projectTemplateUid: string (required), path.
-        :param body: EditAnalyseSettingsDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AbstractAnalyseSettingsDto
-        """
-        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/analyseSettings"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AbstractAnalyseSettingsDto(**r)
-
-    def getImportSettingsForProjectTemplate(
-        self,
-        projectTemplateUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> FileImportSettingsDto:
-        """
-        Get import settings
-
-        :param projectTemplateUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: FileImportSettingsDto
-        """
-        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/importSettings"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return FileImportSettingsDto(**r)
-
-    def getMachineTranslateSettingsForProjectTemplate(
-        self,
-        projectTemplateUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> MTSettingsPerLanguageListDto:
-        """
-        Get project template machine translate settings
-
-        :param projectTemplateUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: MTSettingsPerLanguageListDto
-        """
-        endpoint = f"/api2/v1/projectTemplates/{projectTemplateUid}/mtSettings"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return MTSettingsPerLanguageListDto(**r)
+        return r
 
     def setProjectTemplateTransMemoriesV2(
         self,
@@ -498,64 +801,6 @@ class ProjectTemplateOperations:
 
         return ProjectTemplateTransMemoryListV2Dto(**r)
 
-    def getPreTranslateSettingsForProjectTemplate_2(
-        self,
-        projectTemplateUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> PreTranslateSettingsV3Dto:
-        """
-        Get Pre-translate settings
-
-        :param projectTemplateUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PreTranslateSettingsV3Dto
-        """
-        endpoint = (
-            f"/api2/v3/projectTemplates/{projectTemplateUid}/preTranslateSettings"
-        )
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PreTranslateSettingsV3Dto(**r)
-
-    def updatePreTranslateSettingsForProjectTemplate_2(
-        self,
-        projectTemplateUid: str,
-        body: PreTranslateSettingsV3Dto,
-        phrase_token: Optional[str] = None,
-    ) -> PreTranslateSettingsV3Dto:
-        """
-        Update Pre-translate settings
-
-        :param projectTemplateUid: string (required), path.
-        :param body: PreTranslateSettingsV3Dto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PreTranslateSettingsV3Dto
-        """
-        endpoint = (
-            f"/api2/v3/projectTemplates/{projectTemplateUid}/preTranslateSettings"
-        )
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PreTranslateSettingsV3Dto(**r)
-
     def getProjectTemplateTransMemories_2(
         self,
         projectTemplateUid: str,
@@ -585,3 +830,61 @@ class ProjectTemplateOperations:
         )
 
         return ProjectTemplateTransMemoryListDtoV3(**r)
+
+    def getProjectTemplatePreTranslateSettingsV4(
+        self,
+        projectTemplateUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> PreTranslateSettingsV4Dto:
+        """
+        Get project template pre-translate settings
+
+        :param projectTemplateUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PreTranslateSettingsV4Dto
+        """
+        endpoint = (
+            f"/api2/v4/projectTemplates/{projectTemplateUid}/preTranslateSettings"
+        )
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PreTranslateSettingsV4Dto(**r)
+
+    def updateProjectTemplatePreTranslateSettingsV4(
+        self,
+        projectTemplateUid: str,
+        body: PreTranslateSettingsV4Dto,
+        phrase_token: Optional[str] = None,
+    ) -> PreTranslateSettingsV4Dto:
+        """
+        Update project template pre-translate settings
+
+        :param projectTemplateUid: string (required), path.
+        :param body: PreTranslateSettingsV4Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PreTranslateSettingsV4Dto
+        """
+        endpoint = (
+            f"/api2/v4/projectTemplates/{projectTemplateUid}/preTranslateSettings"
+        )
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PreTranslateSettingsV4Dto(**r)

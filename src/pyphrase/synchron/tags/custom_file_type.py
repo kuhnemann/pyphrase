@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -35,7 +34,7 @@ class CustomFileTypeOperations:
 
         :return: PageDtoCustomFileTypeDto
         """
-        endpoint = f"/api2/v1/customFileTypes"
+        endpoint = "/api2/v1/customFileTypes"
         params = {"pageNumber": pageNumber, "pageSize": pageSize}
 
         files = None
@@ -61,7 +60,7 @@ class CustomFileTypeOperations:
 
         :return: CustomFileTypeDto
         """
-        endpoint = f"/api2/v1/customFileTypes"
+        endpoint = "/api2/v1/customFileTypes"
         params = {}
 
         files = None
@@ -87,7 +86,7 @@ class CustomFileTypeOperations:
 
         :return: None
         """
-        endpoint = f"/api2/v1/customFileTypes"
+        endpoint = "/api2/v1/customFileTypes"
         params = {}
 
         files = None
@@ -122,7 +121,6 @@ class CustomFileTypeOperations:
         r = self.client.get(
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
-
         return CustomFileTypeDto(**r)
 
     def updateCustomFileType(
@@ -178,3 +176,31 @@ class CustomFileTypeOperations:
         )
 
         return
+
+    def findCustomFileType(
+        self,
+        fileName: str = None,
+        phrase_token: Optional[str] = None,
+    ) -> Optional[CustomFileTypeDto]:
+        """
+        Find custom file type
+        If no matching custom file type is found it returns status 200 and empty body.
+        :param fileName: string (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: CustomFileTypeDto
+        """
+        endpoint = "/api2/v1/customFileTypes/find"
+        params = {"fileName": fileName}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+        if r is not None:
+            return CustomFileTypeDto(**r)
+        else:
+            return

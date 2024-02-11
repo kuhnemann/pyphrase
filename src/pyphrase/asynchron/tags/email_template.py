@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -58,7 +57,7 @@ class EmailTemplateOperations:
 
         :return: PageDtoOrganizationEmailTemplateDto
         """
-        endpoint = f"/api2/v1/emailTemplates"
+        endpoint = "/api2/v1/emailTemplates"
         params = {"type": type, "pageNumber": pageNumber, "pageSize": pageSize}
 
         files = None

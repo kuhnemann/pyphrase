@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -57,7 +56,7 @@ class AdditionalWorkflowStepOperations:
 
         :return: PageDtoAdditionalWorkflowStepDto
         """
-        endpoint = f"/api2/v1/additionalWorkflowSteps"
+        endpoint = "/api2/v1/additionalWorkflowSteps"
         params = {"pageNumber": pageNumber, "pageSize": pageSize, "name": name}
 
         files = None
@@ -81,7 +80,7 @@ class AdditionalWorkflowStepOperations:
 
         :return: AdditionalWorkflowStepDto
         """
-        endpoint = f"/api2/v1/additionalWorkflowSteps"
+        endpoint = "/api2/v1/additionalWorkflowSteps"
         params = {}
 
         files = None

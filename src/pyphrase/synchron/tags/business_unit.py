@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -121,7 +120,7 @@ class BusinessUnitOperations:
 
         :return: PageDtoBusinessUnitDto
         """
-        endpoint = f"/api2/v1/businessUnits"
+        endpoint = "/api2/v1/businessUnits"
         params = {
             "name": name,
             "createdBy": createdBy,
@@ -154,7 +153,7 @@ class BusinessUnitOperations:
 
         :return: BusinessUnitDto
         """
-        endpoint = f"/api2/v1/businessUnits"
+        endpoint = "/api2/v1/businessUnits"
         params = {}
 
         files = None

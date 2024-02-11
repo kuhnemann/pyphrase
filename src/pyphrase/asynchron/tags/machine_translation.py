@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -19,7 +18,7 @@ class MachineTranslationOperations:
     async def machineTranslation(
         self,
         mtSettingsUid: str,
-        body: TranslationRequestExtendedDto,
+        body: TranslationRequestExtendedDto | dict,
         phrase_token: Optional[str] = None,
     ) -> MachineTranslateResponse:
         """

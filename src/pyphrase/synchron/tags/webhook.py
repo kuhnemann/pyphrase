@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -19,36 +18,6 @@ from ...models.phrase_models import (
 class WebhookOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
-
-    def replayLast(
-        self,
-        status: str = None,
-        events: List[str] = None,
-        numberOfCalls: int = "5",
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-        Replay last webhook calls
-        Replays specified number of last Webhook calls from oldest to the newest one
-        :param status: string (optional), query. Status of Webhook calls to filter by.
-        :param events: array (optional), query. List of Webhook events to filter by.
-        :param numberOfCalls: integer (optional), query. Number of calls to be replayed.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v1/webhooksCalls/replay/latest"
-        params = {"numberOfCalls": numberOfCalls, "events": events, "status": status}
-
-        files = None
-        payload = None
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
 
     def getWebhookCallsList(
         self,
@@ -74,7 +43,7 @@ class WebhookOperations:
 
         :return: PageDtoWebhookCallDto
         """
-        endpoint = f"/api2/v1/webhooksCalls"
+        endpoint = "/api2/v1/webhooksCalls"
         params = {
             "pageNumber": pageNumber,
             "pageSize": pageSize,
@@ -107,7 +76,7 @@ class WebhookOperations:
 
         :return: None
         """
-        endpoint = f"/api2/v1/webhooksCalls/replay"
+        endpoint = "/api2/v1/webhooksCalls/replay"
         params = {}
 
         files = None
@@ -118,6 +87,117 @@ class WebhookOperations:
         )
 
         return
+
+    def replayLast(
+        self,
+        status: str = None,
+        events: List[str] = None,
+        numberOfCalls: int = "5",
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Replay last webhook calls
+        Replays specified number of last Webhook calls from oldest to the newest one
+        :param status: string (optional), query. Status of Webhook calls to filter by.
+        :param events: array (optional), query. List of Webhook events to filter by.
+        :param numberOfCalls: integer (optional), query. Number of calls to be replayed.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = "/api2/v1/webhooksCalls/replay/latest"
+        params = {"numberOfCalls": numberOfCalls, "events": events, "status": status}
+
+        files = None
+        payload = None
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
+
+    def getWebHookList_1(
+        self,
+        sortField: str = None,
+        modifiedBy: List[str] = None,
+        createdBy: List[str] = None,
+        events: List[str] = None,
+        url: str = None,
+        status: str = None,
+        name: str = None,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        sortTrend: str = "ASC",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoWebHookDtoV2:
+        """
+        Lists webhooks
+
+        :param sortField: string (optional), query. Sort by this field.
+        :param modifiedBy: array (optional), query. Filter by webhook updaters UIDs.
+        :param createdBy: array (optional), query. Filter by webhook creators UIDs.
+        :param events: array (optional), query. Filter by webhook events, any match is included.
+        :param url: string (optional), query. Filter by webhook URL.
+        :param status: string (optional), query. Filter by enabled/disabled status.
+        :param name: string (optional), query. Filter by webhook name.
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+        :param sortTrend: string (optional), query. Sort direction.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PageDtoWebHookDtoV2
+        """
+        endpoint = "/api2/v2/webhooks"
+        params = {
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+            "name": name,
+            "status": status,
+            "url": url,
+            "events": events,
+            "createdBy": createdBy,
+            "modifiedBy": modifiedBy,
+            "sortField": sortField,
+            "sortTrend": sortTrend,
+        }
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoWebHookDtoV2(**r)
+
+    def createWebHook_1(
+        self,
+        body: CreateWebHookDto,
+        phrase_token: Optional[str] = None,
+    ) -> WebHookDtoV2:
+        """
+        Create webhook
+
+        :param body: CreateWebHookDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: WebHookDtoV2
+        """
+        endpoint = "/api2/v2/webhooks"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return WebHookDtoV2(**r)
 
     def getWebHook_1(
         self,
@@ -207,13 +287,13 @@ class WebhookOperations:
         """
         Get webhook body previews
 
-        :param events: array (optional), query. Filter by webhook events, example for multiple: ?events=JOB_CREATED&amp;events=JOB_UPDATED.
+        :param events: array (optional), query. Filter by webhook events.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: WebhookPreviewsDto
         """
-        endpoint = f"/api2/v2/webhooks/previews"
+        endpoint = "/api2/v2/webhooks/previews"
         params = {"events": events}
 
         files = None
@@ -251,85 +331,4 @@ class WebhookOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return
-
-    def getWebHookList_1(
-        self,
-        sortField: str = None,
-        modifiedBy: List[str] = None,
-        createdBy: List[str] = None,
-        events: List[str] = None,
-        url: str = None,
-        status: str = None,
-        name: str = None,
-        pageNumber: int = "0",
-        pageSize: int = "50",
-        sortTrend: str = "ASC",
-        phrase_token: Optional[str] = None,
-    ) -> PageDtoWebHookDtoV2:
-        """
-        Lists webhooks
-
-        :param sortField: string (optional), query. Sort by this field.
-        :param modifiedBy: array (optional), query. Filter by webhook updaters UIDs.
-        :param createdBy: array (optional), query. Filter by webhook creators UIDs.
-        :param events: array (optional), query. Filter by webhook events.
-        :param url: string (optional), query. Filter by webhook URL.
-        :param status: string (optional), query. Filter by enabled/disabled status.
-        :param name: string (optional), query. Filter by webhook name.
-        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
-        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
-        :param sortTrend: string (optional), query. Sort direction.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PageDtoWebHookDtoV2
-        """
-        endpoint = f"/api2/v2/webhooks"
-        params = {
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-            "name": name,
-            "status": status,
-            "url": url,
-            "events": events,
-            "createdBy": createdBy,
-            "modifiedBy": modifiedBy,
-            "sortField": sortField,
-            "sortTrend": sortTrend,
-        }
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PageDtoWebHookDtoV2(**r)
-
-    def createWebHook_1(
-        self,
-        body: CreateWebHookDto,
-        phrase_token: Optional[str] = None,
-    ) -> WebHookDtoV2:
-        """
-        Create webhook
-
-        :param body: CreateWebHookDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: WebHookDtoV2
-        """
-        endpoint = f"/api2/v2/webhooks"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return WebHookDtoV2(**r)
+        return r

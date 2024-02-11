@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -15,18 +14,20 @@ class SupportedLanguagesOperations:
 
     def listOfLanguages(
         self,
+        active: bool = None,
         phrase_token: Optional[str] = None,
     ) -> LanguageListDto:
         """
         List supported languages
 
+        :param active: boolean (optional), query.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: LanguageListDto
         """
-        endpoint = f"/api2/v1/languages"
-        params = {}
+        endpoint = "/api2/v1/languages"
+        params = {"active": active}
 
         files = None
         payload = None

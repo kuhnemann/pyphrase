@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -52,6 +51,199 @@ class UserOperations:
 
         return
 
+    def listJobs(
+        self,
+        userUid: str,
+        filename: str = None,
+        dueInHours: int = None,
+        workflowStepId: int = None,
+        targetLang: List[str] = None,
+        projectUid: str = None,
+        status: List[str] = None,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoAssignedJobDto:
+        """
+        List assigned jobs
+
+        :param userUid: string (required), path.
+        :param filename: string (optional), query.
+        :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
+        :param workflowStepId: integer (optional), query.
+        :param targetLang: array (optional), query.
+        :param projectUid: string (optional), query.
+        :param status: array (optional), query.
+        :param pageNumber: integer (optional), query.
+        :param pageSize: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PageDtoAssignedJobDto
+        """
+        endpoint = f"/api2/v1/users/{userUid}/jobs"
+        params = {
+            "status": status,
+            "projectUid": projectUid,
+            "targetLang": targetLang,
+            "workflowStepId": workflowStepId,
+            "dueInHours": dueInHours,
+            "filename": filename,
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+        }
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoAssignedJobDto(**r)
+
+    def getListOfUsersFiltered(
+        self,
+        order: List[str] = None,
+        sort: List[str] = None,
+        role: List[str] = None,
+        nameOrEmail: str = None,
+        email: str = None,
+        userName: str = None,
+        name: str = None,
+        lastName: str = None,
+        firstName: str = None,
+        includeDeleted: bool = "False",
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoUserDto:
+        """
+        List users
+
+        :param order: array (optional), query.
+        :param sort: array (optional), query.
+        :param role: array (optional), query.
+        :param nameOrEmail: string (optional), query. Filter for last name, first name or email starting with the value.
+        :param email: string (optional), query.
+        :param userName: string (optional), query.
+        :param name: string (optional), query. Filter for last name or first name, that starts with value.
+        :param lastName: string (optional), query. Filter for last name, that starts with value.
+        :param firstName: string (optional), query. Filter for first name, that starts with value.
+        :param includeDeleted: boolean (optional), query.
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PageDtoUserDto
+        """
+        endpoint = "/api2/v1/users"
+        params = {
+            "firstName": firstName,
+            "lastName": lastName,
+            "name": name,
+            "userName": userName,
+            "email": email,
+            "nameOrEmail": nameOrEmail,
+            "role": role,
+            "includeDeleted": includeDeleted,
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+            "sort": sort,
+            "order": order,
+        }
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoUserDto(**r)
+
+    def updatePassword(
+        self,
+        userUid: str,
+        body: UserPasswordEditDto,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+                Update password
+                * Password length must be between 8 and 255
+        * Password must not be same as the username
+                :param userUid: string (required), path.
+                :param body: UserPasswordEditDto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: None
+        """
+        endpoint = f"/api2/v1/users/{userUid}/updatePassword"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
+
+    def sendLoginInfo(
+        self,
+        userUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Send login information
+
+        :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = f"/api2/v1/users/{userUid}/emailLoginInformation"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
+
+    def cancelDeletion(
+        self,
+        userUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> UserDto:
+        """
+        Restore user
+
+        :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: UserDto
+        """
+        endpoint = f"/api2/v1/users/{userUid}/undelete"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return UserDto(**r)
+
     def listAssignedProjects(
         self,
         userUid: str,
@@ -67,14 +259,14 @@ class UserOperations:
     ) -> PageDtoProjectReference:
         """
         List assigned projects
-
+        List projects in which the user is assigned to at least one job matching the criteria
         :param userUid: string (required), path.
         :param projectName: string (optional), query.
         :param filename: string (optional), query.
-        :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
+        :param dueInHours: integer (optional), query. Number of hours in which the assigned jobs are due. Use `-1` for jobs that are overdue..
         :param workflowStepId: integer (optional), query.
-        :param targetLang: array (optional), query.
-        :param status: array (optional), query.
+        :param targetLang: array (optional), query. Target language of the assigned jobs.
+        :param status: array (optional), query. Status of the assigned jobs.
         :param pageNumber: integer (optional), query.
         :param pageSize: integer (optional), query.
 
@@ -102,6 +294,80 @@ class UserOperations:
         )
 
         return PageDtoProjectReference(**r)
+
+    def loginActivity(
+        self,
+        userUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> UserStatisticsListDto:
+        """
+        Login statistics
+
+        :param userUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: UserStatisticsListDto
+        """
+        endpoint = f"/api2/v1/users/{userUid}/loginStatistics"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return UserStatisticsListDto(**r)
+
+    def listWorkflowSteps(
+        self,
+        userUid: str,
+        filename: str = None,
+        dueInHours: int = None,
+        targetLang: List[str] = None,
+        projectUid: str = None,
+        status: List[str] = None,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoWorkflowStepReference:
+        """
+        List assigned workflow steps
+
+        :param userUid: string (required), path.
+        :param filename: string (optional), query.
+        :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
+        :param targetLang: array (optional), query.
+        :param projectUid: string (optional), query.
+        :param status: array (optional), query.
+        :param pageNumber: integer (optional), query.
+        :param pageSize: integer (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PageDtoWorkflowStepReference
+        """
+        endpoint = f"/api2/v1/users/{userUid}/workflowSteps"
+        params = {
+            "status": status,
+            "projectUid": projectUid,
+            "targetLang": targetLang,
+            "dueInHours": dueInHours,
+            "filename": filename,
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+        }
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoWorkflowStepReference(**r)
 
     def listTargetLangs(
         self,
@@ -175,7 +441,7 @@ class UserOperations:
 
         :return: PageDtoLastLoginDto
         """
-        endpoint = f"/api2/v1/users/lastLogins"
+        endpoint = "/api2/v1/users/lastLogins"
         params = {
             "userName": userName,
             "role": role,
@@ -194,263 +460,24 @@ class UserOperations:
 
         return PageDtoLastLoginDto(**r)
 
-    def listJobs(
+    def createUserV3(
         self,
-        userUid: str,
-        filename: str = None,
-        dueInHours: int = None,
-        workflowStepId: int = None,
-        targetLang: List[str] = None,
-        projectUid: str = None,
-        status: List[str] = None,
-        pageNumber: int = "0",
-        pageSize: int = "50",
+        body: AbstractUserCreateDto,
+        sendInvitation: bool = "False",
         phrase_token: Optional[str] = None,
-    ) -> PageDtoAssignedJobDto:
+    ) -> UserDetailsDtoV3:
         """
-        List assigned jobs
+        Create user
 
-        :param userUid: string (required), path.
-        :param filename: string (optional), query.
-        :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
-        :param workflowStepId: integer (optional), query.
-        :param targetLang: array (optional), query.
-        :param projectUid: string (optional), query.
-        :param status: array (optional), query.
-        :param pageNumber: integer (optional), query.
-        :param pageSize: integer (optional), query.
+        :param body: AbstractUserCreateDto (required), body.
+        :param sendInvitation: boolean (optional), query.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: PageDtoAssignedJobDto
+        :return: UserDetailsDtoV3
         """
-        endpoint = f"/api2/v1/users/{userUid}/jobs"
-        params = {
-            "status": status,
-            "projectUid": projectUid,
-            "targetLang": targetLang,
-            "workflowStepId": workflowStepId,
-            "dueInHours": dueInHours,
-            "filename": filename,
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-        }
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PageDtoAssignedJobDto(**r)
-
-    def sendLoginInfo(
-        self,
-        userUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-        Send login information
-
-        :param userUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v1/users/{userUid}/emailLoginInformation"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
-
-    def cancelDeletion(
-        self,
-        userUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> UserDto:
-        """
-        Restore user
-
-        :param userUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: UserDto
-        """
-        endpoint = f"/api2/v1/users/{userUid}/undelete"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return UserDto(**r)
-
-    def loginActivity(
-        self,
-        userUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> UserStatisticsListDto:
-        """
-        Login statistics
-
-        :param userUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: UserStatisticsListDto
-        """
-        endpoint = f"/api2/v1/users/{userUid}/loginStatistics"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return UserStatisticsListDto(**r)
-
-    def getListOfUsersFiltered(
-        self,
-        order: List[str] = None,
-        sort: List[str] = None,
-        role: List[str] = None,
-        nameOrEmail: str = None,
-        email: str = None,
-        userName: str = None,
-        name: str = None,
-        lastName: str = None,
-        firstName: str = None,
-        includeDeleted: bool = "False",
-        pageNumber: int = "0",
-        pageSize: int = "50",
-        phrase_token: Optional[str] = None,
-    ) -> PageDtoUserDto:
-        """
-        List users
-
-        :param order: array (optional), query.
-        :param sort: array (optional), query.
-        :param role: array (optional), query.
-        :param nameOrEmail: string (optional), query. Filter for last name, first name or email starting with the value.
-        :param email: string (optional), query.
-        :param userName: string (optional), query.
-        :param name: string (optional), query. Filter for last name or first name, that starts with value.
-        :param lastName: string (optional), query. Filter for last name, that starts with value.
-        :param firstName: string (optional), query. Filter for first name, that starts with value.
-        :param includeDeleted: boolean (optional), query.
-        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
-        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PageDtoUserDto
-        """
-        endpoint = f"/api2/v1/users"
-        params = {
-            "firstName": firstName,
-            "lastName": lastName,
-            "name": name,
-            "userName": userName,
-            "email": email,
-            "nameOrEmail": nameOrEmail,
-            "role": role,
-            "includeDeleted": includeDeleted,
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-            "sort": sort,
-            "order": order,
-        }
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PageDtoUserDto(**r)
-
-    def listWorkflowSteps(
-        self,
-        userUid: str,
-        filename: str = None,
-        dueInHours: int = None,
-        targetLang: List[str] = None,
-        projectUid: str = None,
-        status: List[str] = None,
-        pageNumber: int = "0",
-        pageSize: int = "50",
-        phrase_token: Optional[str] = None,
-    ) -> PageDtoWorkflowStepReference:
-        """
-        List assigned workflow steps
-
-        :param userUid: string (required), path.
-        :param filename: string (optional), query.
-        :param dueInHours: integer (optional), query. -1 for jobs that are overdue.
-        :param targetLang: array (optional), query.
-        :param projectUid: string (optional), query.
-        :param status: array (optional), query.
-        :param pageNumber: integer (optional), query.
-        :param pageSize: integer (optional), query.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PageDtoWorkflowStepReference
-        """
-        endpoint = f"/api2/v1/users/{userUid}/workflowSteps"
-        params = {
-            "status": status,
-            "projectUid": projectUid,
-            "targetLang": targetLang,
-            "dueInHours": dueInHours,
-            "filename": filename,
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-        }
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PageDtoWorkflowStepReference(**r)
-
-    def updatePassword(
-        self,
-        userUid: str,
-        body: UserPasswordEditDto,
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-                Update password
-                * Password length must be between 8 and 255
-        * Password must not be same as the username
-                :param userUid: string (required), path.
-                :param body: UserPasswordEditDto (required), body.
-
-                :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-                :return: None
-        """
-        endpoint = f"/api2/v1/users/{userUid}/updatePassword"
-        params = {}
+        endpoint = "/api2/v3/users"
+        params = {"sendInvitation": sendInvitation}
 
         files = None
         payload = body
@@ -459,7 +486,7 @@ class UserOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return
+        return UserDetailsDtoV3(**r)
 
     def getUserV3(
         self,
@@ -515,25 +542,25 @@ class UserOperations:
 
         return UserDetailsDtoV3(**r)
 
-    def createUserV3(
+    def disableTwoFactorAuthV3(
         self,
-        body: AbstractUserCreateDto,
+        userUid: str,
         phrase_token: Optional[str] = None,
     ) -> UserDetailsDtoV3:
         """
-        Create user
+        Disable two-factor authentication
 
-        :param body: AbstractUserCreateDto (required), body.
+        :param userUid: string (required), path.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: UserDetailsDtoV3
         """
-        endpoint = f"/api2/v3/users"
+        endpoint = f"/api2/v3/users/{userUid}/disableTwoFactorAuth"
         params = {}
 
         files = None
-        payload = body
+        payload = None
 
         r = self.client.post(
             endpoint, phrase_token, params=params, payload=payload, files=files

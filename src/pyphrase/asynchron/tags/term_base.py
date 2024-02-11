@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -68,6 +67,30 @@ class TermBaseOperations:
         )
 
         return TermPairDto(**r)
+
+    async def getTermBaseMetadata(
+        self, termBaseUid: str, phrase_token: Optional[str] = None
+    ) -> MetadataTbDto:
+        """
+        Get term base metadata
+
+        :param termBaseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: MetadataTbDto
+        """
+        endpoint = f"/api2/v1/termBases/{termBaseUid}/metadata"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = await self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return MetadataTbDto(**r)
 
     async def getTermBase(
         self, termBaseUid: str, phrase_token: Optional[str] = None
@@ -150,76 +173,6 @@ class TermBaseOperations:
 
         return
 
-    async def listTermBases(
-        self,
-        subDomainId: str = None,
-        domainId: str = None,
-        clientId: str = None,
-        lang: List[str] = None,
-        name: str = None,
-        pageNumber: int = "0",
-        pageSize: int = "50",
-        phrase_token: Optional[str] = None,
-    ) -> PageDtoTermBaseDto:
-        """
-        List term bases
-
-        :param subDomainId: string (optional), query.
-        :param domainId: string (optional), query.
-        :param clientId: string (optional), query.
-        :param lang: array (optional), query. Language of the term base.
-        :param name: string (optional), query.
-        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
-        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PageDtoTermBaseDto
-        """
-        endpoint = f"/api2/v1/termBases"
-        params = {
-            "name": name,
-            "lang": lang,
-            "clientId": clientId,
-            "domainId": domainId,
-            "subDomainId": subDomainId,
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-        }
-
-        files = None
-        payload = None
-
-        r = await self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PageDtoTermBaseDto(**r)
-
-    async def createTermBase(
-        self, body: TermBaseEditDto, phrase_token: Optional[str] = None
-    ) -> TermBaseDto:
-        """
-        Create term base
-
-        :param body: TermBaseEditDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: TermBaseDto
-        """
-        endpoint = f"/api2/v1/termBases"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return TermBaseDto(**r)
-
     async def importTermBase(
         self,
         termBaseUid: str,
@@ -232,7 +185,7 @@ class TermBaseOperations:
         """
                 Upload term base
                 Terms can be imported from XLS/XLSX and TBX file formats into a term base.
-        See <a target="_blank" href="https://help.memsource.com/hc/en-us/articles/115003681851-Term-Bases">Memsource Wiki</a>
+        See <a target="_blank" href="https://support.phrase.com/hc/en-us/articles/5709733372188">Phrase Help Center</a>
                 :param termBaseUid: string (required), path.
                 :param body: InputStream (required), body.
                 :param charset: string (optional), query.
@@ -688,20 +641,42 @@ class TermBaseOperations:
 
         return r
 
-    async def getTermBaseMetadata(
-        self, termBaseUid: str, phrase_token: Optional[str] = None
-    ) -> MetadataTbDto:
+    async def listTermBases(
+        self,
+        subDomainId: str = None,
+        domainId: str = None,
+        clientId: str = None,
+        lang: List[str] = None,
+        name: str = None,
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoTermBaseDto:
         """
-        Get term base metadata
+        List term bases
 
-        :param termBaseUid: string (required), path.
+        :param subDomainId: string (optional), query.
+        :param domainId: string (optional), query.
+        :param clientId: string (optional), query.
+        :param lang: array (optional), query. Language of the term base.
+        :param name: string (optional), query.
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: MetadataTbDto
+        :return: PageDtoTermBaseDto
         """
-        endpoint = f"/api2/v1/termBases/{termBaseUid}/metadata"
-        params = {}
+        endpoint = "/api2/v1/termBases"
+        params = {
+            "name": name,
+            "lang": lang,
+            "clientId": clientId,
+            "domainId": domainId,
+            "subDomainId": subDomainId,
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+        }
 
         files = None
         payload = None
@@ -710,27 +685,21 @@ class TermBaseOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return MetadataTbDto(**r)
+        return PageDtoTermBaseDto(**r)
 
-    async def searchTermsByJob_1(
-        self,
-        projectUid: str,
-        jobUid: str,
-        body: SearchTbByJobRequestDto,
-        phrase_token: Optional[str] = None,
-    ) -> SearchTbResponseListDto:
+    async def createTermBase(
+        self, body: TermBaseEditDto, phrase_token: Optional[str] = None
+    ) -> TermBaseDto:
         """
-        Search job's term bases
-        Search all read term bases assigned to the job
-        :param projectUid: string (required), path.
-        :param jobUid: string (required), path.
-        :param body: SearchTbByJobRequestDto (required), body.
+        Create term base
+
+        :param body: TermBaseEditDto (required), body.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: SearchTbResponseListDto
+        :return: TermBaseDto
         """
-        endpoint = f"/api2/v2/projects/{projectUid}/jobs/{jobUid}/termBases/searchByJob"
+        endpoint = "/api2/v1/termBases"
         params = {}
 
         files = None
@@ -740,7 +709,46 @@ class TermBaseOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return SearchTbResponseListDto(**r)
+        return TermBaseDto(**r)
+
+    async def importTermBaseV2(
+        self,
+        termBaseUid: str,
+        body: InputStream,
+        charset: str = "UTF-8",
+        strictLangMatching: bool = "False",
+        updateTerms: bool = "True",
+        phrase_token: Optional[str] = None,
+    ) -> dict:
+        """
+                Upload term base
+                Terms can be imported from XLS/XLSX and TBX file formats into a term base.
+        See <a target="_blank" href="https://support.phrase.com/hc/en-us/articles/5709733372188">Phrase Help Center</a>
+                :param termBaseUid: string (required), path.
+                :param body: InputStream (required), body.
+                :param charset: string (optional), query.
+                :param strictLangMatching: boolean (optional), query.
+                :param updateTerms: boolean (optional), query.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return:
+        """
+        endpoint = f"/api2/v2/termBases/{termBaseUid}/upload"
+        params = {
+            "charset": charset,
+            "strictLangMatching": strictLangMatching,
+            "updateTerms": updateTerms,
+        }
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return r
 
     async def searchTermsInTextByJobV2(
         self,
@@ -773,3 +781,33 @@ class TermBaseOperations:
         )
 
         return SearchInTextResponseList2Dto(**r)
+
+    async def searchTermsByJob_1(
+        self,
+        projectUid: str,
+        jobUid: str,
+        body: SearchTbByJobRequestDto,
+        phrase_token: Optional[str] = None,
+    ) -> SearchTbResponseListDto:
+        """
+        Search job's term bases
+        Search all read term bases assigned to the job
+        :param projectUid: string (required), path.
+        :param jobUid: string (required), path.
+        :param body: SearchTbByJobRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: SearchTbResponseListDto
+        """
+        endpoint = f"/api2/v2/projects/{projectUid}/jobs/{jobUid}/termBases/searchByJob"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return SearchTbResponseListDto(**r)

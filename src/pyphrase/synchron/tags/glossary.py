@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -121,7 +120,7 @@ class GlossaryOperations:
 
         :return: PageDtoGlossaryDto
         """
-        endpoint = f"/api2/v1/glossaries"
+        endpoint = "/api2/v1/glossaries"
         params = {
             "name": name,
             "lang": lang,
@@ -152,7 +151,7 @@ class GlossaryOperations:
 
         :return: GlossaryDto
         """
-        endpoint = f"/api2/v1/glossaries"
+        endpoint = "/api2/v1/glossaries"
         params = {}
 
         files = None

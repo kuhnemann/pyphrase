@@ -5,27 +5,26 @@ from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
 
-from ...models.phrase_models import LanguageListDto
+from ...models.phrase_models import ConsumedMtusDto
 
 
-class SupportedLanguagesOperations:
+class LanguageAiOperations:
     def __init__(self, client: AsyncPhraseTMSClient):
         self.client = client
 
-    async def listOfLanguages(
-        self, active: bool = None, phrase_token: Optional[str] = None
-    ) -> LanguageListDto:
+    async def getConsumedMtus(
+        self, phrase_token: Optional[str] = None
+    ) -> ConsumedMtusDto:
         """
-        List supported languages
+        Total amount of consumed MTUs in the current month
 
-        :param active: boolean (optional), query.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :return: LanguageListDto
+        :return: ConsumedMtusDto
         """
-        endpoint = "/api2/v1/languages"
-        params = {"active": active}
+        endpoint = "/api2/v1/mtuUsage"
+        params = {}
 
         files = None
         payload = None
@@ -34,4 +33,4 @@ class SupportedLanguagesOperations:
             endpoint, phrase_token, params=params, payload=payload, files=files
         )
 
-        return LanguageListDto(**r)
+        return ConsumedMtusDto(**r)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -19,13 +18,13 @@ class LanguageQualityAssessmentOperations:
                 Returns a single xlsx report or ZIP archive with multiple reports.
         If any given jobPart is not from LQA workflow step, reports from successive workflow steps may be returned
         If none were found returns 404 error, otherwise returns those that were found.
-                :param jobParts: string (required), query. Comma separated list of JobPart UIDs.
+                :param jobParts: string (required), query. Comma separated list of JobPart UIDs, between 1 and 100 UIDs.
 
                 :param phrase_token: string (optional) - if not supplied, client will look token from init
 
                 :return: None
         """
-        endpoint = f"/api2/v1/lqa/assessments/reports"
+        endpoint = "/api2/v1/lqa/assessments/reports"
         params = {"jobParts": jobParts}
 
         files = None

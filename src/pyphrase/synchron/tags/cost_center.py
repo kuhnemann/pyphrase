@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -121,7 +120,7 @@ class CostCenterOperations:
 
         :return: PageDtoCostCenterDto
         """
-        endpoint = f"/api2/v1/costCenters"
+        endpoint = "/api2/v1/costCenters"
         params = {
             "name": name,
             "createdBy": createdBy,
@@ -154,7 +153,7 @@ class CostCenterOperations:
 
         :return: CostCenterDto
         """
-        endpoint = f"/api2/v1/costCenters"
+        endpoint = "/api2/v1/costCenters"
         params = {}
 
         files = None

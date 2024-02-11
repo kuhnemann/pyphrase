@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -31,7 +30,7 @@ class SpellCheckOperations:
 
         :return: SpellCheckResponseDto
         """
-        endpoint = f"/api2/v1/spellCheck/check"
+        endpoint = "/api2/v1/spellCheck/check"
         params = {}
 
         files = None
@@ -71,30 +70,6 @@ class SpellCheckOperations:
 
         return SpellCheckResponseDto(**r)
 
-    async def addWord(
-        self, body: DictionaryItemDto, phrase_token: Optional[str] = None
-    ) -> None:
-        """
-        Add word to dictionary
-
-        :param body: DictionaryItemDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v1/spellCheck/words"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = await self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
-
     async def suggest(
         self, body: SuggestRequestDto, phrase_token: Optional[str] = None
     ) -> SuggestResponseDto:
@@ -107,7 +82,7 @@ class SpellCheckOperations:
 
         :return: SuggestResponseDto
         """
-        endpoint = f"/api2/v1/spellCheck/suggest"
+        endpoint = "/api2/v1/spellCheck/suggest"
         params = {}
 
         files = None
@@ -118,3 +93,27 @@ class SpellCheckOperations:
         )
 
         return SuggestResponseDto(**r)
+
+    async def addWord(
+        self, body: DictionaryItemDto, phrase_token: Optional[str] = None
+    ) -> None:
+        """
+        Add word to dictionary
+
+        :param body: DictionaryItemDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = "/api2/v1/spellCheck/words"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return

@@ -39,14 +39,21 @@ Work in progress, with some wrinkles to be ironed out and tests to be written. R
 
 Modern Python client for interacting with the Phrase TMS API, both for sync and async use. 
 
-- Implements all documented paths and operations
+- Implements all documented paths and operations from #latest
 - Typed (where possible) for validation and code completion support
-- Fully documented methods with complete content of the Phrase TMS API docs.
+- Fully documented methods with complete content of the Phrase TMS API docs
+- sync and async clients
 
+### New in 0.3
+
+- Support for pydantic 2.x
+- Updated models with current standing
+- Fixed many issues, including header encoding for job creation
+- Still work in progress and a lot to do
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Built With
-The code is based on the [Phrase TMS OpenAPI docs](https://cloud.memsource.com/web/docs/api) as of March 20 2023, which was parsed using [datamodel-code-generator](https://github.com/koxudaxi/datamodel-code-generator/) for the models
+The code is based on the [Phrase TMS OpenAPI docs](https://cloud.memsource.com/web/docs/api) as of January 2024, which was parsed using [datamodel-code-generator](https://github.com/koxudaxi/datamodel-code-generator/) for the models
 and a slightly modified version of [swagger-to](https://github.com/Parquery/swagger-to) for the methods. 
 
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -30,7 +29,7 @@ class ImportSettingsOperations:
 
         :return: ImportSettingsDto
         """
-        endpoint = f"/api2/v1/importSettings/default"
+        endpoint = "/api2/v1/importSettings/default"
         params = {}
 
         files = None
@@ -112,7 +111,7 @@ class ImportSettingsOperations:
 
         :return: PageDtoImportSettingsReference
         """
-        endpoint = f"/api2/v1/importSettings"
+        endpoint = "/api2/v1/importSettings"
         params = {"name": name, "pageNumber": pageNumber, "pageSize": pageSize}
 
         files = None
@@ -139,7 +138,7 @@ class ImportSettingsOperations:
 
         :return: ImportSettingsDto
         """
-        endpoint = f"/api2/v1/importSettings"
+        endpoint = "/api2/v1/importSettings"
         params = {}
 
         files = None
@@ -165,7 +164,7 @@ class ImportSettingsOperations:
 
         :return: ImportSettingsDto
         """
-        endpoint = f"/api2/v1/importSettings"
+        endpoint = "/api2/v1/importSettings"
         params = {}
 
         files = None

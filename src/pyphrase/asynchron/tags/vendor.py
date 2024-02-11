@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -55,7 +54,7 @@ class VendorOperations:
 
         :return: PageDtoVendorDto
         """
-        endpoint = f"/api2/v1/vendors"
+        endpoint = "/api2/v1/vendors"
         params = {"pageNumber": pageNumber, "pageSize": pageSize, "name": name}
 
         files = None
@@ -79,7 +78,7 @@ class VendorOperations:
 
         :return: VendorDto
         """
-        endpoint = f"/api2/v1/vendors"
+        endpoint = "/api2/v1/vendors"
         params = {}
 
         files = None

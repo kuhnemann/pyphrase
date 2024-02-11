@@ -1,20 +1,16 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
 
 from ...models.phrase_models import (
-    AbstractConnectorDto,
     AsyncFileOpResponseDto,
-    ConnectorCreateResponseDto,
     ConnectorDto,
     ConnectorListDto,
     FileListDto,
     GetFileRequestParamsDto,
-    InputStreamLength,
     UploadResultDto,
 )
 
@@ -79,36 +75,6 @@ class ConnectorOperations:
 
         return ConnectorDto(**r)
 
-    def editConnector(
-        self,
-        connectorId: str,
-        body: AbstractConnectorDto,
-        connectionTest: bool = None,
-        phrase_token: Optional[str] = None,
-    ) -> ConnectorCreateResponseDto:
-        """
-        Edit connector
-        Edit selected connector
-        :param connectorId: string (required), path.
-        :param body: AbstractConnectorDto (required), body.
-        :param connectionTest: boolean (optional), query. For running connection test.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: ConnectorCreateResponseDto
-        """
-        endpoint = f"/api2/v1/connectors/{connectorId}"
-        params = {"connectionTest": connectionTest}
-
-        files = None
-        payload = body
-
-        r = self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return ConnectorCreateResponseDto(**r)
-
     def getConnectorList(
         self,
         type: str = None,
@@ -123,7 +89,7 @@ class ConnectorOperations:
 
         :return: ConnectorListDto
         """
-        endpoint = f"/api2/v1/connectors"
+        endpoint = "/api2/v1/connectors"
         params = {"type": type}
 
         files = None

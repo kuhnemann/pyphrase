@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -128,7 +127,7 @@ class TranslationMemoryOperations:
 
         :return: PageDtoTransMemoryDto
         """
-        endpoint = f"/api2/v1/transMemories"
+        endpoint = "/api2/v1/transMemories"
         params = {
             "name": name,
             "sourceLang": sourceLang,
@@ -164,7 +163,7 @@ class TranslationMemoryOperations:
 
         :return: TransMemoryDto
         """
-        endpoint = f"/api2/v1/transMemories"
+        endpoint = "/api2/v1/transMemories"
         params = {}
 
         files = None
@@ -175,32 +174,6 @@ class TranslationMemoryOperations:
         )
 
         return TransMemoryDto(**r)
-
-    def exportCleanedTMs(
-        self,
-        body: CleanedTransMemoriesDto,
-        phrase_token: Optional[str] = None,
-    ) -> AsyncRequestWrapperDto:
-        """
-        Extract cleaned translation memory
-        Returns a ZIP file containing the cleaned translation memories in the specified outputFormat.
-        :param body: CleanedTransMemoriesDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AsyncRequestWrapperDto
-        """
-        endpoint = f"/api2/v1/transMemories/extractCleaned"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AsyncRequestWrapperDto(**r)
 
     def getTransMemory(
         self,
@@ -311,6 +284,32 @@ class TranslationMemoryOperations:
         )
 
         return TransMemoryDto(**r)
+
+    def exportCleanedTMs(
+        self,
+        body: CleanedTransMemoriesDto,
+        phrase_token: Optional[str] = None,
+    ) -> AsyncRequestWrapperDto:
+        """
+        Extract cleaned translation memory
+        Returns a ZIP file containing the cleaned translation memories in the specified outputFormat.
+        :param body: CleanedTransMemoriesDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AsyncRequestWrapperDto
+        """
+        endpoint = "/api2/v1/transMemories/extractCleaned"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AsyncRequestWrapperDto(**r)
 
     def downloadCleanedTM(
         self, asyncRequestId: str, phrase_token: Optional[str] = None
@@ -650,6 +649,34 @@ class TranslationMemoryOperations:
 
         return AsyncExportTMByQueryResponseDto(**r)
 
+    def exportV2(
+        self,
+        transMemoryUid: str,
+        body: ExportTMDto,
+        phrase_token: Optional[str] = None,
+    ) -> AsyncExportTMResponseDto:
+        """
+        Export translation memory
+        Use [this API](#operation/downloadSearchResult) to download result
+        :param transMemoryUid: string (required), path.
+        :param body: ExportTMDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AsyncExportTMResponseDto
+        """
+        endpoint = f"/api2/v2/transMemories/{transMemoryUid}/export"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AsyncExportTMResponseDto(**r)
+
     def clearTransMemoryV2(
         self,
         transMemoryUid: str,
@@ -710,31 +737,3 @@ class TranslationMemoryOperations:
         )
 
         return AsyncRequestWrapperV2Dto(**r)
-
-    def exportV2(
-        self,
-        transMemoryUid: str,
-        body: ExportTMDto,
-        phrase_token: Optional[str] = None,
-    ) -> AsyncExportTMResponseDto:
-        """
-        Export translation memory
-        Use [this API](#operation/downloadSearchResult) to download result
-        :param transMemoryUid: string (required), path.
-        :param body: ExportTMDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AsyncExportTMResponseDto
-        """
-        endpoint = f"/api2/v2/transMemories/{transMemoryUid}/export"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AsyncExportTMResponseDto(**r)

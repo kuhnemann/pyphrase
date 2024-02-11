@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -24,6 +23,8 @@ class WorkflowStepOperations:
         name: str = None,
         pageNumber: int = "0",
         pageSize: int = "50",
+        sort: str = "ID",
+        order: str = "ASC",
         phrase_token: Optional[str] = None,
     ) -> PageDtoWorkflowStepDto:
         """
@@ -33,15 +34,19 @@ class WorkflowStepOperations:
         :param name: string (optional), query. Name of the workflow step.
         :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
         :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+        :param sort: string (optional), query.
+        :param order: string (optional), query.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: PageDtoWorkflowStepDto
         """
-        endpoint = f"/api2/v1/workflowSteps"
+        endpoint = "/api2/v1/workflowSteps"
         params = {
             "pageNumber": pageNumber,
             "pageSize": pageSize,
+            "sort": sort,
+            "order": order,
             "name": name,
             "abbr": abbr,
         }
@@ -69,7 +74,7 @@ class WorkflowStepOperations:
 
         :return: WorkflowStepDto
         """
-        endpoint = f"/api2/v1/workflowSteps"
+        endpoint = "/api2/v1/workflowSteps"
         params = {}
 
         files = None

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -119,7 +118,7 @@ class PriceListOperations:
 
         :return: PageDtoTranslationPriceListDto
         """
-        endpoint = f"/api2/v1/priceLists"
+        endpoint = "/api2/v1/priceLists"
         params = {"pageNumber": pageNumber, "pageSize": pageSize}
 
         files = None
@@ -145,7 +144,7 @@ class PriceListOperations:
 
         :return: TranslationPriceListDto
         """
-        endpoint = f"/api2/v1/priceLists"
+        endpoint = "/api2/v1/priceLists"
         params = {}
 
         files = None

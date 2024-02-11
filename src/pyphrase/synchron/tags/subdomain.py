@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -12,75 +11,6 @@ from ...models.phrase_models import PageDtoSubDomainDto, SubDomainDto, SubDomain
 class SubdomainOperations:
     def __init__(self, client: SyncPhraseTMSClient):
         self.client = client
-
-    def listSubDomains(
-        self,
-        createdBy: str = None,
-        name: str = None,
-        sort: str = "NAME",
-        order: str = "ASC",
-        pageNumber: int = "0",
-        pageSize: int = "50",
-        phrase_token: Optional[str] = None,
-    ) -> PageDtoSubDomainDto:
-        """
-        List subdomains
-
-        :param createdBy: string (optional), query. Uid of user.
-        :param name: string (optional), query.
-        :param sort: string (optional), query.
-        :param order: string (optional), query.
-        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
-        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: PageDtoSubDomainDto
-        """
-        endpoint = f"/api2/v1/subDomains"
-        params = {
-            "name": name,
-            "createdBy": createdBy,
-            "sort": sort,
-            "order": order,
-            "pageNumber": pageNumber,
-            "pageSize": pageSize,
-        }
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return PageDtoSubDomainDto(**r)
-
-    def createSubDomain(
-        self,
-        body: SubDomainEditDto,
-        phrase_token: Optional[str] = None,
-    ) -> SubDomainDto:
-        """
-        Create subdomain
-
-        :param body: SubDomainEditDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: SubDomainDto
-        """
-        endpoint = f"/api2/v1/subDomains"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return SubDomainDto(**r)
 
     def getSubDomain(
         self,
@@ -161,3 +91,72 @@ class SubdomainOperations:
         )
 
         return
+
+    def listSubDomains(
+        self,
+        createdBy: str = None,
+        name: str = None,
+        sort: str = "NAME",
+        order: str = "ASC",
+        pageNumber: int = "0",
+        pageSize: int = "50",
+        phrase_token: Optional[str] = None,
+    ) -> PageDtoSubDomainDto:
+        """
+        List subdomains
+
+        :param createdBy: string (optional), query. Uid of user.
+        :param name: string (optional), query.
+        :param sort: string (optional), query.
+        :param order: string (optional), query.
+        :param pageNumber: integer (optional), query. Page number, starting with 0, default 0.
+        :param pageSize: integer (optional), query. Page size, accepts values between 1 and 50, default 50.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: PageDtoSubDomainDto
+        """
+        endpoint = "/api2/v1/subDomains"
+        params = {
+            "name": name,
+            "createdBy": createdBy,
+            "sort": sort,
+            "order": order,
+            "pageNumber": pageNumber,
+            "pageSize": pageSize,
+        }
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return PageDtoSubDomainDto(**r)
+
+    def createSubDomain(
+        self,
+        body: SubDomainEditDto,
+        phrase_token: Optional[str] = None,
+    ) -> SubDomainDto:
+        """
+        Create subdomain
+
+        :param body: SubDomainEditDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: SubDomainDto
+        """
+        endpoint = "/api2/v1/subDomains"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return SubDomainDto(**r)

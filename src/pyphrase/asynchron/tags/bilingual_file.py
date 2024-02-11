@@ -1,12 +1,16 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
 
-from ...models.phrase_models import ComparedSegmentsDto, InputStream, JobPartsDto
+from ...models.phrase_models import (
+    ComparedSegmentsDto,
+    InputStream,
+    ProjectJobPartsDto,
+    UploadBilingualFileRequestDto,
+)
 
 
 class BilingualFileOperations:
@@ -27,7 +31,7 @@ class BilingualFileOperations:
 
         :return: None
         """
-        endpoint = f"/api2/v1/bilingualFiles/convert"
+        endpoint = "/api2/v1/bilingualFiles/convert"
         params = {"from": frm, "to": to}
 
         files = None
@@ -38,42 +42,6 @@ class BilingualFileOperations:
         )
 
         return r
-
-    async def uploadBilingualFile(
-        self,
-        body: InputStream,
-        format: str = "MXLF",
-        saveToTransMemory: str = "Confirmed",
-        setCompleted: bool = "False",
-        phrase_token: Optional[str] = None,
-    ) -> JobPartsDto:
-        """
-        Upload bilingual file
-        Returns updated job parts
-        :param body: InputStream (required), body.
-        :param format: string (optional), query.
-        :param saveToTransMemory: string (optional), query.
-        :param setCompleted: boolean (optional), query.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: JobPartsDto
-        """
-        endpoint = f"/api2/v1/bilingualFiles"
-        params = {
-            "format": format,
-            "saveToTransMemory": saveToTransMemory,
-            "setCompleted": setCompleted,
-        }
-
-        files = None
-        payload = body
-
-        r = await self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return JobPartsDto(**r)
 
     async def compareBilingualFile(
         self,
@@ -91,7 +59,7 @@ class BilingualFileOperations:
 
         :return: ComparedSegmentsDto
         """
-        endpoint = f"/api2/v1/bilingualFiles/compare"
+        endpoint = "/api2/v1/bilingualFiles/compare"
         params = {"workflowLevel": workflowLevel}
 
         files = None
@@ -115,7 +83,7 @@ class BilingualFileOperations:
 
         :return: None
         """
-        endpoint = f"/api2/v1/bilingualFiles/preview"
+        endpoint = "/api2/v1/bilingualFiles/preview"
         params = {}
 
         files = None
@@ -126,3 +94,33 @@ class BilingualFileOperations:
         )
 
         return r
+
+    async def uploadBilingualFileV2(
+        self,
+        multipart: UploadBilingualFileRequestDto,
+        saveToTransMemory: str = "Confirmed",
+        setCompleted: bool = "False",
+        phrase_token: Optional[str] = None,
+    ) -> ProjectJobPartsDto:
+        """
+        Upload bilingual file
+        Returns updated job parts and projects
+        :param multipart: UploadBilingualFileRequestDto (required), body. Multipart request with files.
+        :param saveToTransMemory: string (optional), query.
+        :param setCompleted: boolean (optional), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: ProjectJobPartsDto
+        """
+        endpoint = "/api2/v2/bilingualFiles"
+        params = {"saveToTransMemory": saveToTransMemory, "setCompleted": setCompleted}
+
+        files = None
+        payload = multipart
+
+        r = await self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return ProjectJobPartsDto(**r)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -72,7 +71,7 @@ class AnalysisOperations:
 
         :return: None
         """
-        endpoint = f"/api2/v1/analyses/bulk"
+        endpoint = "/api2/v1/analyses/bulk"
         params = {}
 
         files = None
@@ -83,57 +82,6 @@ class AnalysisOperations:
         )
 
         return
-
-    def recalculate(
-        self,
-        body: AnalyseRecalculateRequestDto,
-        phrase_token: Optional[str] = None,
-    ) -> AnalyseRecalculateResponseDto:
-        """
-        Recalculate analysis
-
-        :param body: AnalyseRecalculateRequestDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AnalyseRecalculateResponseDto
-        """
-        endpoint = f"/api2/v1/analyses/recalculate"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AnalyseRecalculateResponseDto(**r)
-
-    def downloadAnalyse(
-        self, analyseUid: str, format: str, phrase_token: Optional[str] = None
-    ) -> bytes:
-        """
-        Download analysis
-
-        :param analyseUid: string (required), path.
-        :param format: string (required), query.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v1/analyses/{analyseUid}/download"
-        params = {"format": format}
-
-        files = None
-        payload = None
-
-        r = self.client.get_bytestream(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return r
 
     def createAnalysesForProviders(
         self,
@@ -149,7 +97,7 @@ class AnalysisOperations:
 
         :return: AsyncAnalyseListResponseDto
         """
-        endpoint = f"/api2/v1/analyses/byProviders"
+        endpoint = "/api2/v1/analyses/byProviders"
         params = {}
 
         files = None
@@ -175,7 +123,7 @@ class AnalysisOperations:
 
         :return: AsyncAnalyseListResponseDto
         """
-        endpoint = f"/api2/v1/analyses/byLanguages"
+        endpoint = "/api2/v1/analyses/byLanguages"
         params = {}
 
         files = None
@@ -186,6 +134,60 @@ class AnalysisOperations:
         )
 
         return AsyncAnalyseListResponseDto(**r)
+
+    def recalculate(
+        self,
+        body: AnalyseRecalculateRequestDto,
+        phrase_token: Optional[str] = None,
+    ) -> AnalyseRecalculateResponseDto:
+        """
+        Recalculate analysis
+
+        :param body: AnalyseRecalculateRequestDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AnalyseRecalculateResponseDto
+        """
+        endpoint = "/api2/v1/analyses/recalculate"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AnalyseRecalculateResponseDto(**r)
+
+    def getAnalyseLanguagePart(
+        self,
+        analyseLanguagePartId: int,
+        analyseUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> AnalyseLanguagePartDto:
+        """
+        Get analysis language part
+        Returns analysis language pair
+        :param analyseLanguagePartId: integer (required), path.
+        :param analyseUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AnalyseLanguagePartDto
+        """
+        endpoint = f"/api2/v1/analyses/{analyseUid}/analyseLanguageParts/{analyseLanguagePartId}"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AnalyseLanguagePartDto(**r)
 
     def listJobParts(
         self,
@@ -219,34 +221,6 @@ class AnalysisOperations:
 
         return PageDtoAnalyseJobDto(**r)
 
-    def getAnalyseLanguagePart(
-        self,
-        analyseLanguagePartId: int,
-        analyseUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> AnalyseLanguagePartDto:
-        """
-        Get analysis language part
-        Returns analysis language pair
-        :param analyseLanguagePartId: integer (required), path.
-        :param analyseUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AnalyseLanguagePartDto
-        """
-        endpoint = f"/api2/v1/analyses/{analyseUid}/analyseLanguageParts/{analyseLanguagePartId}"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AnalyseLanguagePartDto(**r)
-
     def getJobPartAnalyse(
         self,
         jobUid: str,
@@ -274,6 +248,57 @@ class AnalysisOperations:
         )
 
         return AnalyseJobDto(**r)
+
+    def downloadAnalyse(
+        self, analyseUid: str, format: str, phrase_token: Optional[str] = None
+    ) -> bytes:
+        """
+        Download analysis
+
+        :param analyseUid: string (required), path.
+        :param format: string (required), query.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = f"/api2/v1/analyses/{analyseUid}/download"
+        params = {"format": format}
+
+        files = None
+        payload = None
+
+        r = self.client.get_bytestream(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return r
+
+    def createAnalyseAsync_1(
+        self,
+        body: CreateAnalyseAsyncV2Dto,
+        phrase_token: Optional[str] = None,
+    ) -> AsyncAnalyseListResponseV2Dto:
+        """
+        Create analysis
+        Returns created analyses - batching analyses by number of segments (api.segment.count.approximation, default 100000), in case request contains more segments than maximum (api.segment.max.count, default 300000), returns 400 bad request.
+        :param body: CreateAnalyseAsyncV2Dto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: AsyncAnalyseListResponseV2Dto
+        """
+        endpoint = "/api2/v2/analyses"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AsyncAnalyseListResponseV2Dto(**r)
 
     def editAnalysis(
         self,
@@ -305,32 +330,6 @@ class AnalysisOperations:
 
         return AnalyseV2Dto(**r)
 
-    def createAnalyseAsync_1(
-        self,
-        body: CreateAnalyseAsyncV2Dto,
-        phrase_token: Optional[str] = None,
-    ) -> AsyncAnalyseListResponseV2Dto:
-        """
-        Create analysis
-        Returns created analyses - batching analyses by number of segments (api.segment.count.approximation, default 100000), in case request contains more segments than maximum (api.segment.max.count, default 300000), returns 400 bad request.
-        :param body: CreateAnalyseAsyncV2Dto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: AsyncAnalyseListResponseV2Dto
-        """
-        endpoint = f"/api2/v2/analyses"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return AsyncAnalyseListResponseV2Dto(**r)
-
     def analyses_batchEdit_v2(
         self,
         body: BulkEditAnalyseV2Dto,
@@ -346,7 +345,7 @@ class AnalysisOperations:
 
                 :return: AnalysesV2Dto
         """
-        endpoint = f"/api2/v2/analyses/bulk"
+        endpoint = "/api2/v2/analyses/bulk"
         params = {}
 
         files = None
@@ -364,13 +363,31 @@ class AnalysisOperations:
         phrase_token: Optional[str] = None,
     ) -> AnalyseV3Dto:
         """
-        Get analysis
+                Get analysis
+                This API endpoint retrieves analysis results, encompassing basic information about the analysis, such as its name,
+        assigned provider,
+        [net rate scheme](https://support.phrase.com/hc/en-us/articles/5709665578908-Net-Rate-Schemes-TMS-),
+        [Analysis settings](https://support.phrase.com/hc/en-us/articles/5709712007708-Analysis-TMS-) settings and a subset of
+        [Get project](#operation/getProject) information for the project the analysis belongs to.
 
-        :param analyseUid: string (required), path.
+        The analysis results consist of each analyzed language, presented as an item within the `analyseLanguageParts` array.
+        Each of these items contains details regarding the analyzed
+        [jobs](https://support.phrase.com/hc/en-us/articles/5709686763420-Jobs-TMS-),
+        [translation memories](https://support.phrase.com/hc/en-us/articles/5709688865692-Translation-Memories-Overview)
+        and the resultant data.
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        The analysis results are divided into two sections:
 
-        :return: AnalyseV3Dto
+        - `data` stores the raw numbers,
+        - `discountedData` recalculates the raw numbers using the selected net rate scheme.
+
+        Similar to the UI, both raw and net numbers are categorized based on their source into TM, MT, and NT categories,
+        including repetitions where applicable. These categories are then further subdivided based on the match score.
+                :param analyseUid: string (required), path.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: AnalyseV3Dto
         """
         endpoint = f"/api2/v3/analyses/{analyseUid}"
         params = {}

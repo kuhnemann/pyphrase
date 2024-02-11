@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+import urllib.parse
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
 
 from ...models.phrase_models import (
+    AsyncRequestWrapperV2Dto,
     ComparedSegmentsDto,
     CreateWebEditorLinkDtoV2,
     FileHandoverDto,
@@ -47,6 +48,7 @@ from ...models.phrase_models import (
     SplitJobActionDto,
     TargetFileWarningsDto,
     TranslationResourcesDto,
+    UpdateSourceMetadataDto,
     WebEditorLinkDtoV2,
     WildCardSearchByJobRequestDtoV3,
 )
@@ -220,14 +222,33 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> JobPartExtendedDto:
         """
-        Get job
+                Get job
+                This API call provides specific information about a
+        [job](https://support.phrase.com/hc/en-us/articles/5709686763420-Jobs-TMS-) within a project.
 
-        :param jobUid: string (required), path.
-        :param projectUid: string (required), path.
+        The response includes fundamental job details such as the current status, assigned providers, language combination, or
+        [workflow step](https://support.phrase.com/hc/en-us/articles/5709717879324-Workflow-TMS-) to which the job belongs.
+        Additionally, it offers a subset of the [Get project](#operation/getProject) information.
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        Furthermore, the response contains timestamps for the last
+        [Update source and Update target](https://support.phrase.com/hc/en-us/articles/10825557848220-Job-Tools) operations
+        executed on the job.
 
-        :return: JobPartExtendedDto
+        If the job was imported as
+        [continuous](https://support.phrase.com/hc/en-us/articles/5709711922972-Continuous-Jobs-CJ-TMS-), the job will be
+        marked as such, and the response will include the timestamp of the last update.
+
+        Moreover, the response features a boolean flag indicating if the job was imported successfully.
+        It also highlights potential errors that might have occurred during the import process.
+
+        The `jobReference` field serves as a unique identifier that allows matching corresponding jobs across different
+        workflow steps.
+                :param jobUid: string (required), path.
+                :param projectUid: string (required), path.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: JobPartExtendedDto
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}"
         params = {}
@@ -249,15 +270,27 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> JobPartExtendedDto:
         """
-        Edit job
+                Edit job
+                This API call facilitates job editing using a PUT method.
 
-        :param jobUid: string (required), path.
-        :param projectUid: string (required), path.
-        :param body: JobPartUpdateSingleDto (required), body.
+        Unlike [Patch job](#operation/patchPart), this call employs a PUT method, necessitating the inclusion of all
+        parameters in the request. Omitting any parameter will reset its value to the default. For instance, if only the status
+        field is included, the due date and provider fields will be emptied, even if they had previous values.
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        It's recommended to either use a call like [Get job](#operation/getPart) or [List jobs](#operation/listPartsV2) to
+        gather the unchanged information or consider using the [Patch job](#operation/patchPart) operation.
 
-        :return: JobPartExtendedDto
+        This call supports editing the status, due date, and providers. When modifying providers, it's crucial to submit both
+        the provider's ID and its type (either VENDOR or USER).
+
+        The response will offer a subset of information from [Get job](#operation/getPart).
+                :param jobUid: string (required), path.
+                :param projectUid: string (required), path.
+                :param body: JobPartUpdateSingleDto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: JobPartExtendedDto
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}"
         params = {}
@@ -279,15 +312,24 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> JobPartExtendedDto:
         """
-        Patch job
+                Patch job
+                This API call allows for partial updates to jobs, modifying specific fields without overwriting
+        those not included in the update request.
 
-        :param jobUid: string (required), path.
-        :param projectUid: string (required), path.
-        :param body: JobPartPatchSingleDto (required), body.
+        Differing from [Edit job](#operation/editPart), this call employs a PATCH method, updating only the provided fields
+        without altering others. It's beneficial when editing a subset of supported fields is required.
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        The call supports the editing of status, due date, and providers. When editing providers, it's essential to submit
+        both the ID of the provider and its type (either VENDOR or USER).
 
-        :return: JobPartExtendedDto
+        The response will provide a subset of information from [Get job](#operation/getPart).
+                :param jobUid: string (required), path.
+                :param projectUid: string (required), path.
+                :param body: JobPartPatchSingleDto (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: JobPartExtendedDto
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}"
         params = {}
@@ -300,64 +342,6 @@ class JobOperations:
         )
 
         return JobPartExtendedDto(**r)
-
-    def getImportSettings_3(
-        self,
-        jobUid: str,
-        projectUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> FileImportSettingsDto:
-        """
-        Get import settings for job
-
-        :param jobUid: string (required), path.
-        :param projectUid: string (required), path.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: FileImportSettingsDto
-        """
-        endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}/importSettings"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.get(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return FileImportSettingsDto(**r)
-
-    def editJobImportSettings(
-        self,
-        jobUid: str,
-        projectUid: str,
-        body: FileImportSettingsCreateDto,
-        phrase_token: Optional[str] = None,
-    ) -> FileImportSettingsDto:
-        """
-        Edit job import settings
-
-        :param jobUid: string (required), path.
-        :param projectUid: string (required), path.
-        :param body: FileImportSettingsCreateDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: FileImportSettingsDto
-        """
-        endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}/importSettings"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return FileImportSettingsDto(**r)
 
     def pseudoTranslateJobPart(
         self,
@@ -416,6 +400,64 @@ class JobOperations:
         )
 
         return
+
+    def getImportSettings_3(
+        self,
+        jobUid: str,
+        projectUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> FileImportSettingsDto:
+        """
+        Get import settings for job
+
+        :param jobUid: string (required), path.
+        :param projectUid: string (required), path.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: FileImportSettingsDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}/importSettings"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.get(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return FileImportSettingsDto(**r)
+
+    def editJobImportSettings(
+        self,
+        jobUid: str,
+        projectUid: str,
+        body: FileImportSettingsCreateDto,
+        phrase_token: Optional[str] = None,
+    ) -> FileImportSettingsDto:
+        """
+        Edit job import settings
+
+        :param jobUid: string (required), path.
+        :param projectUid: string (required), path.
+        :param body: FileImportSettingsCreateDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: FileImportSettingsDto
+        """
+        endpoint = f"/api2/v1/projects/{projectUid}/jobs/{jobUid}/importSettings"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return FileImportSettingsDto(**r)
 
     def statusChanges(
         self,
@@ -826,9 +868,13 @@ class JobOperations:
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs"
         params = {}
+        encoded_filename = urllib.parse.quote(fileName, encoding="utf-8")
+        """if metadata.remoteFile:
+            metadata.remoteFile.remoteFileName = urllib.parse.quote(metadata.remoteFile.remoteFileName, encoding='utf-8')
+        """
         headers = {
             "Memsource": metadata.json(exclude_none=True),
-            "Content-disposition": f"filename*=UTF-8''{fileName}",
+            "Content-disposition": f"filename*=UTF-8''{encoded_filename}",
         }
         payload = None
         content = body
@@ -873,6 +919,8 @@ class JobOperations:
           - `callbackUrl` - consumer callback
           - `path` - original destination directory
           - `preTranslate` - set pre translate job after import
+          - `semanticMarkup` - set semantic markup processing after import when enabled for organization
+          - `xmlAssistantProfile` - apply XML import settings defined using XML assistant
 
         Create job simple (without workflow steps, without assignments):
         ```
@@ -972,7 +1020,9 @@ class JobOperations:
     def updateSource(
         self,
         projectUid: str,
-        body: InputStream,
+        body: bytes,
+        fileName: str,
+        metadata: UpdateSourceMetadataDto,
         phrase_token: Optional[str] = None,
     ) -> JobUpdateSourceResponseDto:
         """
@@ -1033,14 +1083,24 @@ class JobOperations:
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs/source"
         params = {}
+        headers = {
+            "Memsource": metadata.json(exclude_none=True),
+            "Content-disposition": f"filename*=UTF-8''{fileName}",
+        }
+        payload = None
+        content = body
 
         files = None
-        payload = body
 
         r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
+            endpoint,
+            phrase_token,
+            params=params,
+            payload=payload,
+            content=content,
+            files=files,
+            headers=headers,
         )
-
         return JobUpdateSourceResponseDto(**r)
 
     def updateTarget(
@@ -1244,16 +1304,28 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> bytes:
         """
-        Download bilingual file
+                Download bilingual file
+                This API call generates a bilingual file in the chosen format by merging all submitted jobs together.
+        Note that all submitted jobs must belong to the same project; it's not feasible to merge jobs from multiple projects.
 
-        :param projectUid: string (required), path.
-        :param body: GetBilingualFileDto (required), body.
-        :param format: string (optional), query.
-        :param preview: boolean (optional), query.
+        When dealing with MXLIFF or DOCX files, modifications made externally can be imported back into the Phrase TMS project.
+        Any changes will be synchronized into the editor, allowing actions like confirming or locking segments.
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        Unlike the user interface (UI), the APIs also support XLIFF as a bilingual format, intended primarily
+        for export purposes. However, TMX and XLIFF files cannot be imported back into the project to reflect external changes.
 
-        :return: None
+        While MXLIFF files are editable using various means, their primary intended use is with the
+        [CAT Desktop Editor](https://support.phrase.com/hc/en-us/articles/5709683873052-CAT-Desktop-Editor-TMS-).
+        It's crucial to note that alterations to the file incompatible with the CAT Desktop Editor's features may result in
+        a corrupted file, leading to potential loss or duplication of work.
+                :param projectUid: string (required), path.
+                :param body: GetBilingualFileDto (required), body.
+                :param format: string (optional), query.
+                :param preview: boolean (optional), query.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: None
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs/bilingualFile"
         params = {"format": format, "preview": preview}
@@ -1302,14 +1374,16 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> SearchJobsDto:
         """
-        Search jobs in project
+                Search jobs in project
+                This API call can be used to verify (search) which of the provided jobs belong to the specified project. For the jobs
+        that belong to the project, a subset of [Get job](#operation/getPart) information will be returned and the rest of the
+        jobs will be filtered out.
+                :param projectUid: string (required), path.
+                :param body: SearchJobsRequestDto (required), body.
 
-        :param projectUid: string (required), path.
-        :param body: SearchJobsRequestDto (required), body.
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: SearchJobsDto
+                :return: SearchJobsDto
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs/search"
         params = {}
@@ -1330,14 +1404,36 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> SegmentsCountsResponseListDto:
         """
-        Get segments count
-        Provides segments count (progress data)
-        :param projectUid: string (required), path.
-        :param body: JobPartReadyReferences (required), body.
+                Get segments count
+                This API provides the current count of segments (progress data).
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        Every time this API is called, it returns the most up-to-date information. Consequently, these numbers will change
+        dynamically over time. The data retrieved from this API call is utilized to calculate the progress percentage in the UI.
 
-        :return: SegmentsCountsResponseListDto
+        The call returns the following information:
+
+        Counts of characters, words, and segments for each of the locked, confirmed, and completed categories. In this context,
+        _completed_ is defined as `confirmed` + `locked` - `confirmed and locked`.
+
+        The number of added words if the [Update source](https://support.phrase.com/hc/en-us/articles/10825557848220-Job-Tools)
+        operation has been performed on the job. In this context, added words are defined as the original word count plus the
+        sum of words added during all subsequent update source operations.
+
+        The count of segments where relevant machine translation (MT) was available (machineTranslationRelevantSegmentsCount)
+        and the number of segments where the MT output was post-edited (machineTranslationPostEditedSegmentsCount).
+
+        A breakdown of [Quality assurance](https://support.phrase.com/hc/en-us/articles/5709703799324-Quality-Assurance-QA-TMS-)
+        results, including the number of segments on which it was performed, the count of warnings found, and the number of
+        warnings that were ignored.
+
+        Additionally, a breakdown of the aforementioned information from the previous
+        [Workflow step](https://support.phrase.com/hc/en-us/articles/5709717879324-Workflow-TMS-) is also provided.
+                :param projectUid: string (required), path.
+                :param body: JobPartReadyReferences (required), body.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: SegmentsCountsResponseListDto
         """
         endpoint = f"/api2/v1/projects/{projectUid}/jobs/segmentsCount"
         params = {}
@@ -1351,127 +1447,10 @@ class JobOperations:
 
         return SegmentsCountsResponseListDto(**r)
 
-    def pseudoTranslate_1(
-        self,
-        projectUid: str,
-        body: PseudoTranslateWrapperDto,
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-        Pseudo-translate job
-
-        :param projectUid: string (required), path.
-        :param body: PseudoTranslateWrapperDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v2/projects/{projectUid}/jobs/pseudoTranslate"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
-
-    def deleteAllTranslations_1(
-        self,
-        projectUid: str,
-        body: JobPartReadyDeleteTranslationDto,
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-        Delete specific translations
-
-        :param projectUid: string (required), path.
-        :param body: JobPartReadyDeleteTranslationDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v2/projects/{projectUid}/jobs/translations"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.delete(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
-
-    def completedFile_1(
-        self,
-        jobUid: str,
-        projectUid: str,
-        phrase_token: Optional[str] = None,
-    ) -> Any:
-        """
-            Download target file (async)
-            This call will create async request for downloading target file with translation that can be downloaded when
-        finished. This means even for other jobs that were created via 'split jobs' etc.
-            :param jobUid: string (required), path.
-            :param projectUid: string (required), path.
-
-            :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-            :return:
-        """
-        endpoint = f"/api2/v2/projects/{projectUid}/jobs/{jobUid}/targetFile"
-        params = {}
-
-        files = None
-        payload = None
-
-        r = self.client.put(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return r
-
-    def downloadCompletedFile(
-        self,
-        asyncRequestId: str,
-        jobUid: str,
-        projectUid: str,
-        format: str = "ORIGINAL",
-        phrase_token: Optional[str] = None,
-    ) -> bytes:
-        """
-            Download target file based on async request
-            This call will return target file with translation. This means even for other jobs that were created via
-        'split jobs' etc.
-            :param asyncRequestId: string (required), path.
-            :param jobUid: string (required), path.
-            :param projectUid: string (required), path.
-            :param format: string (optional), query.
-
-            :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-            :return: None
-        """
-        endpoint = f"/api2/v2/projects/{projectUid}/jobs/{jobUid}/downloadTargetFile/{asyncRequestId}"
-        params = {"format": format}
-
-        files = None
-        payload = None
-
-        r = self.client.get_bytestream(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return r
-
     def listPartsV2(
         self,
         projectUid: str,
+        notReady: bool = None,
         assignedVendor: int = None,
         targetLang: str = None,
         filename: str = None,
@@ -1485,23 +1464,50 @@ class JobOperations:
         phrase_token: Optional[str] = None,
     ) -> PageDtoJobPartReferenceV2:
         """
-        List jobs
+                List jobs
+                API call to return a paginated list of [jobs](https://support.phrase.com/hc/en-us/articles/5709686763420-Jobs-TMS-)
+        in the given project.
 
-        :param projectUid: string (required), path.
-        :param assignedVendor: integer (optional), query.
-        :param targetLang: string (optional), query.
-        :param filename: string (optional), query.
-        :param dueInHours: integer (optional), query.
-        :param assignedUser: integer (optional), query.
-        :param status: array (optional), query.
-        :param pageNumber: integer (optional), query.
-        :param pageSize: integer (optional), query.
-        :param count: boolean (optional), query.
-        :param workflowLevel: integer (optional), query.
+        Use the query parameters to further narrow down the searching criteria.
 
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
+        - **pageNumber** - A zero-based parameter indicating the page number you wish to retrieve. The total number of pages is
+        returned in each response in the `totalPages` field in the top level of the response.
+        - **pageSize** - A parameter indicating the size of the page you wish to return.
+        This has direct effect on the `totalPages`
+        retrieved in each response and can hence influence the number of times to iterate over to get all the jobs.
+        - **count** - When set to `true`, the response will not contain the list of jobs (the `content` field) but only the
+        counts of elements and pages. Can be used to quickly retrieve the number of elements and pages to iterate over.
+        - **workflowLevel** - A non-zero based parameter indicating which
+        [workflow steps](https://support.phrase.com/hc/en-us/articles/5709717879324-Workflow-TMS-)
+        the returned jobs belong to. If left unspecified, its value is set to 1.
+        - **status** - A parameter allowing for filtering only for jobs in a specific status.
+        - **assignedUser** - A parameter allowing for filtering only for jobs assigned to a specific user.
+        The parameter accepts a user ID.
+        - **dueInHours** - A parameter allowing for filtering only for jobs whose due date is less or equal to the number
+         of hours specified.
+        - **filename** - A parameter allowing for filtering only for jobs with a specific file name.
+        - **targetLang** - A parameter allowing for filtering only for jobs with a specific target language.
+        - **assignedVendor** - A parameter allowing for filtering only for jobs assigned to a specific vendor.
+        The parameter accepts a user ID.
+        - **notReady** - A parameter allowing for filtering only jobs that have been imported. When set to `true` the response
+         will only contain jobs that have not been imported yet.
+         This will also return jobs that have not been imported correctly, e.g. due to an error.
+                :param projectUid: string (required), path.
+                :param notReady: boolean (optional), query.
+                :param assignedVendor: integer (optional), query.
+                :param targetLang: string (optional), query.
+                :param filename: string (optional), query.
+                :param dueInHours: integer (optional), query.
+                :param assignedUser: integer (optional), query.
+                :param status: array (optional), query.
+                :param pageNumber: integer (optional), query.
+                :param pageSize: integer (optional), query.
+                :param count: boolean (optional), query.
+                :param workflowLevel: integer (optional), query.
 
-        :return: PageDtoJobPartReferenceV2
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: PageDtoJobPartReferenceV2
         """
         endpoint = f"/api2/v2/projects/{projectUid}/jobs"
         params = {
@@ -1515,6 +1521,7 @@ class JobOperations:
             "filename": filename,
             "targetLang": targetLang,
             "assignedVendor": assignedVendor,
+            "notReady": notReady,
         }
 
         files = None
@@ -1627,6 +1634,138 @@ class JobOperations:
 
         return WebEditorLinkDtoV2(**r)
 
+    def pseudoTranslate_1(
+        self,
+        projectUid: str,
+        body: PseudoTranslateWrapperDto,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Pseudo-translate job
+
+        :param projectUid: string (required), path.
+        :param body: PseudoTranslateWrapperDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = f"/api2/v2/projects/{projectUid}/jobs/pseudoTranslate"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
+
+    def deleteAllTranslations_1(
+        self,
+        projectUid: str,
+        body: JobPartReadyDeleteTranslationDto,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Delete specific translations
+
+        :param projectUid: string (required), path.
+        :param body: JobPartReadyDeleteTranslationDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = f"/api2/v2/projects/{projectUid}/jobs/translations"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.delete(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return
+
+    def completedFile_1(
+        self,
+        jobUid: str,
+        projectUid: str,
+        phrase_token: Optional[str] = None,
+    ) -> AsyncRequestWrapperV2Dto:
+        """
+                Download target file (async)
+                This call initiates an asynchronous request to generate and download the target file containing translations.
+        This request covers jobs created via actions like 'split jobs', ensuring accessibility even for such cases.
+
+        To monitor the status of this asynchronous request, you have two options:
+        1. Use [Get asynchronous request](#operation/getAsyncRequest).
+        2. Search for the asyncRequestId by utilizing [List pending requests](#operation/listPendingRequests).
+
+        In contrast to the previous version (v1) of this call, v2 does not directly provide the target file within the response.
+        Once the asynchronous request is completed, you can download the target file using
+        [Download target file based on async request](#operation/downloadCompletedFile).
+
+        _Note_: The asyncRequestId can be used only once. Once the download is initiated through `Download target file based on
+        async request`, the asyncRequestId becomes invalid for further use.
+                :param jobUid: string (required), path.
+                :param projectUid: string (required), path.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: AsyncRequestWrapperV2Dto
+        """
+        endpoint = f"/api2/v2/projects/{projectUid}/jobs/{jobUid}/targetFile"
+        params = {}
+
+        files = None
+        payload = None
+
+        r = self.client.put(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return AsyncRequestWrapperV2Dto(**r)
+
+    def downloadCompletedFile(
+        self,
+        asyncRequestId: str,
+        jobUid: str,
+        projectUid: str,
+        format: str = "ORIGINAL",
+        phrase_token: Optional[str] = None,
+    ) -> bytes:
+        """
+                Download target file based on async request
+                This call will return target file with translation. This means even for other jobs that were created via
+        'split jobs' etc.
+
+        The asyncRequestId can be used only once. Once the download is initiated , the asyncRequestId becomes
+        invalid for further use.
+                :param asyncRequestId: string (required), path.
+                :param jobUid: string (required), path.
+                :param projectUid: string (required), path.
+                :param format: string (optional), query.
+
+                :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+                :return: None
+        """
+        endpoint = f"/api2/v2/projects/{projectUid}/jobs/{jobUid}/downloadTargetFile/{asyncRequestId}"
+        params = {"format": format}
+
+        files = None
+        payload = None
+
+        r = self.client.get_bytestream(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return r
+
     def patchUpdateJobParts(
         self,
         body: JobPartPatchBatchDto,
@@ -1641,7 +1780,7 @@ class JobOperations:
 
         :return: JobPartPatchResultDto
         """
-        endpoint = f"/api2/v3/jobs"
+        endpoint = "/api2/v3/jobs"
         params = {}
 
         files = None

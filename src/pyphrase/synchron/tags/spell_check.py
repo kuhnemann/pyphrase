@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import SyncPhraseTMSClient
@@ -33,7 +32,7 @@ class SpellCheckOperations:
 
         :return: SpellCheckResponseDto
         """
-        endpoint = f"/api2/v1/spellCheck/check"
+        endpoint = "/api2/v1/spellCheck/check"
         params = {}
 
         files = None
@@ -73,32 +72,6 @@ class SpellCheckOperations:
 
         return SpellCheckResponseDto(**r)
 
-    def addWord(
-        self,
-        body: DictionaryItemDto,
-        phrase_token: Optional[str] = None,
-    ) -> None:
-        """
-        Add word to dictionary
-
-        :param body: DictionaryItemDto (required), body.
-
-        :param phrase_token: string (optional) - if not supplied, client will look token from init
-
-        :return: None
-        """
-        endpoint = f"/api2/v1/spellCheck/words"
-        params = {}
-
-        files = None
-        payload = body
-
-        r = self.client.post(
-            endpoint, phrase_token, params=params, payload=payload, files=files
-        )
-
-        return
-
     def suggest(
         self,
         body: SuggestRequestDto,
@@ -113,7 +86,7 @@ class SpellCheckOperations:
 
         :return: SuggestResponseDto
         """
-        endpoint = f"/api2/v1/spellCheck/suggest"
+        endpoint = "/api2/v1/spellCheck/suggest"
         params = {}
 
         files = None
@@ -124,3 +97,29 @@ class SpellCheckOperations:
         )
 
         return SuggestResponseDto(**r)
+
+    def addWord(
+        self,
+        body: DictionaryItemDto,
+        phrase_token: Optional[str] = None,
+    ) -> None:
+        """
+        Add word to dictionary
+
+        :param body: DictionaryItemDto (required), body.
+
+        :param phrase_token: string (optional) - if not supplied, client will look token from init
+
+        :return: None
+        """
+        endpoint = "/api2/v1/spellCheck/words"
+        params = {}
+
+        files = None
+        payload = body
+
+        r = self.client.post(
+            endpoint, phrase_token, params=params, payload=payload, files=files
+        )
+
+        return

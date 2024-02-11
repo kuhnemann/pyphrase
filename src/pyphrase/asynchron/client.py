@@ -1,7 +1,5 @@
-import json
 import logging
-from json import JSONDecodeError
-from typing import Any, List, Optional, Union
+from typing import Any, Optional
 
 import httpx
 from httpx import HTTPStatusError
@@ -19,6 +17,7 @@ from .tags import (
     ConnectorOperations,
     ConversationsOperations,
     CostCenterOperations,
+    CustomFieldsOperations,
     CustomFileTypeOperations,
     DomainOperations,
     EmailTemplateOperations,
@@ -26,6 +25,7 @@ from .tags import (
     GlossaryOperations,
     ImportSettingsOperations,
     JobOperations,
+    LanguageAiOperations,
     LanguageQualityAssessmentOperations,
     MachineTranslationOperations,
     MachineTranslationSettingsOperations,
@@ -51,6 +51,7 @@ from .tags import (
     WebhookOperations,
     WorkflowChangesOperations,
     WorkflowStepOperations,
+    XmlAssistantOperations,
 )
 
 MEMSOURCE_BASE_URL = "https://cloud.memsource.com/web"
@@ -90,6 +91,7 @@ class AsyncPhraseTMSClient:
         self.connector = ConnectorOperations(self)
         self.conversations = ConversationsOperations(self)
         self.cost_center = CostCenterOperations(self)
+        self.custom_fields = CustomFieldsOperations(self)
         self.custom_file_type = CustomFileTypeOperations(self)
         self.net_rate_scheme = NetRateSchemeOperations(self)
         self.domain = DomainOperations(self)
@@ -104,6 +106,7 @@ class AsyncPhraseTMSClient:
         self.machine_translation_settings = MachineTranslationSettingsOperations(self)
         self.machine_translation = MachineTranslationOperations(self)
         self.mapping = MappingOperations(self)
+        self.language_ai = LanguageAiOperations(self)
         self.import_settings = ImportSettingsOperations(self)
         self.project = ProjectOperations(self)
         self.translation = TranslationOperations(self)
@@ -120,6 +123,7 @@ class AsyncPhraseTMSClient:
         self.vendor = VendorOperations(self)
         self.webhook = WebhookOperations(self)
         self.workflow_step = WorkflowStepOperations(self)
+        self.xml_assistant = XmlAssistantOperations(self)
         self.workflow_changes = WorkflowChangesOperations(self)
         self.provider = ProviderOperations(self)
 
@@ -180,8 +184,7 @@ class AsyncPhraseTMSClient:
 
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict()
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -221,6 +224,7 @@ class AsyncPhraseTMSClient:
         if params is None:
             params = {}
         params = {k: v for k, v in params.items() if v is not None}
+
         url = f"{MEMSOURCE_BASE_URL}{path}"
         header = {"Authorization": token}
         if headers is not None:
@@ -257,8 +261,7 @@ class AsyncPhraseTMSClient:
 
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict()
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -300,8 +303,7 @@ class AsyncPhraseTMSClient:
             header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict()
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -345,8 +347,7 @@ class AsyncPhraseTMSClient:
             header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict()
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -378,7 +379,7 @@ class AsyncPhraseTMSClient:
         payload: Optional[Any] = None,
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
-    ) -> Optional[Union[dict, Any]]:
+    ) -> dict:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -397,7 +398,4 @@ class AsyncPhraseTMSClient:
             logger.exception(f"Call failed: {r.content} // {url} - {payload}")
             raise Exception from exc
 
-        try:
-            return r.json()
-        except JSONDecodeError:
-            return r.content
+        return r.json()

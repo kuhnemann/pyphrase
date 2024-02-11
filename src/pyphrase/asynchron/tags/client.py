@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -110,7 +109,7 @@ class ClientOperations:
 
         :return: PageDtoClientDto
         """
-        endpoint = f"/api2/v1/clients"
+        endpoint = "/api2/v1/clients"
         params = {
             "name": name,
             "createdBy": createdBy,
@@ -141,7 +140,7 @@ class ClientOperations:
 
         :return: ClientDto
         """
-        endpoint = f"/api2/v1/clients"
+        endpoint = "/api2/v1/clients"
         params = {}
 
         files = None

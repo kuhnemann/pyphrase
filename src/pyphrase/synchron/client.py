@@ -1,7 +1,6 @@
-import json
 import logging
 from json import JSONDecodeError
-from typing import Any, List, Optional, Union
+from typing import Any, Optional
 
 import httpx
 from httpx import HTTPStatusError
@@ -19,6 +18,7 @@ from .tags import (
     ConnectorOperations,
     ConversationsOperations,
     CostCenterOperations,
+    CustomFieldsOperations,
     CustomFileTypeOperations,
     DomainOperations,
     EmailTemplateOperations,
@@ -26,6 +26,7 @@ from .tags import (
     GlossaryOperations,
     ImportSettingsOperations,
     JobOperations,
+    LanguageAiOperations,
     LanguageQualityAssessmentOperations,
     MachineTranslationOperations,
     MachineTranslationSettingsOperations,
@@ -51,11 +52,23 @@ from .tags import (
     WebhookOperations,
     WorkflowChangesOperations,
     WorkflowStepOperations,
+    XmlAssistantOperations,
 )
 
 MEMSOURCE_BASE_URL = "https://cloud.memsource.com/web"
 
 logger = logging.getLogger(__name__)
+
+
+class PhraseTMSException(Exception):
+    pass
+
+
+class PhraseTmsTooManyRequestsError(PhraseTMSException):
+    pass
+
+
+exception_map = {"TOO_MANY_REQUESTS": PhraseTmsTooManyRequestsError}
 
 
 def sync_get_phrase_tms_token(user: str, pw: str) -> MemsourceAuthTokenModel:
@@ -89,6 +102,7 @@ class SyncPhraseTMSClient:
         self.connector = ConnectorOperations(self)
         self.conversations = ConversationsOperations(self)
         self.cost_center = CostCenterOperations(self)
+        self.custom_fields = CustomFieldsOperations(self)
         self.custom_file_type = CustomFileTypeOperations(self)
         self.net_rate_scheme = NetRateSchemeOperations(self)
         self.domain = DomainOperations(self)
@@ -103,6 +117,7 @@ class SyncPhraseTMSClient:
         self.machine_translation_settings = MachineTranslationSettingsOperations(self)
         self.machine_translation = MachineTranslationOperations(self)
         self.mapping = MappingOperations(self)
+        self.language_ai = LanguageAiOperations(self)
         self.import_settings = ImportSettingsOperations(self)
         self.project = ProjectOperations(self)
         self.translation = TranslationOperations(self)
@@ -119,6 +134,7 @@ class SyncPhraseTMSClient:
         self.vendor = VendorOperations(self)
         self.webhook = WebhookOperations(self)
         self.workflow_step = WorkflowStepOperations(self)
+        self.xml_assistant = XmlAssistantOperations(self)
         self.workflow_changes = WorkflowChangesOperations(self)
         self.provider = ProviderOperations(self)
 
@@ -149,8 +165,15 @@ class SyncPhraseTMSClient:
         try:
             r.raise_for_status()
         except HTTPStatusError as exc:
-            logger.exception(f"Call failed: {r.content} // {url} - {params}")
-            raise Exception from exc
+            try:
+                loaded_errors = r.json()
+                error_code = loaded_errors.get("errorCode")
+                error_detail = loaded_errors.get("errorDescription")
+                msg = f"Call failed: {url=}, {params=}, {r.status_code=}, {error_code=}, {error_detail=}"
+                raise PhraseTMSException(msg)
+            except:
+                logger.exception(f"Call failed: {r} // {url} - {params}")
+                raise Exception from exc
 
         return r.content
 
@@ -178,8 +201,7 @@ class SyncPhraseTMSClient:
 
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict()
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -212,7 +234,7 @@ class SyncPhraseTMSClient:
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
         content: Optional[bytes] = None,
-    ) -> dict:
+    ) -> dict | None:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -231,9 +253,21 @@ class SyncPhraseTMSClient:
         try:
             resp.raise_for_status()
         except HTTPStatusError as exc:
-            logger.exception(f"Call failed: {resp.content} // {url} - {params}")
-            raise Exception from exc
-        return resp.json()
+            try:
+                loaded_errors = resp.json()
+                error_code = loaded_errors.get("errorCode")
+                error_detail = loaded_errors.get("errorDescription")
+
+                msg = f"Call failed: {url=}, {params=}, {resp.status_code=}, {error_code=}, {error_detail=}"
+                raise PhraseTMSException(msg)
+            except:
+                logger.exception(f"Call failed: {resp} // {url} - {params}")
+                raise Exception from exc
+
+        try:
+            return resp.json()
+        except JSONDecodeError:
+            return
 
     def post(
         self,
@@ -244,7 +278,7 @@ class SyncPhraseTMSClient:
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
         content: Optional[bytes] = None,
-    ) -> dict:
+    ) -> dict | None:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -256,12 +290,10 @@ class SyncPhraseTMSClient:
 
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict(exclude_none=True)
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
-
         r = httpx.post(
             url,
             json=payload,
@@ -275,9 +307,27 @@ class SyncPhraseTMSClient:
         try:
             r.raise_for_status()
         except HTTPStatusError as exc:
-            logger.exception(f"Call failed: {r.content} // {url} - {payload}")
-            raise Exception from exc
-        return r.json()
+            try:
+                loaded_errors = r.json()
+                error_code = loaded_errors.get("errorCode")
+                error_detail = loaded_errors.get("errorDescription")
+                msg = f"Call failed: {r.request.method=}, {url=}, {params=}, {r.status_code=}, {error_code=}, {error_detail=}"
+            except:
+                error_code = None
+                msg = None
+
+            if msg:
+                specific_exception = exception_map.get(error_code, PhraseTMSException)
+                raise specific_exception(msg)
+
+            else:
+                logger.exception(f"Call failed: {r} // {url} - {params}")
+                raise Exception from exc
+
+        try:
+            return r.json()
+        except JSONDecodeError:
+            return
 
     def put(
         self,
@@ -288,7 +338,7 @@ class SyncPhraseTMSClient:
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
         content: Optional[bytes] = None,
-    ) -> dict:
+    ) -> dict | None:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -299,8 +349,7 @@ class SyncPhraseTMSClient:
             header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict()
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -318,10 +367,20 @@ class SyncPhraseTMSClient:
         try:
             r.raise_for_status()
         except HTTPStatusError as exc:
-            logger.exception(f"Call failed: {r.content} // {url} - {payload}")
-            raise Exception from exc
+            try:
+                loaded_errors = r.json()
+                error_code = loaded_errors.get("errorCode")
+                error_detail = loaded_errors.get("errorDescription")
+                msg = f"Call failed: {url=}, {params=}, {r.status_code=}, {error_code=}, {error_detail=}"
+                raise PhraseTMSException(msg)
+            except:
+                logger.exception(f"Call failed: {r} // {url} - {params}")
+                raise Exception from exc
 
-        return r.json()
+        try:
+            return r.json()
+        except JSONDecodeError:
+            return
 
     def patch(
         self,
@@ -332,7 +391,7 @@ class SyncPhraseTMSClient:
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
         content: Optional[bytes] = None,
-    ) -> dict:
+    ) -> dict | None:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -343,8 +402,7 @@ class SyncPhraseTMSClient:
             header.update(headers)
         if payload is not None and type(payload) != dict:
             try:
-                _p = payload.json(exclude_none=True)
-                payload = json.loads(_p)
+                payload = payload.dict()
             except Exception as e:
                 logger.exception(f"Payload could not be cast as dict: {e}")
                 raise Exception from e
@@ -362,10 +420,20 @@ class SyncPhraseTMSClient:
         try:
             r.raise_for_status()
         except HTTPStatusError as exc:
-            logger.exception(f"Call failed: {r.content} // {url} - {payload}")
-            raise Exception from exc
+            try:
+                loaded_errors = r.json()
+                error_code = loaded_errors.get("errorCode")
+                error_detail = loaded_errors.get("errorDescription")
+                msg = f"Call failed: {url=}, {params=}, {r.status_code=}, {error_code=}, {error_detail=}"
+                raise PhraseTMSException(msg)
+            except:
+                logger.exception(f"Call failed: {r} // {url} - {params}")
+                raise Exception from exc
 
-        return r.json()
+        try:
+            return r.json()
+        except JSONDecodeError:
+            return
 
     def delete(
         self,
@@ -376,7 +444,7 @@ class SyncPhraseTMSClient:
         files: Optional[Any] = None,
         headers: Optional[dict] = None,
         content: Optional[bytes] = None,
-    ) -> Optional[Union[dict, Any]]:
+    ) -> dict | None:
         token = phrase_token or self.token
         if token is None:
             raise NotAuthenticatedError
@@ -391,9 +459,17 @@ class SyncPhraseTMSClient:
         try:
             r.raise_for_status()
         except HTTPStatusError as exc:
-            logger.exception(f"Call failed: {r.content} // {url} - {payload}")
-            raise Exception from exc
+            try:
+                loaded_errors = r.json()
+                error_code = loaded_errors.get("errorCode")
+                error_detail = loaded_errors.get("errorDescription")
+                msg = f"Call failed: {url=}, {params=}, {r.status_code=}, {error_code=}, {error_detail=}"
+                raise PhraseTMSException(msg)
+            except:
+                logger.exception(f"Call failed: {r} // {url} - {params}")
+                raise Exception from exc
+
         try:
             return r.json()
         except JSONDecodeError:
-            return r.content
+            return

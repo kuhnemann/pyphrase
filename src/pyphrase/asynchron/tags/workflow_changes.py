@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -25,7 +24,7 @@ class WorkflowChangesOperations:
 
         :return: Response
         """
-        endpoint = f"/api2/v2/jobs/workflowChanges"
+        endpoint = "/api2/v2/jobs/workflowChanges"
         params = {}
 
         files = None

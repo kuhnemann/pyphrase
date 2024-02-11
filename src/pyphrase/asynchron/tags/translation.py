@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, List, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from ..client import AsyncPhraseTMSClient
@@ -11,7 +10,7 @@ from ...models.phrase_models import (
     AsyncRequestWrapperV2Dto,
     HumanTranslateJobsDto,
     MachineTranslateResponse,
-    PreTranslateJobsV2Dto,
+    PreTranslateJobsV3Dto,
     TranslationRequestDto,
 )
 
@@ -78,23 +77,23 @@ class TranslationOperations:
 
         return MachineTranslateResponse(**r)
 
-    async def preTranslate_1(
+    async def preTranslateV3(
         self,
         projectUid: str,
-        body: PreTranslateJobsV2Dto,
+        body: PreTranslateJobsV3Dto,
         phrase_token: Optional[str] = None,
     ) -> AsyncRequestWrapperV2Dto:
         """
         Pre-translate job
 
         :param projectUid: string (required), path.
-        :param body: PreTranslateJobsV2Dto (required), body.
+        :param body: PreTranslateJobsV3Dto (required), body.
 
         :param phrase_token: string (optional) - if not supplied, client will look token from init
 
         :return: AsyncRequestWrapperV2Dto
         """
-        endpoint = f"/api2/v2/projects/{projectUid}/jobs/preTranslate"
+        endpoint = f"/api2/v3/projects/{projectUid}/jobs/preTranslate"
         params = {}
 
         files = None
